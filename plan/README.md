@@ -1,19 +1,19 @@
 # Plan thực thi
 
-Mỗi file `<slug>.md` là một lát chức năng (backend + frontend + test), được lập bằng `/plan-feature <slug>` và thực hiện bằng `/cook <slug>`. Mẫu: [_template.md](_template.md). Kế hoạch tổng của đồ án (giai đoạn → lát → việc con, có đánh dấu done) nằm ở [../docs/plan/README.md](../docs/plan/README.md).
+Mỗi file `<slug>.md` là một lát chức năng (backend + frontend + test), được lập bằng `/plan-feature <slug>` và thực hiện bằng `/cook <slug>`. Mẫu: [_template.md](_template.md). Kế hoạch tổng của đồ án (giai đoạn → lát → việc con, có đánh dấu done) nằm ở [thiet-ke-giay.md](thiet-ke-giay.md).
 
 Một plan chỉ được cook khi `status: approved`, nghĩa là người dùng đã đọc và duyệt.
 
-**Cửa hàng LUT (DownBeat):** thiết kế tổng quát cơ sở dữ liệu + API và lộ trình các lát nằm ở [thiet-ke-tong-quat.md](thiet-ke-tong-quat.md) (draft), gồm cả thuật toán gợi ý theo nội dung (§11). Bản đầy đủ để viết báo cáo: [../docs/tai-lieu-thiet-ke.md](../docs/tai-lieu-thiet-ke.md). Các plan trong bảng dưới là của dự án AEOC cũ, chỉ để tham khảo cách viết.
+**Cửa hàng LUT (DownBeat) cũ:** thiết kế và kế hoạch tổng đã chuyển vào [../docs/archive/lut/](../docs/archive/lut/README.md) sau lát `go-lut`. Các plan LUT / AEOC trong bảng dưới chỉ để tham khảo cách viết.
 
 **Cửa hàng giày (chuyển hướng 18/11/2026):** kế hoạch tổng, thiết kế CSDL / API và lộ trình các lát ở [thiet-ke-giay.md](thiet-ke-giay.md) (approved 18/11/2026). Đặc tả UI tham chiếu nike.com + ảnh khung hình: [ui-nike/README.md](ui-nike/README.md).
 
 | Slug | Chức năng | Lát | Trạng thái |
 |---|---|---|---|
 | [khung-automation](khung-automation.md) | Khung bộ automation test `automation/` (Playwright + JS): POM, fixture, API client, 6 project trình duyệt, HTML + Allure, ESLint, CI smoke; test xác thực + Chức vụ; cập nhật CLAUDE.md / skill sang `automation/` | 0.1 | done |
-| [go-lut](go-lut.md) | Gỡ toàn bộ LUT: V18 xoá 18 bảng + resource / module, xoá package BE và route / component FE, payOS chuyển sang `business.payment`, `account/me` bỏ trường gói, `/` thành trang tạm | 1.1 | approved |
+| [go-lut](go-lut.md) | Gỡ toàn bộ LUT: V18 xoá 18 bảng + resource / module, xoá package BE và route / component FE, payOS chuyển sang `business.payment`, `account/me` bỏ trường gói, `/` thành trang tạm | 1.1 | done |
 
-Bảng dưới là các lát của cửa hàng LUT cũ (sẽ chuyển vào `docs/archive/lut/` khi `go-lut` xong).
+Bảng dưới là các lát của cửa hàng LUT cũ (tài liệu thiết kế đã chuyển vào `docs/archive/lut/`).
 
 `tasks/` lưu task spec đã giao cho Codex / agy (`<slug>-be.md`, `<slug>-fe.md`, `<slug>-be-fix1.md` …).
 

@@ -1,16 +1,17 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { getAccountMe, getPreference, loginShop, register, savePreference } from "@/lib/axios/account";
+import { getAccountMe, loginShop, register } from "@/lib/axios/account";
 import { logoutRemote } from "@/lib/axios/auth";
-import { requestLutDownload } from "@/lib/axios/luts";
-import { mergeAnon } from "@/lib/axios/recommend";
-import { getAnonId } from "@/lib/recommend/anon-id";
 import { useAuthStore } from "@/lib/stores/auth";
 import { useShopSession } from "@/lib/stores/shop-session";
 import { queryClient } from "@/lib/tanstack/query-client";
 import type { ShopLoginRequest, ShopRegisterRequest, ShopUserDTO } from "@/lib/types/account";
-import type { LutDTO } from "@/lib/types/lut";
+import type { LoginResponseDTO } from "@/lib/types/auth";
 
-/** GET /account/me — query lấy thông tin tài khoản hiện tại khi có token (plan §8). */
+/** Cache phụ thuộc người đăng nhập: xoá khi đổi tài khoản để không lộ quyền của người trước. */
+const USER_SCOPED_KEYS = [["account-me"], ["permission-resource"]];
+const clearUserQueries = () => USER_SCOPED_KEYS.forEach((queryKey) => queryClient.removeQueries({ queryKey }));
+
+/** GET /account/me — query lấy thông tin tài khoản hiện tại khi có token. */
 export const accountMeQueryOptions = queryOptions({
   queryKey: ["account-me"],
   queryFn: async () => {
@@ -22,21 +23,23 @@ export const accountMeQueryOptions = queryOptions({
   staleTime: 0
 });
 
+/** Lưu token rồi nạp `account/me` vào phiên cửa hàng. */
+async function startSession(res: LoginResponseDTO): Promise<ShopUserDTO> {
+  clearUserQueries();
+  useAuthStore.getState().set({
+    accessToken: res.token,
+    refreshToken: res.refreshToken,
+    userId: res.userId,
+    remember: true
+  });
+  const user = await getAccountMe();
+  useShopSession.getState().setUser(user);
+  return user;
+}
+
 /** Lỗi đăng nhập / đăng ký hiện ngay trong form (role="alert"), nên tắt toast lỗi */
 export const loginMutationOptions = mutationOptions({
-  mutationFn: async (req: ShopLoginRequest): Promise<ShopUserDTO> => {
-    const res = await loginShop(req);
-    useAuthStore.getState().set({
-      accessToken: res.token,
-      refreshToken: res.refreshToken,
-      userId: res.userId,
-      remember: true
-    });
-    const user = await getAccountMe();
-    useShopSession.getState().setUser(user);
-    void mergeAnon(getAnonId()).catch(() => undefined);
-    return user;
-  },
+  mutationFn: async (req: ShopLoginRequest): Promise<ShopUserDTO> => startSession(await loginShop(req)),
   meta: {
     successMessage: (u) => `Xin chào, ${(u as ShopUserDTO).name}`,
     silentError: true
@@ -44,19 +47,7 @@ export const loginMutationOptions = mutationOptions({
 });
 
 export const registerMutationOptions = mutationOptions({
-  mutationFn: async (req: ShopRegisterRequest): Promise<ShopUserDTO> => {
-    const res = await register(req);
-    useAuthStore.getState().set({
-      accessToken: res.token,
-      refreshToken: res.refreshToken,
-      userId: res.userId,
-      remember: true
-    });
-    const user = await getAccountMe();
-    useShopSession.getState().setUser(user);
-    void mergeAnon(getAnonId()).catch(() => undefined);
-    return user;
-  },
+  mutationFn: async (req: ShopRegisterRequest): Promise<ShopUserDTO> => startSession(await register(req)),
   meta: {
     successMessage: (u) => `Đã tạo tài khoản, chào mừng ${(u as ShopUserDTO).name}`,
     silentError: true
@@ -69,34 +60,9 @@ export const logoutMutationOptions = mutationOptions({
     void logoutRemote(refreshToken);
     useAuthStore.getState().clear();
     useShopSession.getState().logout();
-    queryClient.removeQueries({ queryKey: ["account-me"] });
+    clearUserQueries();
   },
   meta: {
     successMessage: "Đã đăng xuất"
-  }
-});
-
-export const lutDownloadMutationOptions = mutationOptions({
-  mutationFn: ({ lut }: { lut: LutDTO; user?: ShopUserDTO | null }) => requestLutDownload(lut.id),
-  meta: {
-    silentError: true
-  }
-});
-
-/** GET /account/preference — query lấy sở thích màu đã lưu (plan §5.1, §8). */
-export const preferenceQueryOptions = queryOptions({
-  queryKey: ["account-preference"],
-  queryFn: () => getPreference(),
-  staleTime: 0,
-  retry: false
-});
-
-/** POST /account/preference — lưu sở thích màu (plan §5.2, §8). */
-export const savePreferenceMutationOptions = mutationOptions({
-  mutationKey: ["account-preference", "save"],
-  mutationFn: (categorySlugs: string[]) => savePreference(categorySlugs),
-  meta: {
-    successMessage: "Đã lưu sở thích màu",
-    invalidatesQuery: [["account-preference"], ["recommend", "for-you"]]
   }
 });

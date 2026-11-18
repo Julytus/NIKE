@@ -15,7 +15,7 @@ import {
 } from "@/lib/types/resource";
 import { toFieldErrors } from "@/lib/utils/form-errors";
 
-// Giới hạn theo cột bảng `resource`. `uri` phải trùng hằng URI của controller ("/lut-category/").
+// Giới hạn theo cột bảng `resource`. `uri` phải trùng hằng URI của controller ("/product/").
 const resourceSchema = z.object({
   name: z
     .string()
@@ -154,7 +154,7 @@ export function ResourceFormDialog({
             id="resource-uri"
             name="uri"
             value={uri}
-            placeholder="Ví dụ: /lut-category/"
+            placeholder="Ví dụ: /product/"
             onChange={(e) => setUri(e.target.value)}
             disabled={isSystemResource}
             aria-invalid={!!errors.uri}

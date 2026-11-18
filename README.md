@@ -1,85 +1,16 @@
-# DownBeat
+# Nike Shoes (DownBeat)
 
-Cửa hàng LUT chỉnh màu cho người làm video. Người dùng xem trước LUT bằng ảnh trước/sau hoặc video, tải miễn phí các LUT thường, còn LUT có dấu ★ (Premium) cần gói Pro hoặc Studio.
-
-Đồ án môn học: ứng dụng thương mại điện tử. Monorepo gồm `backend/` (Spring Boot) và `frontend/` (React).
-
-![Trang chủ](docs/img/readme/00-trang-chu.jpg)
+Đồ án: **xây dựng automation test cho web thương mại điện tử bán giày** bằng JavaScript với Playwright. Cửa hàng mô phỏng nike.com/vn (tên, logo, ảnh Nike chỉ dùng để học, chạy local, không kinh doanh). Monorepo gồm `backend/` (Spring Boot), `frontend/` (React) và `automation/` (Playwright + JS).
 
 ## Trạng thái hiện tại
 
 | Phần | Trạng thái |
 |---|---|
-| Trang chủ `/`: hero, nhà sáng tạo, colorist, ghép ảnh LUT phổ biến, tìm màu bằng lời, băng tính năng, bảng giá rút gọn, FAQ | Xong, dữ liệu giả; tài liệu ở [docs/chuc-nang/trang-chu.md](docs/chuc-nang/trang-chu.md) |
-| Giao diện cửa hàng: kho LUT, chi tiết, danh mục, tìm kiếm, bảng giá, đăng ký/đăng nhập, nâng cấp, thanh toán | Xong, chạy bằng **dữ liệu giả** trong `frontend/src/lib/mock` (chưa gọi API) |
-| Đăng nhập trang quản trị `/login` → `/admin` | Xong, chạy với backend thật (JWT + refresh token lưu MySQL; đã bỏ quên mật khẩu qua email) |
-| Trang quản trị (quản lý LUT, đơn hàng, gói) | Mới có khung, chức năng làm theo từng lát trong `plan/` |
-| Thanh toán payOS | Chưa nối; hộp thoại thanh toán hiện là bản giả lập |
-| CSDL và API cho cửa hàng | Đã thiết kế ở [plan/thiet-ke-tong-quat.md](plan/thiet-ke-tong-quat.md), chưa làm |
+| Khung automation test `automation/` (POM, fixture, API client, đa trình duyệt, báo cáo, CI) | Xong, [docs/chuc-nang/khung-automation.md](docs/chuc-nang/khung-automation.md) |
+| Gỡ cửa hàng LUT cũ, còn nền đăng nhập / phân quyền / MinIO / payOS | Xong, [docs/chuc-nang/go-lut.md](docs/chuc-nang/go-lut.md); `/` là trang tạm "Cửa hàng đang được nâng cấp" |
+| Cửa hàng giày (dữ liệu, giao diện kiểu Nike, giỏ hàng, đặt hàng, quản trị) | Làm theo từng lát ở [plan/thiet-ke-giay.md](plan/thiet-ke-giay.md) |
 
-## Giao diện
-
-### Trang chủ
-
-<table>
-  <tr>
-    <td width="50%"><img src="docs/img/readme/00-trang-chu-tinh-nang.jpg" alt="Băng tính năng trên trang chủ"><br><sub>Băng tính năng; header hiện menu khi đã cuộn qua hero</sub></td>
-    <td width="50%"><img src="docs/img/readme/01-kho-lut.jpg" alt="Kho LUT"><br><sub>Kho LUT, giao diện sáng</sub></td>
-  </tr>
-</table>
-
-Trang chủ có nút sáng / tối như các trang khác. Ở giao diện tối, các khối dùng xen kẽ hai tông nền.
-
-### Cửa hàng
-
-<table>
-  <tr>
-    <td width="50%"><img src="docs/img/readme/02-kho-lut-toi.jpg" alt="Kho LUT giao diện tối"><br><sub>Kho LUT, giao diện tối</sub></td>
-    <td width="50%"><img src="docs/img/readme/03-tim-kiem.jpg" alt="Gợi ý tìm kiếm"><br><sub>Gợi ý khi gõ tìm kiếm</sub></td>
-  </tr>
-  <tr>
-    <td><img src="docs/img/readme/04-chi-tiet-lut.jpg" alt="Chi tiết LUT, so sánh trước sau"><br><sub>Chi tiết LUT: kéo thanh giữa để so sánh trước/sau</sub></td>
-    <td><img src="docs/img/readme/05-chi-tiet-video.jpg" alt="Chi tiết LUT Premium xem trước bằng video"><br><sub>LUT ★ Premium, xem trước bằng video</sub></td>
-  </tr>
-  <tr>
-    <td><img src="docs/img/readme/06-danh-muc.jpg" alt="Trang danh mục"><br><sub>Trang danh mục (<code>/luts/danh-muc/dien-anh</code>)</sub></td>
-    <td><img src="docs/img/readme/07-bang-gia.jpg" alt="Bảng giá"><br><sub>Bảng giá: Miễn phí, Pro, Studio; trả theo tháng hoặc năm</sub></td>
-  </tr>
-</table>
-
-### Tài khoản và thanh toán
-
-<table>
-  <tr>
-    <td width="50%"><img src="docs/img/readme/08-dang-ky.jpg" alt="Đăng ký"><br><sub>Đăng ký bằng email (không có đăng nhập Google)</sub></td>
-    <td width="50%"><img src="docs/img/readme/09-dang-nhap.jpg" alt="Đăng nhập"><br><sub>Đăng nhập</sub></td>
-  </tr>
-  <tr>
-    <td><img src="docs/img/readme/10-nang-cap.jpg" alt="Mời nâng cấp khi tải LUT Premium"><br><sub>Tài khoản miễn phí bấm tải LUT ★ thì được mời nâng cấp</sub></td>
-    <td><img src="docs/img/readme/11-thanh-toan.jpg" alt="Thanh toán gói Pro"><br><sub>Mua gói Pro qua payOS (bản demo, chưa trừ tiền thật)</sub></td>
-  </tr>
-  <tr>
-    <td><img src="docs/img/readme/12-tai-khoan.jpg" alt="Menu tài khoản gói Pro"><br><sub>Menu tài khoản: gói đang dùng và ngày hết hạn</sub></td>
-    <td></td>
-  </tr>
-</table>
-
-### Điện thoại
-
-<p>
-  <img src="docs/img/readme/13-dien-thoai.jpg" alt="Kho LUT trên điện thoại" width="260">
-  &nbsp;
-  <img src="docs/img/readme/14-dien-thoai-chi-tiet.jpg" alt="Chi tiết LUT trên điện thoại, giao diện tối" width="260">
-</p>
-
-### Quản trị
-
-<table>
-  <tr>
-    <td width="50%"><img src="docs/img/readme/15-admin-dang-nhap.jpg" alt="Đăng nhập quản trị"><br><sub>Đăng nhập quản trị (<code>/login</code>)</sub></td>
-    <td width="50%"><img src="docs/img/readme/16-admin.jpg" alt="Trang quản trị"><br><sub>Trang quản trị (đang là khung)</sub></td>
-  </tr>
-</table>
+Tài liệu cửa hàng LUT cũ nằm ở [docs/archive/lut/](docs/archive/lut/README.md).
 
 ## Công nghệ
 
@@ -97,13 +28,13 @@ backend/            Spring Boot, nhiều module Maven
   entity/           Lớp sinh từ CSDL (jOOQ codegen)
   base/             Hạ tầng dùng chung: repository, xử lý lỗi, phân quyền
   authenticate/     Đăng nhập, refresh token (bảng MySQL), đếm đăng nhập sai (bộ nhớ)
-  business/         Nghiệp vụ cửa hàng (chưa có)
+  business/         Nghiệp vụ: account, payment (payOS); các lát cửa hàng giày thêm dần
   app/              Điểm khởi chạy, cấu hình, migration Flyway (src/main/resources/db)
 frontend/
-  src/routes/       Trang theo file (TanStack Router): index (trang chủ), _shop/luts, _plain/pricing, _auth/login, admin
-  src/components/   shop/ (cửa hàng, trang chủ ở shop/home), admin/ (quản trị), ui/ (shadcn)
-  src/lib/mock/     Dữ liệu và API giả của cửa hàng, cùng chữ ký với API thật sau này
-plan/               Thiết kế tổng quát + plan từng chức năng
+  src/routes/       Trang theo file (TanStack Router): index (trang tạm), _auth/login, admin
+  src/components/   shop/ (cửa hàng), admin/ (quản trị), ui/ (shadcn)
+automation/         Playwright + JavaScript: tests/, pages/, fixtures/, api/, data/
+plan/               Kế hoạch tổng + plan từng chức năng
 docs/               Tài liệu chức năng, ảnh chụp giao diện
 scripts/ai/         Script hỗ trợ (restart backend, chụp ảnh README)
 ```
@@ -128,8 +59,6 @@ cd backend && mvn -q -DskipTests package && java -jar app/target/aeoc-backend.ja
 cd frontend && pnpm install && pnpm dev
 ```
 
-Chỉ xem trang chủ và giao diện cửa hàng thì bước 4 là đủ, vì cửa hàng đang chạy bằng dữ liệu giả.
-
 Các địa chỉ khác khi chạy local:
 
 | | |
@@ -144,10 +73,8 @@ Các địa chỉ khác khi chạy local:
 |---|---|---|---|
 | Quản trị `/login` | `admin@downbeat.local` | `Admin@123` | Toàn quyền |
 | Quản trị `/login` | `noaccess@downbeat.local` | `Admin@123` | Không có quyền nào |
-| Cửa hàng (nút Đăng nhập) | `free@downbeat.local` | `Admin@123` | Gói Miễn phí, dữ liệu giả |
-| Cửa hàng (nút Đăng nhập) | `pro@downbeat.local` | `Admin@123` | Gói Pro, tải được LUT ★ |
+| Cửa hàng (nút Đăng nhập) | `free@downbeat.local` | `Admin@123` | Khách hàng |
 
-Tài khoản cửa hàng và tài khoản quản trị là hai hệ riêng: tài khoản cửa hàng hiện chỉ lưu trong trình duyệt (localStorage) cho bản demo.
 
 ## Kiểm tra chất lượng
 
@@ -165,8 +92,6 @@ Mã test JUnit của backend (`backend/**/src/test/`) đang nằm trong `.gitign
 
 ## Tài liệu
 
-- [plan/thiet-ke-tong-quat.md](plan/thiet-ke-tong-quat.md): thiết kế CSDL, API, luồng thanh toán payOS và các lát chức năng sẽ làm.
+- [plan/thiet-ke-giay.md](plan/thiet-ke-giay.md): kế hoạch tổng cửa hàng giày, thiết kế CSDL / API và các lát chức năng.
 - [plan/README.md](plan/README.md): danh sách plan.
 - `docs/chuc-nang/`: tài liệu từng chức năng khi làm xong (phục vụ báo cáo).
-
-Ảnh trong README chụp tự động bằng `node scripts/ai/chup-anh-readme.mjs` (chỉ chụp lại ảnh trang chủ: `README_ONLY=trang-chu node scripts/ai/chup-anh-readme.mjs`) (cần frontend :4500; ảnh quản trị cần thêm backend :9500). Giao diện đổi thì chạy lại lệnh này.

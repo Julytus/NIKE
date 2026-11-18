@@ -30,6 +30,3 @@ export const useShopSession = create<ShopSessionState>()((set) => ({
   setLoading: (loading) => set({ loading }),
   logout: () => set({ user: null, loading: false })
 }));
-
-/** Gói hiện tại có tải được LUT Premium không */
-export const canDownloadPremium = (user: ShopUserDTO | null) => !!user && user.plan !== "free";

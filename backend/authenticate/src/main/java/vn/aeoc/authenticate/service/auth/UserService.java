@@ -61,6 +61,12 @@ public class UserService extends BaseService<UserRepository, User, Integer> {
         return copyUser(cached);
     }
 
+    /** Tài khoản đã đặt mật khẩu chưa (mật khẩu không nằm trong cache user). */
+    public boolean hasPassword(Integer userId) {
+        String hashed = repository.getUserPasswordById(userId);
+        return hashed != null && !hashed.isBlank();
+    }
+
     public User getUserByPhone(String phone) {
         return repository.getUserByPhone(phone);
     }

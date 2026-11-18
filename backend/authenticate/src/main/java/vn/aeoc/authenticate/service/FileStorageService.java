@@ -2,7 +2,6 @@ package vn.aeoc.authenticate.service;
 
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;
-import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,14 +17,12 @@ import vn.aeoc.base.exception.AppException;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Lưu file lên MinIO, trả về URL công khai (qua nginx: {system.file-url}/{bucket}/{key}).
@@ -62,9 +59,6 @@ public class FileStorageService {
     @Value("${minio.bucket}")
     private String bucket;
 
-    @Value("${minio.private-bucket:downbeat-lut}")
-    private String privateBucket;
-
     @Value("${system.file-url}")
     private String fileUrl;
 
@@ -76,7 +70,6 @@ public class FileStorageService {
     public void ensureBucket() {
         try {
             ensureBucket(bucket, true);
-            ensureBucket(privateBucket, false);
         } catch (Exception e) {
             // Không chặn app khởi động khi MinIO chưa sẵn sàng; upload sẽ báo lỗi riêng.
             log.warn("Không kiểm tra/tạo được bucket MinIO '{}': {}", bucket, e.getMessage());
@@ -88,19 +81,6 @@ public class FileStorageService {
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(name).build());
             if (publicRead) setPublicReadPolicy();
             log.info("Đã tạo bucket MinIO '{}'", name);
-        }
-    }
-
-    public byte[] readPrivate(String key) {
-        try (InputStream stream = minioClient.getObject(
-                GetObjectArgs.builder()
-                        .bucket(privateBucket)
-                        .object(key)
-                        .build())) {
-            return stream.readAllBytes();
-        } catch (Exception e) {
-            log.error("Không đọc được object '{}' từ bucket '{}': {}", key, privateBucket, e.getMessage());
-            throw new AppException(ErrorCode.UPLOAD_FILE_FAILED, "Không đọc được file .cube");
         }
     }
 
@@ -117,41 +97,6 @@ public class FileStorageService {
         } catch (Exception e) {
             log.error("Upload file công khai lên MinIO thất bại, key={}", key, e);
             throw new AppException(ErrorCode.UPLOAD_FILE_FAILED);
-        }
-    }
-
-    public void putPrivate(String key, byte[] data, String contentType) {
-        try {
-            minioClient.putObject(PutObjectArgs.builder()
-                    .bucket(privateBucket)
-                    .object(key)
-                    .stream(new java.io.ByteArrayInputStream(data), data.length, -1)
-                    .contentType(contentType)
-                    .build());
-        } catch (Exception e) {
-            log.error("Upload file riêng tư lên MinIO thất bại, key={}", key, e);
-            throw new AppException(ErrorCode.UPLOAD_FILE_FAILED);
-        }
-    }
-
-    public boolean existsPrivate(String key) {
-        try {
-            minioClient.statObject(
-                    StatObjectArgs.builder()
-                            .bucket(privateBucket)
-                            .object(key)
-                            .build()
-            );
-            return true;
-        } catch (ErrorResponseException e) {
-            if ("NoSuchKey".equals(e.errorResponse().code())) {
-                return false;
-            }
-            log.error("MinIO statObject thất bại cho key='{}' trong bucket='{}': {}", key, privateBucket, e.getMessage());
-            throw new AppException(ErrorCode.LUT_FILE_UNAVAILABLE);
-        } catch (Exception e) {
-            log.error("MinIO statObject thất bại cho key='{}' trong bucket='{}': {}", key, privateBucket, e.getMessage());
-            throw new AppException(ErrorCode.LUT_FILE_UNAVAILABLE);
         }
     }
 
@@ -178,28 +123,6 @@ public class FileStorageService {
 
     public String publicBucket() {
         return bucket;
-    }
-
-    public String presignPrivateGet(String key, Duration ttl, String downloadName, String contentType) {
-        try {
-            int expirySeconds = ttl != null ? (int) ttl.toSeconds() : 300;
-            Map<String, String> queryParams = Map.of(
-                    "response-content-disposition", "attachment; filename=\"" + downloadName + "\"",
-                    "response-content-type", contentType
-            );
-            return minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(Method.GET)
-                            .bucket(privateBucket)
-                            .object(key)
-                            .expiry(expirySeconds, TimeUnit.SECONDS)
-                            .extraQueryParams(queryParams)
-                            .build()
-            );
-        } catch (Exception e) {
-            log.error("MinIO presignPrivateGet thất bại cho key='{}' trong bucket='{}': {}", key, privateBucket, e.getMessage(), e);
-            throw new AppException(ErrorCode.LUT_FILE_UNAVAILABLE);
-        }
     }
 
     public String requireExtension(MultipartFile file, java.util.Set<String> allowed, String message) {

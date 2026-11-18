@@ -16,7 +16,7 @@ export interface ResourceDTO {
   name: string;
   description: string | null;
   code: string;
-  /** Khớp hằng URI của controller, ví dụ "/lut/" */
+  /** Khớp hằng URI của controller, ví dụ "/product/" */
   uri: string;
   actions: string[];
   active: number;

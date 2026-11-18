@@ -11,30 +11,12 @@ import org.jooq.Catalog;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
 
-import vn.entity.backend.tables.Collection;
-import vn.entity.backend.tables.CollectionItem;
-import vn.entity.backend.tables.Creator;
-import vn.entity.backend.tables.DownloadLog;
-import vn.entity.backend.tables.Lut;
-import vn.entity.backend.tables.LutCategory;
-import vn.entity.backend.tables.LutCategoryMap;
-import vn.entity.backend.tables.LutColorFeature;
-import vn.entity.backend.tables.LutSimilarity;
-import vn.entity.backend.tables.LutTag;
 import vn.entity.backend.tables.Module;
-import vn.entity.backend.tables.PaymentOrder;
 import vn.entity.backend.tables.Permission;
-import vn.entity.backend.tables.Plan;
-import vn.entity.backend.tables.RecEvalRun;
-import vn.entity.backend.tables.RecEvalTest;
-import vn.entity.backend.tables.RecImpression;
 import vn.entity.backend.tables.RefreshToken;
 import vn.entity.backend.tables.Resource;
 import vn.entity.backend.tables.Role;
-import vn.entity.backend.tables.Subscription;
 import vn.entity.backend.tables.UserApp;
-import vn.entity.backend.tables.UserEvent;
-import vn.entity.backend.tables.UserPreference;
 
 
 /**
@@ -51,89 +33,14 @@ public class DefaultSchema extends SchemaImpl {
     public static final DefaultSchema DEFAULT_SCHEMA = new DefaultSchema();
 
     /**
-     * The table <code>collection</code>.
-     */
-    public final Collection COLLECTION = Collection.COLLECTION;
-
-    /**
-     * The table <code>collection_item</code>.
-     */
-    public final CollectionItem COLLECTION_ITEM = CollectionItem.COLLECTION_ITEM;
-
-    /**
-     * The table <code>creator</code>.
-     */
-    public final Creator CREATOR = Creator.CREATOR;
-
-    /**
-     * The table <code>download_log</code>.
-     */
-    public final DownloadLog DOWNLOAD_LOG = DownloadLog.DOWNLOAD_LOG;
-
-    /**
-     * The table <code>lut</code>.
-     */
-    public final Lut LUT = Lut.LUT;
-
-    /**
-     * The table <code>lut_category</code>.
-     */
-    public final LutCategory LUT_CATEGORY = LutCategory.LUT_CATEGORY;
-
-    /**
-     * The table <code>lut_category_map</code>.
-     */
-    public final LutCategoryMap LUT_CATEGORY_MAP = LutCategoryMap.LUT_CATEGORY_MAP;
-
-    /**
-     * The table <code>lut_color_feature</code>.
-     */
-    public final LutColorFeature LUT_COLOR_FEATURE = LutColorFeature.LUT_COLOR_FEATURE;
-
-    /**
-     * The table <code>lut_similarity</code>.
-     */
-    public final LutSimilarity LUT_SIMILARITY = LutSimilarity.LUT_SIMILARITY;
-
-    /**
-     * The table <code>lut_tag</code>.
-     */
-    public final LutTag LUT_TAG = LutTag.LUT_TAG;
-
-    /**
      * The table <code>module</code>.
      */
     public final Module MODULE = Module.MODULE;
 
     /**
-     * The table <code>payment_order</code>.
-     */
-    public final PaymentOrder PAYMENT_ORDER = PaymentOrder.PAYMENT_ORDER;
-
-    /**
      * The table <code>permission</code>.
      */
     public final Permission PERMISSION = Permission.PERMISSION;
-
-    /**
-     * The table <code>plan</code>.
-     */
-    public final Plan PLAN = Plan.PLAN;
-
-    /**
-     * The table <code>rec_eval_run</code>.
-     */
-    public final RecEvalRun REC_EVAL_RUN = RecEvalRun.REC_EVAL_RUN;
-
-    /**
-     * The table <code>rec_eval_test</code>.
-     */
-    public final RecEvalTest REC_EVAL_TEST = RecEvalTest.REC_EVAL_TEST;
-
-    /**
-     * The table <code>rec_impression</code>.
-     */
-    public final RecImpression REC_IMPRESSION = RecImpression.REC_IMPRESSION;
 
     /**
      * The table <code>refresh_token</code>.
@@ -151,24 +58,9 @@ public class DefaultSchema extends SchemaImpl {
     public final Role ROLE = Role.ROLE;
 
     /**
-     * The table <code>subscription</code>.
-     */
-    public final Subscription SUBSCRIPTION = Subscription.SUBSCRIPTION;
-
-    /**
      * The table <code>user_app</code>.
      */
     public final UserApp USER_APP = UserApp.USER_APP;
-
-    /**
-     * The table <code>user_event</code>.
-     */
-    public final UserEvent USER_EVENT = UserEvent.USER_EVENT;
-
-    /**
-     * The table <code>user_preference</code>.
-     */
-    public final UserPreference USER_PREFERENCE = UserPreference.USER_PREFERENCE;
 
     /**
      * No further instances allowed
@@ -186,30 +78,12 @@ public class DefaultSchema extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
-            Collection.COLLECTION,
-            CollectionItem.COLLECTION_ITEM,
-            Creator.CREATOR,
-            DownloadLog.DOWNLOAD_LOG,
-            Lut.LUT,
-            LutCategory.LUT_CATEGORY,
-            LutCategoryMap.LUT_CATEGORY_MAP,
-            LutColorFeature.LUT_COLOR_FEATURE,
-            LutSimilarity.LUT_SIMILARITY,
-            LutTag.LUT_TAG,
             Module.MODULE,
-            PaymentOrder.PAYMENT_ORDER,
             Permission.PERMISSION,
-            Plan.PLAN,
-            RecEvalRun.REC_EVAL_RUN,
-            RecEvalTest.REC_EVAL_TEST,
-            RecImpression.REC_IMPRESSION,
             RefreshToken.REFRESH_TOKEN,
             Resource.RESOURCE,
             Role.ROLE,
-            Subscription.SUBSCRIPTION,
-            UserApp.USER_APP,
-            UserEvent.USER_EVENT,
-            UserPreference.USER_PREFERENCE
+            UserApp.USER_APP
         );
     }
 }
