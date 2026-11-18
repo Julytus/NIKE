@@ -1,6 +1,6 @@
 # Nike Shoes (repo DownBeat) — Đồ án: Xây dựng Automation test cho web thương mại điện tử bán giày dùng JavaScript với Playwright
 
-Monorepo: `backend/` (Spring Boot 3.2, Java 21, jOOQ, MySQL, MinIO) · `frontend/` (React 19, Vite, TanStack) · `automation/` (Playwright + JavaScript, lập ở lát `khung-automation`).
+Monorepo: `backend/` (Spring Boot 3.2, Java 21, jOOQ, MySQL, MinIO) · `frontend/` (React 19, Vite, TanStack) · `automation/` (Playwright + JavaScript, POM + fixture + API client, hướng dẫn ở `automation/README.md`).
 Đang chuyển từ cửa hàng LUT cũ sang cửa hàng giày mô phỏng nike.com/vn (dùng tên, logo, ảnh Nike **chỉ để học, chạy local**). Kế hoạch tổng: `plan/thiet-ke-giay.md`; đặc tả UI + ảnh tham chiếu: `plan/ui-nike/README.md`; danh sách plan: `plan/README.md`.
 Phần LUT (kho, gói, tải, bộ sưu tập, gợi ý) đang chờ gỡ ở lát `go-lut`; các plan LUT / AEOC cũ trong `plan/` chỉ để tham khảo cách viết.
 
@@ -47,7 +47,8 @@ sh scripts/ai/backend-restart.sh                    # build + restart backend :9
 docker compose -f docker-compose.local.yml --env-file backend/.env up -d   # MySQL / MinIO local (container downBeat-*)
 cd backend && mvn -q "-Djooq.codegen.skip=true" -pl <module> -am test
 cd frontend && pnpm build && pnpm lint
-cd automation && pnpm test:smoke                    # (sau lát khung-automation) nhóm @smoke, mọi trình duyệt
+cd automation && pnpm test:smoke                    # nhóm @smoke, mọi trình duyệt (api, chromium, firefox, webkit, mobile-chrome)
+cd automation && pnpm test:api && pnpm lint        # chỉ nhóm API (không bật frontend) + ESLint code test
 cd automation && E2E_SLOWMO=400 pnpm exec playwright test <spec> --project=chromium --headed --workers=1 --reporter=line
 ```
 

@@ -10,7 +10,7 @@ Một plan chỉ được cook khi `status: approved`, nghĩa là người dùng
 
 | Slug | Chức năng | Lát | Trạng thái |
 |---|---|---|---|
-| [khung-automation](khung-automation.md) | Khung bộ automation test `automation/` (Playwright + JS): POM, fixture, API client, 6 project trình duyệt, HTML + Allure, ESLint, CI smoke; test xác thực + Chức vụ; cập nhật CLAUDE.md / skill sang `automation/` | 0.1 | in-progress |
+| [khung-automation](khung-automation.md) | Khung bộ automation test `automation/` (Playwright + JS): POM, fixture, API client, 6 project trình duyệt, HTML + Allure, ESLint, CI smoke; test xác thực + Chức vụ; cập nhật CLAUDE.md / skill sang `automation/` | 0.1 | done |
 | [go-lut](go-lut.md) | Gỡ toàn bộ LUT: V18 xoá 18 bảng + resource / module, xoá package BE và route / component FE, payOS chuyển sang `business.payment`, `account/me` bỏ trường gói, `/` thành trang tạm | 1.1 | approved |
 
 Bảng dưới là các lát của cửa hàng LUT cũ (sẽ chuyển vào `docs/archive/lut/` khi `go-lut` xong).

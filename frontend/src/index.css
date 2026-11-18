@@ -125,6 +125,108 @@
   --sidebar-ring: var(--ring);
 }
 
+/*
+ * Bộ màu kiểu nike.com cho trang quản trị + đăng nhập (bật bằng hook `useNikeTheme`):
+ * đen #111111 / trắng, xám #707072 · #e5e5e5 · #f5f5f5, font Helvetica, nút bo tròn hẳn.
+ */
+.nike-admin {
+  --font-sans: "Helvetica Now Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: var(--font-sans);
+
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #111111;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #111111;
+  --muted: #f5f5f5;
+  --muted-foreground: #707072;
+  --accent: #e5e5e5;
+  --accent-foreground: #111111;
+  --destructive: #d30005;
+  --destructive-foreground: #ffffff;
+  --border: #e5e5e5;
+  --input: #cacacb;
+  --ring: #111111;
+  --radius: 0.5rem;
+
+  --chart-1: #111111;
+  --chart-2: #707072;
+  --chart-3: #9e9ea0;
+  --chart-4: #cacacb;
+  --chart-5: #fa5400;
+
+  --sidebar-background: #f5f5f5;
+  --sidebar: #f5f5f5;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #111111;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e5e5e5;
+  --sidebar-accent-foreground: #111111;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #111111;
+}
+
+.nike-admin.dark {
+  --background: #111111;
+  --foreground: #ffffff;
+  --card: #1a1a1a;
+  --card-foreground: #ffffff;
+  --popover: #1a1a1a;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #111111;
+  --secondary: #28282a;
+  --secondary-foreground: #ffffff;
+  --muted: #28282a;
+  --muted-foreground: #9e9ea0;
+  --accent: #39393b;
+  --accent-foreground: #ffffff;
+  --destructive: #ee0005;
+  --destructive-foreground: #ffffff;
+  --border: #39393b;
+  --input: #4b4b4d;
+  --ring: #ffffff;
+
+  --chart-1: #ffffff;
+  --chart-2: #9e9ea0;
+  --chart-3: #707072;
+  --chart-4: #4b4b4d;
+  --chart-5: #fa5400;
+
+  --sidebar-background: #000000;
+  --sidebar: #000000;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #111111;
+  --sidebar-accent: #28282a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #28282a;
+  --sidebar-ring: #ffffff;
+}
+
+/* Nút bo tròn hẳn như nike.com (nút icon thành hình tròn) */
+.nike-admin [data-slot="button"] {
+  border-radius: 9999px;
+}
+
+/* Trang đăng nhập: ô nhập cao 56px, viền xám bo 8px như form nike.com */
+.nike-login [data-slot="input"] {
+  height: 3.5rem;
+  border-radius: 0.5rem;
+  padding-inline: 1rem;
+  font-size: 1rem;
+}
+
+.nike-login [data-slot="input"] + [data-slot="button"] {
+  height: 3.5rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

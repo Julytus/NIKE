@@ -79,55 +79,63 @@ test.describe('Quản trị Chức vụ (toàn quyền)', () => {
     await expect(rolePage.page.getByText('Không có dữ liệu.')).toBeVisible();
   });
 
-  test('TC-17 kiểm tra tên chức vụ theo giá trị biên', { tag: '@regression' }, async ({ rolePage }, testInfo) => {
-    const tooLong = uniqueNameOfLength(roleNames.maxLength + 1);
-    const maxLen = uniqueNameOfLength(roleNames.maxLength);
-    created.push(maxLen);
+  test(
+    'TC-17 kiểm tra tên chức vụ theo giá trị biên',
+    { tag: '@regression' },
+    async ({ rolePage }, testInfo) => {
+      const tooLong = uniqueNameOfLength(roleNames.maxLength + 1);
+      const maxLen = uniqueNameOfLength(roleNames.maxLength);
+      created.push(maxLen);
 
-    await rolePage.open();
-    const dialog = await rolePage.openCreate();
+      await rolePage.open();
+      const dialog = await rolePage.openCreate();
 
-    // Để trống
-    await dialog.nameInput.fill(roleNames.empty);
-    await dialog.createButton.click();
-    await expect(dialog.error(roleNames.requiredMessage)).toBeVisible();
+      // Để trống
+      await dialog.nameInput.fill(roleNames.empty);
+      await dialog.createButton.click();
+      await expect(dialog.error(roleNames.requiredMessage)).toBeVisible();
 
-    // Chỉ có khoảng trắng (bị cắt) cũng coi là trống
-    await dialog.nameInput.fill(roleNames.spacesOnly);
-    await dialog.createButton.click();
-    await expect(dialog.error(roleNames.requiredMessage)).toBeVisible();
+      // Chỉ có khoảng trắng (bị cắt) cũng coi là trống
+      await dialog.nameInput.fill(roleNames.spacesOnly);
+      await dialog.createButton.click();
+      await expect(dialog.error(roleNames.requiredMessage)).toBeVisible();
 
-    // 51 ký tự: vượt biên trên
-    expect(tooLong).toHaveLength(roleNames.maxLength + 1);
-    await dialog.nameInput.fill(tooLong);
-    await dialog.createButton.click();
-    await expect(dialog.error(roleNames.tooLongMessage)).toBeVisible();
-    await docShot(rolePage.page, testInfo, '08-ten-qua-dai');
+      // 51 ký tự: vượt biên trên
+      expect(tooLong).toHaveLength(roleNames.maxLength + 1);
+      await dialog.nameInput.fill(tooLong);
+      await dialog.createButton.click();
+      await expect(dialog.error(roleNames.tooLongMessage)).toBeVisible();
+      await docShot(rolePage.page, testInfo, '08-ten-qua-dai');
 
-    // 50 ký tự: đúng biên trên, tạo được
-    expect(maxLen).toHaveLength(roleNames.maxLength);
-    await dialog.nameInput.fill(maxLen);
-    await dialog.createButton.click();
-    await expect(dialog.root).toBeHidden();
-    await rolePage.search(maxLen);
-    await expect(rolePage.row(maxLen)).toBeVisible();
-  });
+      // 50 ký tự: đúng biên trên, tạo được
+      expect(maxLen).toHaveLength(roleNames.maxLength);
+      await dialog.nameInput.fill(maxLen);
+      await dialog.createButton.click();
+      await expect(dialog.root).toBeHidden();
+      await rolePage.search(maxLen);
+      await expect(rolePage.row(maxLen)).toBeVisible();
+    }
+  );
 });
 
 test.describe('Quản trị Chức vụ (không quyền)', () => {
   test.use({ storageState: storageStateOf('noaccess') });
 
-  test('TC-18 tài khoản không quyền không thấy Chức vụ', { tag: '@regression' }, async ({ page, adminLayout, rolePage }, testInfo) => {
-    await adminLayout.goto();
-    await expect(adminLayout.greeting).toBeVisible();
-    await adminLayout.openSidebar();
-    await expect(adminLayout.menuItem('Trang chủ')).toBeVisible();
-    await expect(adminLayout.menuItem('Chức vụ')).toHaveCount(0);
+  test(
+    'TC-18 tài khoản không quyền không thấy Chức vụ',
+    { tag: '@regression' },
+    async ({ page, adminLayout, rolePage }, testInfo) => {
+      await adminLayout.goto();
+      await expect(adminLayout.greeting).toBeVisible();
+      await adminLayout.openSidebar();
+      await expect(adminLayout.menuItem('Trang chủ')).toBeVisible();
+      await expect(adminLayout.menuItem('Chức vụ')).toHaveCount(0);
 
-    await rolePage.goto();
-    await expect(adminLayout.accessDenied).toBeVisible();
-    await expect(page.getByText('Bạn không có quyền xem trang này.')).toBeVisible();
-    await expect(rolePage.addButton).toHaveCount(0);
-    await docShot(page, testInfo, '09-khong-quyen');
-  });
+      await rolePage.goto();
+      await expect(adminLayout.accessDenied).toBeVisible();
+      await expect(page.getByText('Bạn không có quyền xem trang này.')).toBeVisible();
+      await expect(rolePage.addButton).toHaveCount(0);
+      await docShot(page, testInfo, '09-khong-quyen');
+    }
+  );
 });

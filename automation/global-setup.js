@@ -15,8 +15,6 @@ export default async function globalSetup() {
   }
   if (status !== 200) {
     const origin = new URL(API_URL).origin;
-    throw new Error(
-      `Backend chưa chạy ở ${origin} — chạy: sh scripts/ai/backend-restart.sh`
-    );
+    throw new Error(`Backend chưa chạy ở ${origin} — chạy: sh scripts/ai/backend-restart.sh`);
   }
 }

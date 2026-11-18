@@ -4,7 +4,14 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['node_modules/', 'playwright-report/', 'test-results/', 'allure-results/', 'allure-report/', '.auth/'],
+    ignores: [
+      'node_modules/',
+      'playwright-report/',
+      'test-results/',
+      'allure-results/',
+      'allure-report/',
+      '.auth/',
+    ],
   },
   js.configs.recommended,
   {
@@ -25,6 +32,7 @@ export default [
         { assertFunctionNames: ['expectOk', 'expectError', 'loginOk', 'create'] },
       ],
       'playwright/no-conditional-in-test': 'off',
+      'playwright/no-skipped-test': ['warn', { allowConditional: true }],
     },
   },
 ];

@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Boxes, Command, Film, House, KeyRound, LayoutGrid, Palette, ShieldCheck, Sparkles } from "lucide-react";
+import { Boxes, Film, House, KeyRound, LayoutGrid, Palette, ShieldCheck, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
+import { NikeSwoosh } from "@/components/admin/nike-swoosh";
 import { AdminMain, type AdminNavItem } from "@/components/admin/sidebar/admin-main";
 import {
   Sidebar,
@@ -48,11 +49,12 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/admin">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
+                <div className="text-sidebar-foreground flex aspect-square size-8 items-center justify-center">
+                  <NikeSwoosh className="h-3.5" />
                 </div>
-                <div className="grid flex-1 text-left text-lg leading-tight">
-                  <span className="font-semibold">DownBeat</span>
+                <div className="grid flex-1 text-left leading-tight">
+                  <span className="text-base font-medium">Nike</span>
+                  <span className="text-muted-foreground text-xs">Quản trị</span>
                 </div>
               </Link>
             </SidebarMenuButton>
