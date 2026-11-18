@@ -63,65 +63,54 @@ export function LoginForm() {
   });
 
   return (
-    <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-24">
-      <div className="flex flex-col space-y-8">
-        <h4 className="text-2xl font-bold tracking-tight md:text-3xl">Đăng nhập</h4>
+    <div className="nike-login space-y-6">
+      <div className="space-y-2">
+        <h4 className="text-[28px] leading-tight font-medium tracking-normal">Đăng nhập</h4>
+        <p className="text-muted-foreground text-base">Trang quản trị cửa hàng Nike.</p>
+      </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            form.handleSubmit();
-          }}
-          className="space-y-6"
-        >
-          <FieldGroup className="gap-6">
-            {/* Email Field */}
-            <form.AppField name="identifier">
-              {(field) => (
-                <field.Input
-                  label="Email hoặc số điện thoại*"
-                  placeholder="vd: example@gmail.com hoặc 0987654321"
-                  description=""
-                />
-              )}
-            </form.AppField>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
+        className="space-y-6"
+      >
+        <FieldGroup className="gap-5">
+          <form.AppField name="identifier">
+            {(field) => (
+              <field.Input
+                label="Email hoặc số điện thoại*"
+                placeholder="vd: example@gmail.com hoặc 0987654321"
+                description=""
+              />
+            )}
+          </form.AppField>
 
-            {/* Password Field */}
-            <form.AppField name="password">
-              {(field) => <field.Password label="Mật khẩu*" description="" />}
-            </form.AppField>
+          <form.AppField name="password">
+            {(field) => <field.Password label="Mật khẩu*" description="" />}
+          </form.AppField>
 
-            {/* Remember Me Row */}
-            <div className="flex items-center">
-              <form.AppField name="rememberMe">
-                {(field) => (
-                  <div className="flex items-center space-x-2">
-                    <field.Checkbox label="Ghi nhớ đăng nhập" />
-                  </div>
-                )}
-              </form.AppField>
-            </div>
+          <form.AppField name="rememberMe">
+            {(field) => <field.Checkbox label="Ghi nhớ đăng nhập" />}
+          </form.AppField>
 
-            {/* Submit Button */}
+          <p className="text-muted-foreground text-xs leading-relaxed">
+            Hệ thống không hỗ trợ tự đăng ký. Quản trị viên sẽ phân quyền và cấp tài khoản cho bạn.
+          </p>
+
+          <div className="flex justify-end">
             <Button
               type="submit"
               size="lg"
-              className="h-12 w-full px-12 font-bold tracking-widest uppercase md:w-fit"
+              className="h-12 px-8 text-base font-medium"
               disabled={form.state.isSubmitting}
             >
               {form.state.isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
             </Button>
-          </FieldGroup>
-        </form>
-      </div>
-
-      {/* Right Column: CTA */}
-      <div className="flex flex-col space-y-6 border-t pt-12 md:border-t-0 md:border-l md:pt-0 md:pl-24">
-        <h4 className="text-2xl font-bold tracking-tight md:text-3xl">Chưa có tài khoản?</h4>
-        <p className="text-muted-foreground leading-relaxed">
-          Hệ thống không hỗ trợ tự đăng ký. Quản trị viên sẽ phân quyền và cấp tài khoản cho bạn.
-        </p>
-      </div>
+          </div>
+        </FieldGroup>
+      </form>
     </div>
   );
 }

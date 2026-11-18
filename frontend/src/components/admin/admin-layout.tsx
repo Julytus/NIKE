@@ -11,9 +11,11 @@ import { AdminLoadError } from "@/components/admin/admin-load-error";
 import { AdminLoading } from "@/components/admin/admin-loading";
 import { ThemeToggle } from "@/components/layout/theme/theme-toggle";
 import { useAuthStore } from "@/lib/stores/auth";
+import { useNikeTheme } from "@/hooks/use-nike-theme";
 
 /** Khung giao diện dùng chung (sidebar + header + canvas bo góc) cho nhóm route /admin. */
 export function AdminLayout() {
+  useNikeTheme();
   const { data: me, isLoading, isError, isFetching, refetch } = useQuery(meQueryOptions);
   // Token bị xoá khi đang ở trong trang quản trị (hết phiên, đăng xuất ở tab khác) => về trang đăng nhập
   const accessToken = useAuthStore((s) => s.accessToken);
@@ -54,7 +56,7 @@ export function AdminLayout() {
         </header>
         {/* Main Content Area with rounded canvas effect */}
         <main className="flex-1 overflow-hidden px-4 pb-4">
-          <div className="bg-background h-full w-full overflow-hidden rounded-3xl border shadow-sm">
+          <div className="bg-background h-full w-full overflow-hidden rounded-2xl border">
             <ScrollArea className="h-full w-full [&_[data-slot=scroll-area-viewport]>div]:!block">
               <div className="p-6 md:p-8">
                 <Outlet />
