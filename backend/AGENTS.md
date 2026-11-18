@@ -8,7 +8,7 @@ Spring Boot 3.2 · Java 21 · MySQL 8 + jOOQ · Caffeine (cache trong bộ nhớ
 entity/        POJO entity (vn.aeoc.entity.data.mysql.*) + jOOQ codegen (vn.entity.backend.*, entity/src/main/generated — không sửa tay)
 base/          ApiResponse, AppException/ErrorCode, paging, AbsMysqlRepository, BaseService, utils
 authenticate/  đăng nhập (JWT + refresh token lưu bảng `refresh_token`), user_app, role, permission, resource, module, BaseController
-business/      TOÀN BỘ nghiệp vụ ecom (vn.aeoc.business.<chức năng>: lut, product, cart, order…)
+business/      TOÀN BỘ nghiệp vụ ecom (vn.aeoc.business.<chức năng>: account, payment, product, cart, order…)
 app/           main + application*.yml + db/migration + db/seed. Không chứa nghiệp vụ
 ```
 Phụ thuộc một chiều: `entity` ← `base` ← `authenticate` ← `business` ← `app`. Chức năng mới **không tạo module Maven mới**: thêm package con trong `business`. `base` chỉ chứa hạ tầng. Package chức năng này không gọi repository của package chức năng khác (gọi qua service). Logic dùng chung giữa các chức năng đặt ở `vn.aeoc.business.common`.
@@ -39,17 +39,19 @@ Flyway: `app/src/main/resources/db/migration/V<n+1>__<mo_ta>.sql`. **Không sử
 - **Mọi repository `extends AbsMysqlRepository<XxxRecord, Xxx, Integer>`, mọi service có repository `extends BaseService<XxxRepository, Xxx, Integer>`** (khuôn ở mục "Thêm 1 CRUD"). Không tạo repository / service "trần" (`@RequiredArgsConstructor` + tự giữ `DSLContext`). Service dùng field `repository` của `BaseService`, không khai báo thêm field cho repository chính.
 - **Repository dùng hàm có sẵn của `AbsMysqlRepository`** thay vì viết tay jOOQ: `getListByCriteria` / `getListByCriteriaWithJoin` (+ `mergeFields` cho cột JOIN), `getById`, `getByIdWithJoin`, `getOneByCriteriaWithJoin`, `getOne`, `exists`, `getCountWithCriteria`, `updateByCondition`, `updateFieldByCondition`, `insertReturning`, `delete(id)` / `delete(condition)`. Chỉ viết tay (`dslContext…`) khi truy vấn bảng khác, chọn một phần cột vào kiểu khác, hoặc cần `fetchGroups` / `forUpdate` / biểu thức SQL riêng.
 - `getWhereCondition(…)` dựng `Condition` **chỉ tham chiếu bảng chính** (điều kiện trên bảng khác viết bằng `DSL.exists(selectOne()…)`), để `list` dùng `getListByCriteriaWithJoin` còn `count` dùng thẳng `getCountWithCriteria` với cùng điều kiện.
-- Bảng không có cột `id` (bảng nối như `lut_tag`, `lut_category_map`) **không có repository riêng** (`AbsMysqlRepository.init` bắt buộc cột `id`): truy vấn nó bằng tay trong repository của bảng chính.
+- Bảng không có cột `id` (bảng nối, vd ảnh / size của sản phẩm nếu thiết kế không có `id`) **không có repository riêng** (`AbsMysqlRepository.init` bắt buộc cột `id`): truy vấn nó bằng tay trong repository của bảng chính.
 - Trong repository, `exists(…)` / `delete(…)` / `update(…)` là hàm kế thừa và **che** `import static org.jooq.impl.DSL.exists`: viết `DSL.exists(...)`.
 - Danh sách có phân trang: service gọi `pageQuery(pageable, () -> repository.list(…), () -> repository.count(…))` (list + count chạy song song trên `dbExecutor`), không tự `new Page<>` / `setTotal`.
 - **Phân quyền**: đã có màn hình quản trị (`/admin/chuc-vu`, `/admin/phan-quyen`, `/admin/tai-nguyen`, `/admin/module`; API `role`, `permission`, `resource`, `module` ở `authenticate`). Chức năng mới vẫn **tạo dòng `resource` bằng migration** (vì `uri` phải khớp hằng `URI` của controller viết cùng lúc); việc cấp quyền cho từng chức vụ làm trên màn hình. Không sửa code / uri của 4 resource hệ thống `MODULE`, `RESOURCE`, `ROLE`, `PERMISSION` (`ResourceService.SYSTEM_CODES`).
 - Đổi quyền phải có hiệu lực ngay: ghi bảng `permission` thì `authCache.invalidateAll()` như `PermissionService.update`.
 - Không nới whitelist upload cho svg/html.
-- **Mẫu upload** (xem `LutAdminService.upload`): kiểm theo thứ tự tồn tại → loại → rỗng → đuôi → dung lượng → nội dung (magic bytes) rồi mới ghi; ghi file bằng `FileStorageService.putPublic` (bucket công khai, trả URL) hoặc `putPrivate` (bucket riêng tư); khoá object có UUID; content-type do server quyết định.
+- **Mẫu upload**: kiểm theo thứ tự tồn tại → loại → rỗng → đuôi → dung lượng → nội dung (magic bytes) rồi mới ghi; ghi file bằng `FileStorageService.putPublic` (bucket công khai, trả URL); khoá object có UUID; content-type do server quyết định.
 
 ## Thêm 1 CRUD
 
 Khuôn chuẩn (ví dụ `product`). Code đã theo khuôn để tham khảo: `authenticate/.../RoleController` + `RoleService` + `RoleRepository` (CRUD quản trị đầy đủ nhất: trùng tên, chặn xoá khi đang dùng, chỉ một bản ghi mặc định), `ModuleService` (xoá có dọn tham chiếu, endpoint body là mảng id), `PermissionService.update` (ghi theo lô, `@Transactional`), `business/lut` (JOIN + `DSL.exists`, `pageQuery`, cache Caffeine), `authenticate/.../RefreshTokenRepository` (`getOne`, `delete(condition)`). Unit test mẫu cho CRUD quản trị: `authenticate/src/test/.../service/auth/PhanQuyenServiceTest.java`.
+
+**Dữ liệu mẫu cửa hàng giày** nằm ở `business/src/main/resources/seed/giay/products.json` (+ ảnh `seed/giay/<slug>/<n>.webp`), nạp bằng `business.product.seed.ShoeSeedService` khi DB trống và khi gọi `POST /test-support/reset`. Sửa dữ liệu mẫu thì sửa file này (không viết migration). Lát nào thêm bảng tham chiếu `product` / `product_size` (giỏ, đơn, yêu thích…) phải mở rộng `ShoeSeedService.reloadDatabase()`: xoá bảng con trước.
 
 ```java
 // business/src/main/java/vn/aeoc/business/product/repository/ProductRepository.java

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Boxes, Film, House, KeyRound, LayoutGrid, Palette, ShieldCheck, Sparkles } from "lucide-react";
+import { Boxes, House, KeyRound, LayoutGrid, ShieldCheck } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import { NikeSwoosh } from "@/components/admin/nike-swoosh";
@@ -16,16 +16,10 @@ import { useCanView } from "@/hooks/use-can-view";
 
 /**
  * Mục menu theo quyền: `code` khớp cột `resource.code` trong DB, chỉ hiện khi role có quyền VIEW.
- * Chức năng mới: thêm `{ code, title, url, icon }` vào đây (hoặc `items` để gom nhóm).
+ * Chức năng mới (lát sau): thêm nhóm `FEATURE_ITEMS` `{ code, title, url, icon }` như nhóm dưới.
  * Backend vẫn chặn ở API nên đây chỉ là ẩn/hiện UI, không phải lớp bảo vệ.
- */
-const FEATURE_ITEMS: (AdminNavItem & { code: string })[] = [
-  { code: "LUT", title: "LUT", url: "/admin/luts", icon: Film },
-  { code: "LUT", title: "Đặc trưng màu", url: "/admin/dac-trung-mau", icon: Palette },
-  { code: "RECOMMEND", title: "Gợi ý", url: "/admin/goi-y", icon: Sparkles }
-];
-
-/** Nhóm "Hệ thống": các trang phân quyền (resource MODULE / RESOURCE / ROLE / PERMISSION, migration V4). */
+ *
+ * Nhóm "Hệ thống": các trang phân quyền (resource MODULE / RESOURCE / ROLE / PERMISSION, migration V4). */
 const SYSTEM_ITEMS: (AdminNavItem & { code: string })[] = [
   { code: "ROLE", title: "Chức vụ", url: "/admin/chuc-vu", icon: ShieldCheck },
   { code: "PERMISSION", title: "Phân quyền", url: "/admin/phan-quyen", icon: KeyRound },
@@ -37,8 +31,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
   const { canView } = useCanView();
 
   const navMain: AdminNavItem[] = [
-    { title: "Trang chủ", url: "/admin", icon: House },
-    ...FEATURE_ITEMS.filter((i) => canView(i.code))
+    { title: "Trang chủ", url: "/admin", icon: House }
   ];
   const navSystem = SYSTEM_ITEMS.filter((i) => canView(i.code));
 

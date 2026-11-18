@@ -14,6 +14,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import vn.aeoc.base.constant.ErrorCode;
@@ -120,6 +121,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleMissingApi(Exception ex, HttpServletRequest request) {
         return ResponseEntity.status(404).body(ApiErrorResponse.of(resolvePath(request), ErrorCode.DATA_NOT_FOUND,
                 "Không tìm thấy API", null));
+    }
+
+    // Gọi sai method (vd GET một endpoint POST) là lỗi của client: 405, không phải 500.
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiErrorResponse> handleMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex,
+            HttpServletRequest request
+    ) {
+        return buildResponse(request, ErrorCode.METHOD_NOT_ALLOWED, ErrorCode.METHOD_NOT_ALLOWED.message,
+                ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

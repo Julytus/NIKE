@@ -27,9 +27,7 @@ deploy/mysql/server-init/*.sql
 **/target/
 *.jar
 
-# ============ Test (không đưa lên git) ============
-# Mã test backend (JUnit) ở mọi module
-backend/**/src/test/
+# ============ Test ============
 # Test E2E Playwright + kết quả chạy test
 frontend/tests/
 **/test-results/

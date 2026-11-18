@@ -47,36 +47,6 @@
   --sh-band-green: #22382a;
 }
 
-/* Trang chủ: nền xen kẽ 2 tông + màu thẻ / nút theo bản tham chiếu (chỉ áp cho `.shop-home`). */
-.shop-home {
-  --sh-home-a: #ffffff;
-  --sh-home-b: #f4f5f7;
-  --sh-home-c: #eef0f3;
-  --sh-home-card: #edeef0;
-  --sh-home-kicker: #d01a5c;
-}
-
-.dark .shop-home {
-  --sh-bg: #1d232c;
-  --sh-surface: #3d4653;
-  --sh-surface-hover: #4a5462;
-  --sh-border: #2c3440;
-  --sh-elevated: #222a35;
-  --sh-home-a: #1d232c;
-  --sh-home-b: #151a20;
-  --sh-home-c: #1a222b;
-  --sh-home-card: #323a45;
-  --sh-home-kicker: #f7b9d6;
-}
-
-.shop-home :is(h1, h2).font-display {
-  /* Bản tham chiếu dùng chữ đơn cách (mỗi ký tự ~0.52em) cho tiêu đề khối */
-  font-family: "Chivo Mono", ui-monospace, monospace;
-  font-weight: 800;
-  letter-spacing: -0.06em;
-  word-spacing: -0.18em;
-}
-
 .shop .font-display {
   font-family: "Space Grotesk", "DM Sans", system-ui, sans-serif;
 }
@@ -94,63 +64,10 @@
   animation: shop-progress 1.1s ease-in-out infinite;
 }
 
-/* Băng nhà sáng tạo chạy ngang liên tục */
-@keyframes shop-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-.shop-marquee {
-  animation: shop-marquee 25s linear infinite;
-}
-.shop-marquee:hover {
-  animation-play-state: paused;
-}
-
-/* Ảnh trôi nhẹ trong cụm ghép ảnh */
-@keyframes shop-float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-.shop-float {
-  animation: shop-float 7s ease-in-out infinite;
-}
-
-/* Con trỏ "|" nháy của tiêu đề gõ chữ (hero-section.tsx) */
-@keyframes shop-caret-blink {
-  0%, 50% {
-    opacity: 1;
-  }
-  50.01%, 100% {
-    opacity: 0;
-  }
-}
-.shop-caret {
-  animation: shop-caret-blink 1s step-end infinite;
-}
-/* Đang gõ thì con trỏ sáng liên tục, gõ xong mới nháy */
-.shop-caret[data-typing="true"] {
-  animation: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .shop-caret {
-    animation: none !important;
-  }
   .shop-progress {
     animation: none !important;
     width: 100%;
     opacity: 0.6;
-  }
-  .shop-marquee,
-  .shop-float {
-    animation: none !important;
   }
 }

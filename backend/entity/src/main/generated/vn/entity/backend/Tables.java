@@ -4,30 +4,16 @@
 package vn.entity.backend;
 
 
-import vn.entity.backend.tables.Collection;
-import vn.entity.backend.tables.CollectionItem;
-import vn.entity.backend.tables.Creator;
-import vn.entity.backend.tables.DownloadLog;
-import vn.entity.backend.tables.Lut;
-import vn.entity.backend.tables.LutCategory;
-import vn.entity.backend.tables.LutCategoryMap;
-import vn.entity.backend.tables.LutColorFeature;
-import vn.entity.backend.tables.LutSimilarity;
-import vn.entity.backend.tables.LutTag;
 import vn.entity.backend.tables.Module;
-import vn.entity.backend.tables.PaymentOrder;
 import vn.entity.backend.tables.Permission;
-import vn.entity.backend.tables.Plan;
-import vn.entity.backend.tables.RecEvalRun;
-import vn.entity.backend.tables.RecEvalTest;
-import vn.entity.backend.tables.RecImpression;
+import vn.entity.backend.tables.Product;
+import vn.entity.backend.tables.ProductCategory;
+import vn.entity.backend.tables.ProductImage;
+import vn.entity.backend.tables.ProductSize;
 import vn.entity.backend.tables.RefreshToken;
 import vn.entity.backend.tables.Resource;
 import vn.entity.backend.tables.Role;
-import vn.entity.backend.tables.Subscription;
 import vn.entity.backend.tables.UserApp;
-import vn.entity.backend.tables.UserEvent;
-import vn.entity.backend.tables.UserPreference;
 
 
 /**
@@ -37,64 +23,9 @@ import vn.entity.backend.tables.UserPreference;
 public class Tables {
 
     /**
-     * The table <code>collection</code>.
-     */
-    public static final Collection COLLECTION = Collection.COLLECTION;
-
-    /**
-     * The table <code>collection_item</code>.
-     */
-    public static final CollectionItem COLLECTION_ITEM = CollectionItem.COLLECTION_ITEM;
-
-    /**
-     * The table <code>creator</code>.
-     */
-    public static final Creator CREATOR = Creator.CREATOR;
-
-    /**
-     * The table <code>download_log</code>.
-     */
-    public static final DownloadLog DOWNLOAD_LOG = DownloadLog.DOWNLOAD_LOG;
-
-    /**
-     * The table <code>lut</code>.
-     */
-    public static final Lut LUT = Lut.LUT;
-
-    /**
-     * The table <code>lut_category</code>.
-     */
-    public static final LutCategory LUT_CATEGORY = LutCategory.LUT_CATEGORY;
-
-    /**
-     * The table <code>lut_category_map</code>.
-     */
-    public static final LutCategoryMap LUT_CATEGORY_MAP = LutCategoryMap.LUT_CATEGORY_MAP;
-
-    /**
-     * The table <code>lut_color_feature</code>.
-     */
-    public static final LutColorFeature LUT_COLOR_FEATURE = LutColorFeature.LUT_COLOR_FEATURE;
-
-    /**
-     * The table <code>lut_similarity</code>.
-     */
-    public static final LutSimilarity LUT_SIMILARITY = LutSimilarity.LUT_SIMILARITY;
-
-    /**
-     * The table <code>lut_tag</code>.
-     */
-    public static final LutTag LUT_TAG = LutTag.LUT_TAG;
-
-    /**
      * The table <code>module</code>.
      */
     public static final Module MODULE = Module.MODULE;
-
-    /**
-     * The table <code>payment_order</code>.
-     */
-    public static final PaymentOrder PAYMENT_ORDER = PaymentOrder.PAYMENT_ORDER;
 
     /**
      * The table <code>permission</code>.
@@ -102,24 +33,24 @@ public class Tables {
     public static final Permission PERMISSION = Permission.PERMISSION;
 
     /**
-     * The table <code>plan</code>.
+     * The table <code>product</code>.
      */
-    public static final Plan PLAN = Plan.PLAN;
+    public static final Product PRODUCT = Product.PRODUCT;
 
     /**
-     * The table <code>rec_eval_run</code>.
+     * The table <code>product_category</code>.
      */
-    public static final RecEvalRun REC_EVAL_RUN = RecEvalRun.REC_EVAL_RUN;
+    public static final ProductCategory PRODUCT_CATEGORY = ProductCategory.PRODUCT_CATEGORY;
 
     /**
-     * The table <code>rec_eval_test</code>.
+     * The table <code>product_image</code>.
      */
-    public static final RecEvalTest REC_EVAL_TEST = RecEvalTest.REC_EVAL_TEST;
+    public static final ProductImage PRODUCT_IMAGE = ProductImage.PRODUCT_IMAGE;
 
     /**
-     * The table <code>rec_impression</code>.
+     * The table <code>product_size</code>.
      */
-    public static final RecImpression REC_IMPRESSION = RecImpression.REC_IMPRESSION;
+    public static final ProductSize PRODUCT_SIZE = ProductSize.PRODUCT_SIZE;
 
     /**
      * The table <code>refresh_token</code>.
@@ -137,22 +68,7 @@ public class Tables {
     public static final Role ROLE = Role.ROLE;
 
     /**
-     * The table <code>subscription</code>.
-     */
-    public static final Subscription SUBSCRIPTION = Subscription.SUBSCRIPTION;
-
-    /**
      * The table <code>user_app</code>.
      */
     public static final UserApp USER_APP = UserApp.USER_APP;
-
-    /**
-     * The table <code>user_event</code>.
-     */
-    public static final UserEvent USER_EVENT = UserEvent.USER_EVENT;
-
-    /**
-     * The table <code>user_preference</code>.
-     */
-    public static final UserPreference USER_PREFERENCE = UserPreference.USER_PREFERENCE;
 }
