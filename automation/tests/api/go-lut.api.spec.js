@@ -131,6 +131,7 @@ test.describe('API sau khi gỡ LUT', () => {
     const codes = page.items.map((/** @type {{ code: string }} */ m) => m.code);
 
     expect(codes).toContain('SYSTEM');
-    for (const removed of ['CATALOG', 'RECOMMENDER', 'SALES']) expect(codes).not.toContain(removed);
+    // CATALOG được lát du-lieu-giay thêm lại có chủ đích (go-lut §4), nên không còn trong danh sách phải vắng.
+    for (const removed of ['RECOMMENDER', 'SALES']) expect(codes).not.toContain(removed);
   });
 });

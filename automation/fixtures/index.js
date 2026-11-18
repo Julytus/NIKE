@@ -6,10 +6,11 @@ import { AdminLayout } from '../pages/AdminLayout.js';
 import { AdminLoginPage } from '../pages/AdminLoginPage.js';
 import { NotFoundPage } from '../pages/NotFoundPage.js';
 import { PermissionPage } from '../pages/PermissionPage.js';
+import { ResourcePage } from '../pages/ResourcePage.js';
 import { RolePage } from '../pages/RolePage.js';
 import { ShopHomePage } from '../pages/ShopHomePage.js';
 
-/** @typedef {'admin' | 'noaccess' | 'customer'} Role */
+/** @typedef {'admin' | 'noaccess' | 'customer' | 'khach1' | 'khach2'} Role */
 
 /**
  * @typedef {{
@@ -19,6 +20,7 @@ import { ShopHomePage } from '../pages/ShopHomePage.js';
  *   adminLayout: AdminLayout,
  *   rolePage: RolePage,
  *   permissionPage: PermissionPage,
+ *   resourcePage: ResourcePage,
  *   shopHome: ShopHomePage,
  *   notFoundPage: NotFoundPage,
  * }} TestFixtures
@@ -29,7 +31,7 @@ import { ShopHomePage } from '../pages/ShopHomePage.js';
  * `test` dùng chung cho mọi spec:
  * - `api`: API client chưa đăng nhập.
  * - `apiAs(role)`: API client đã gắn token của vai trò (đăng nhập bằng API một lần mỗi worker).
- * - Page object: `loginPage`, `adminLayout`, `rolePage`, `permissionPage`, `shopHome`, `notFoundPage`.
+ * - Page object: `loginPage`, `adminLayout`, `rolePage`, `permissionPage`, `resourcePage`, `shopHome`, `notFoundPage`.
  * Đăng nhập giao diện dùng `test.use({ storageState: storageStateOf('admin') })` (tạo ở auth.setup.js).
  * @type {import('@playwright/test').TestType<
  *   import('@playwright/test').PlaywrightTestArgs & import('@playwright/test').PlaywrightTestOptions & TestFixtures,
@@ -81,6 +83,10 @@ export const test = base.extend({
 
   permissionPage: async ({ page }, use) => {
     await use(new PermissionPage(page));
+  },
+
+  resourcePage: async ({ page }, use) => {
+    await use(new ResourcePage(page));
   },
 
   shopHome: async ({ page }, use) => {

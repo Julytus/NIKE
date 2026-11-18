@@ -36,6 +36,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/test-support/reset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["reset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/role/update": {
         parameters: {
             query?: never;
@@ -220,6 +236,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getMyInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/test-support/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["summary"];
         put?: never;
         post?: never;
         delete?: never;
@@ -424,6 +456,64 @@ export interface components {
             /** Format: int32 */
             userId?: number;
         };
+        ApiResponseSeedSummary: {
+            /** Format: int32 */
+            code?: number;
+            message?: string;
+            result?: components["schemas"]["SeedSummary"];
+            errors?: Record<string, never>;
+        };
+        ProductSize: {
+            /** Format: int32 */
+            id?: number;
+            /** Format: int32 */
+            productId?: number;
+            sizeLabel?: string;
+            sizeValue?: number;
+            /** Format: int32 */
+            stock?: number;
+        };
+        Sample: {
+            /** Format: int32 */
+            id?: number;
+            slug?: string;
+            imageUrls?: string[];
+            sizes?: components["schemas"]["ProductSize"][];
+        };
+        SeedSummary: {
+            /** Format: int64 */
+            categories?: number;
+            /** Format: int64 */
+            products?: number;
+            /** Format: int64 */
+            publishedProducts?: number;
+            /** Format: int64 */
+            hiddenProducts?: number;
+            /** Format: int64 */
+            images?: number;
+            /** Format: int64 */
+            missingImages?: number;
+            /** Format: int64 */
+            sizes?: number;
+            /** Format: int64 */
+            outOfStockSizes?: number;
+            /** Format: int64 */
+            totalStock?: number;
+            byCategory?: {
+                [key: string]: number;
+            };
+            byGender?: {
+                [key: string]: number;
+            };
+            /** Format: int64 */
+            onSale?: number;
+            /** Format: int64 */
+            justIn?: number;
+            /** Format: int64 */
+            bestseller?: number;
+            sample?: components["schemas"]["Sample"];
+            resetAt?: string;
+        };
         Role: {
             /** Format: int32 */
             id?: number;
@@ -616,6 +706,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseTokenResponse"];
+                };
+            };
+        };
+    };
+    reset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseSeedSummary"];
                 };
             };
         };
@@ -896,6 +1006,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseUser"];
+                };
+            };
+        };
+    };
+    summary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseSeedSummary"];
                 };
             };
         };

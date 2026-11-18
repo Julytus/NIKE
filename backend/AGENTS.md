@@ -51,6 +51,8 @@ Flyway: `app/src/main/resources/db/migration/V<n+1>__<mo_ta>.sql`. **Không sử
 
 Khuôn chuẩn (ví dụ `product`). Code đã theo khuôn để tham khảo: `authenticate/.../RoleController` + `RoleService` + `RoleRepository` (CRUD quản trị đầy đủ nhất: trùng tên, chặn xoá khi đang dùng, chỉ một bản ghi mặc định), `ModuleService` (xoá có dọn tham chiếu, endpoint body là mảng id), `PermissionService.update` (ghi theo lô, `@Transactional`), `business/lut` (JOIN + `DSL.exists`, `pageQuery`, cache Caffeine), `authenticate/.../RefreshTokenRepository` (`getOne`, `delete(condition)`). Unit test mẫu cho CRUD quản trị: `authenticate/src/test/.../service/auth/PhanQuyenServiceTest.java`.
 
+**Dữ liệu mẫu cửa hàng giày** nằm ở `business/src/main/resources/seed/giay/products.json` (+ ảnh `seed/giay/<slug>/<n>.webp`), nạp bằng `business.product.seed.ShoeSeedService` khi DB trống và khi gọi `POST /test-support/reset`. Sửa dữ liệu mẫu thì sửa file này (không viết migration). Lát nào thêm bảng tham chiếu `product` / `product_size` (giỏ, đơn, yêu thích…) phải mở rộng `ShoeSeedService.reloadDatabase()`: xoá bảng con trước.
+
 ```java
 // business/src/main/java/vn/aeoc/business/product/repository/ProductRepository.java
 @Repository

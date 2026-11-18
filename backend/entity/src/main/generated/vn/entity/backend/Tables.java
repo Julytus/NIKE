@@ -6,6 +6,10 @@ package vn.entity.backend;
 
 import vn.entity.backend.tables.Module;
 import vn.entity.backend.tables.Permission;
+import vn.entity.backend.tables.Product;
+import vn.entity.backend.tables.ProductCategory;
+import vn.entity.backend.tables.ProductImage;
+import vn.entity.backend.tables.ProductSize;
 import vn.entity.backend.tables.RefreshToken;
 import vn.entity.backend.tables.Resource;
 import vn.entity.backend.tables.Role;
@@ -27,6 +31,26 @@ public class Tables {
      * The table <code>permission</code>.
      */
     public static final Permission PERMISSION = Permission.PERMISSION;
+
+    /**
+     * The table <code>product</code>.
+     */
+    public static final Product PRODUCT = Product.PRODUCT;
+
+    /**
+     * The table <code>product_category</code>.
+     */
+    public static final ProductCategory PRODUCT_CATEGORY = ProductCategory.PRODUCT_CATEGORY;
+
+    /**
+     * The table <code>product_image</code>.
+     */
+    public static final ProductImage PRODUCT_IMAGE = ProductImage.PRODUCT_IMAGE;
+
+    /**
+     * The table <code>product_size</code>.
+     */
+    public static final ProductSize PRODUCT_SIZE = ProductSize.PRODUCT_SIZE;
 
     /**
      * The table <code>refresh_token</code>.

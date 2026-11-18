@@ -1,0 +1,16 @@
+{
+  "name": "seed-giay-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Tải ảnh sản phẩm trong products.json, đổi sang webp 1000 px cho dữ liệu mẫu cửa hàng giày",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "fetch-images": "node fetch-images.mjs"
+  },
+  "dependencies": {
+    "sharp": "^0.34.4"
+  }
+}

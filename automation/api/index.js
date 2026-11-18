@@ -3,6 +3,7 @@ import { ApiClient } from './ApiClient.js';
 import { AuthApi } from './AuthApi.js';
 import { ResourceApi } from './ResourceApi.js';
 import { RoleApi } from './RoleApi.js';
+import { TestSupportApi } from './TestSupportApi.js';
 
 /**
  * Gom các API client dùng chung một `ApiClient` (cùng token).
@@ -17,6 +18,7 @@ export function createApi(request, token = null) {
     account: new AccountApi(client),
     role: new RoleApi(client),
     resource: new ResourceApi(client),
+    testSupport: new TestSupportApi(client),
     /** Đổi token cho mọi API trong nhóm. @param {string | null} t */
     useToken(t) {
       client.setToken(t);
@@ -27,4 +29,4 @@ export function createApi(request, token = null) {
 
 /** @typedef {ReturnType<typeof createApi>} Api */
 
-export { AccountApi, ApiClient, AuthApi, ResourceApi, RoleApi };
+export { AccountApi, ApiClient, AuthApi, ResourceApi, RoleApi, TestSupportApi };

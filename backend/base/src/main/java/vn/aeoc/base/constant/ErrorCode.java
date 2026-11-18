@@ -31,6 +31,7 @@ public enum ErrorCode {
     LOGIN_TOO_MANY_ATTEMPTS(429, "Đăng nhập sai quá nhiều lần, vui lòng thử lại sau ít phút"),
     REGISTRATION_DISABLED(403, "Hệ thống không mở đăng ký"),
     DATA_NOT_FOUND(404, "Dữ liệu không tồn tại"),
+    METHOD_NOT_ALLOWED(405, "Phương thức HTTP không được hỗ trợ"),
     DEFAULT_ROLE_NOT_FOUND(404, "Role mặc định không tồn tại"),
     LOCK_STATUS(401, "Trạng thái không hoạt động"),
     BAD_REQUEST(400, "Yêu cầu không hợp lệ"),

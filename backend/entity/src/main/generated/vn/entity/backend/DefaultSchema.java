@@ -13,6 +13,10 @@ import org.jooq.impl.SchemaImpl;
 
 import vn.entity.backend.tables.Module;
 import vn.entity.backend.tables.Permission;
+import vn.entity.backend.tables.Product;
+import vn.entity.backend.tables.ProductCategory;
+import vn.entity.backend.tables.ProductImage;
+import vn.entity.backend.tables.ProductSize;
 import vn.entity.backend.tables.RefreshToken;
 import vn.entity.backend.tables.Resource;
 import vn.entity.backend.tables.Role;
@@ -41,6 +45,26 @@ public class DefaultSchema extends SchemaImpl {
      * The table <code>permission</code>.
      */
     public final Permission PERMISSION = Permission.PERMISSION;
+
+    /**
+     * The table <code>product</code>.
+     */
+    public final Product PRODUCT = Product.PRODUCT;
+
+    /**
+     * The table <code>product_category</code>.
+     */
+    public final ProductCategory PRODUCT_CATEGORY = ProductCategory.PRODUCT_CATEGORY;
+
+    /**
+     * The table <code>product_image</code>.
+     */
+    public final ProductImage PRODUCT_IMAGE = ProductImage.PRODUCT_IMAGE;
+
+    /**
+     * The table <code>product_size</code>.
+     */
+    public final ProductSize PRODUCT_SIZE = ProductSize.PRODUCT_SIZE;
 
     /**
      * The table <code>refresh_token</code>.
@@ -80,6 +104,10 @@ public class DefaultSchema extends SchemaImpl {
         return Arrays.asList(
             Module.MODULE,
             Permission.PERMISSION,
+            Product.PRODUCT,
+            ProductCategory.PRODUCT_CATEGORY,
+            ProductImage.PRODUCT_IMAGE,
+            ProductSize.PRODUCT_SIZE,
             RefreshToken.REFRESH_TOKEN,
             Resource.RESOURCE,
             Role.ROLE,
