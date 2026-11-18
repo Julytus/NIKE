@@ -25,7 +25,7 @@ export function ShopDialogs() {
         <DialogContent
           key={dialog.type}
           showCloseButton={false}
-          className="shop max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto rounded-[12px] border-(--sh-border) bg-(--sh-elevated) p-6 text-(--sh-fg) sm:max-w-[420px] sm:p-8"
+          className="shop max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto rounded-[12px] border-(--sh-border) bg-(--sh-bg) p-6 text-(--sh-fg) sm:max-w-[420px] sm:p-8"
         >
           <DialogClose asChild>
             <ShopButton variant="ghost" size="icon-sm" aria-label="Đóng" className="absolute top-4 right-4">
@@ -33,7 +33,7 @@ export function ShopDialogs() {
             </ShopButton>
           </DialogClose>
 
-          <DialogTitle className="font-display pr-8 text-2xl leading-tight font-bold">{heading.title}</DialogTitle>
+          <DialogTitle className="pr-8 text-2xl leading-tight font-medium">{heading.title}</DialogTitle>
           <DialogDescription className="mt-2 mb-6 text-sm text-(--sh-muted)">{heading.description}</DialogDescription>
 
           {dialog.type === "login" && (

@@ -10,34 +10,45 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ShopRouteImport } from './routes/_shop'
 import { Route as AuthRouteImport } from './routes/_auth'
-import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as ShopIndexRouteImport } from './routes/_shop/index'
 import { Route as AdminTaiNguyenRouteImport } from './routes/admin/tai-nguyen'
 import { Route as AdminPhanQuyenRouteImport } from './routes/admin/phan-quyen'
 import { Route as AdminModuleRouteImport } from './routes/admin/module'
 import { Route as AdminChucVuRouteImport } from './routes/admin/chuc-vu'
+import { Route as ShopYeuThichRouteImport } from './routes/_shop/yeu-thich'
+import { Route as ShopGioHangRouteImport } from './routes/_shop/gio-hang'
 import { Route as AuthLogoutRouteImport } from './routes/_auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as ShopWIndexRouteImport } from './routes/_shop/w.index'
+import { Route as ShopWDanhMucRouteImport } from './routes/_shop/w.$danhMuc'
+import { Route as ShopThongTinTrangRouteImport } from './routes/_shop/thong-tin.$trang'
+import { Route as ShopTSlugRouteImport } from './routes/_shop/t.$slug'
 
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/_auth',
+const ShopRoute = ShopRouteImport.update({
+  id: '/_shop',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const ShopIndexRoute = ShopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopRoute,
 } as any)
 const AdminTaiNguyenRoute = AdminTaiNguyenRouteImport.update({
   id: '/tai-nguyen',
@@ -59,6 +70,16 @@ const AdminChucVuRoute = AdminChucVuRouteImport.update({
   path: '/chuc-vu',
   getParentRoute: () => AdminRoute,
 } as any)
+const ShopYeuThichRoute = ShopYeuThichRouteImport.update({
+  id: '/yeu-thich',
+  path: '/yeu-thich',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopGioHangRoute = ShopGioHangRouteImport.update({
+  id: '/gio-hang',
+  path: '/gio-hang',
+  getParentRoute: () => ShopRoute,
+} as any)
 const AuthLogoutRoute = AuthLogoutRouteImport.update({
   id: '/logout',
   path: '/logout',
@@ -69,80 +90,138 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
+const ShopWIndexRoute = ShopWIndexRouteImport.update({
+  id: '/w/',
+  path: '/w/',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopWDanhMucRoute = ShopWDanhMucRouteImport.update({
+  id: '/w/$danhMuc',
+  path: '/w/$danhMuc',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopThongTinTrangRoute = ShopThongTinTrangRouteImport.update({
+  id: '/thong-tin/$trang',
+  path: '/thong-tin/$trang',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopTSlugRoute = ShopTSlugRouteImport.update({
+  id: '/t/$slug',
+  path: '/t/$slug',
+  getParentRoute: () => ShopRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/logout': typeof AuthLogoutRoute
+  '/gio-hang': typeof ShopGioHangRoute
+  '/yeu-thich': typeof ShopYeuThichRoute
   '/admin/chuc-vu': typeof AdminChucVuRoute
   '/admin/module': typeof AdminModuleRoute
   '/admin/phan-quyen': typeof AdminPhanQuyenRoute
   '/admin/tai-nguyen': typeof AdminTaiNguyenRoute
+  '/': typeof ShopIndexRoute
   '/admin/': typeof AdminIndexRoute
+  '/t/$slug': typeof ShopTSlugRoute
+  '/thong-tin/$trang': typeof ShopThongTinTrangRoute
+  '/w/$danhMuc': typeof ShopWDanhMucRoute
+  '/w': typeof ShopWIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/logout': typeof AuthLogoutRoute
+  '/gio-hang': typeof ShopGioHangRoute
+  '/yeu-thich': typeof ShopYeuThichRoute
   '/admin/chuc-vu': typeof AdminChucVuRoute
   '/admin/module': typeof AdminModuleRoute
   '/admin/phan-quyen': typeof AdminPhanQuyenRoute
   '/admin/tai-nguyen': typeof AdminTaiNguyenRoute
+  '/': typeof ShopIndexRoute
   '/admin': typeof AdminIndexRoute
+  '/t/$slug': typeof ShopTSlugRoute
+  '/thong-tin/$trang': typeof ShopThongTinTrangRoute
+  '/w/$danhMuc': typeof ShopWDanhMucRoute
+  '/w': typeof ShopWIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
+  '/_shop': typeof ShopRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/logout': typeof AuthLogoutRoute
+  '/_shop/gio-hang': typeof ShopGioHangRoute
+  '/_shop/yeu-thich': typeof ShopYeuThichRoute
   '/admin/chuc-vu': typeof AdminChucVuRoute
   '/admin/module': typeof AdminModuleRoute
   '/admin/phan-quyen': typeof AdminPhanQuyenRoute
   '/admin/tai-nguyen': typeof AdminTaiNguyenRoute
+  '/_shop/': typeof ShopIndexRoute
   '/admin/': typeof AdminIndexRoute
+  '/_shop/t/$slug': typeof ShopTSlugRoute
+  '/_shop/thong-tin/$trang': typeof ShopThongTinTrangRoute
+  '/_shop/w/$danhMuc': typeof ShopWDanhMucRoute
+  '/_shop/w/': typeof ShopWIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/admin'
     | '/login'
     | '/logout'
+    | '/gio-hang'
+    | '/yeu-thich'
     | '/admin/chuc-vu'
     | '/admin/module'
     | '/admin/phan-quyen'
     | '/admin/tai-nguyen'
+    | '/'
     | '/admin/'
+    | '/t/$slug'
+    | '/thong-tin/$trang'
+    | '/w/$danhMuc'
+    | '/w'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/login'
     | '/logout'
+    | '/gio-hang'
+    | '/yeu-thich'
     | '/admin/chuc-vu'
     | '/admin/module'
     | '/admin/phan-quyen'
     | '/admin/tai-nguyen'
+    | '/'
     | '/admin'
+    | '/t/$slug'
+    | '/thong-tin/$trang'
+    | '/w/$danhMuc'
+    | '/w'
   id:
     | '__root__'
-    | '/'
     | '/_auth'
+    | '/_shop'
     | '/admin'
     | '/_auth/login'
     | '/_auth/logout'
+    | '/_shop/gio-hang'
+    | '/_shop/yeu-thich'
     | '/admin/chuc-vu'
     | '/admin/module'
     | '/admin/phan-quyen'
     | '/admin/tai-nguyen'
+    | '/_shop/'
     | '/admin/'
+    | '/_shop/t/$slug'
+    | '/_shop/thong-tin/$trang'
+    | '/_shop/w/$danhMuc'
+    | '/_shop/w/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
+  ShopRoute: typeof ShopRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
 }
 
@@ -155,18 +234,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_shop': {
+      id: '/_shop'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
       id: '/_auth'
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -175,6 +254,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/_shop/': {
+      id: '/_shop/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof ShopIndexRouteImport
+      parentRoute: typeof ShopRoute
     }
     '/admin/tai-nguyen': {
       id: '/admin/tai-nguyen'
@@ -204,6 +290,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminChucVuRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/_shop/yeu-thich': {
+      id: '/_shop/yeu-thich'
+      path: '/yeu-thich'
+      fullPath: '/yeu-thich'
+      preLoaderRoute: typeof ShopYeuThichRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/_shop/gio-hang': {
+      id: '/_shop/gio-hang'
+      path: '/gio-hang'
+      fullPath: '/gio-hang'
+      preLoaderRoute: typeof ShopGioHangRouteImport
+      parentRoute: typeof ShopRoute
+    }
     '/_auth/logout': {
       id: '/_auth/logout'
       path: '/logout'
@@ -217,6 +317,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/_shop/w/': {
+      id: '/_shop/w/'
+      path: '/w'
+      fullPath: '/w'
+      preLoaderRoute: typeof ShopWIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/_shop/w/$danhMuc': {
+      id: '/_shop/w/$danhMuc'
+      path: '/w/$danhMuc'
+      fullPath: '/w/$danhMuc'
+      preLoaderRoute: typeof ShopWDanhMucRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/_shop/thong-tin/$trang': {
+      id: '/_shop/thong-tin/$trang'
+      path: '/thong-tin/$trang'
+      fullPath: '/thong-tin/$trang'
+      preLoaderRoute: typeof ShopThongTinTrangRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/_shop/t/$slug': {
+      id: '/_shop/t/$slug'
+      path: '/t/$slug'
+      fullPath: '/t/$slug'
+      preLoaderRoute: typeof ShopTSlugRouteImport
+      parentRoute: typeof ShopRoute
     }
   }
 }
@@ -232,6 +360,28 @@ const AuthRouteChildren: AuthRouteChildren = {
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
+interface ShopRouteChildren {
+  ShopGioHangRoute: typeof ShopGioHangRoute
+  ShopYeuThichRoute: typeof ShopYeuThichRoute
+  ShopIndexRoute: typeof ShopIndexRoute
+  ShopTSlugRoute: typeof ShopTSlugRoute
+  ShopThongTinTrangRoute: typeof ShopThongTinTrangRoute
+  ShopWDanhMucRoute: typeof ShopWDanhMucRoute
+  ShopWIndexRoute: typeof ShopWIndexRoute
+}
+
+const ShopRouteChildren: ShopRouteChildren = {
+  ShopGioHangRoute: ShopGioHangRoute,
+  ShopYeuThichRoute: ShopYeuThichRoute,
+  ShopIndexRoute: ShopIndexRoute,
+  ShopTSlugRoute: ShopTSlugRoute,
+  ShopThongTinTrangRoute: ShopThongTinTrangRoute,
+  ShopWDanhMucRoute: ShopWDanhMucRoute,
+  ShopWIndexRoute: ShopWIndexRoute,
+}
+
+const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 
 interface AdminRouteChildren {
   AdminChucVuRoute: typeof AdminChucVuRoute
@@ -252,8 +402,8 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
+  ShopRoute: ShopRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
 }
 export const routeTree = rootRouteImport

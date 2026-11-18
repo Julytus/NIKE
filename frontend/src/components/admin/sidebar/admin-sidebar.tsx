@@ -2,7 +2,7 @@ import * as React from "react";
 import { Boxes, House, KeyRound, LayoutGrid, ShieldCheck } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
-import { NikeSwoosh } from "@/components/admin/nike-swoosh";
+import { NikeSwoosh } from "@/components/brand/nike-swoosh";
 import { AdminMain, type AdminNavItem } from "@/components/admin/sidebar/admin-main";
 import {
   Sidebar,

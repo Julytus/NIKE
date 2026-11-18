@@ -21,6 +21,7 @@ Backend có thể chưa xong khi bạn bắt đầu, vì worker backend chạy s
 src/
 ├─ routes/                 file-based routing (TanStack Router). routeTree.gen.ts tự sinh — KHÔNG sửa tay
 │  ├─ _auth/               login, forgot-password, logout (layout không cần đăng nhập)
+│  ├─ _shop.tsx, _shop/    khu cửa hàng: trang chủ, trang thông tin, trang tạm
 │  ├─ admin.tsx            layout quản trị: chưa có token → redirect /login
 │  ├─ admin/index.tsx      trang chủ quản trị
 │  └─ admin/<url>.tsx      1 trang = 1 file (mẫu: chuc-vu, tai-nguyen, module, phan-quyen)
@@ -31,7 +32,8 @@ src/
 │  ├─ admin/sidebar/       menu (admin-sidebar.tsx: FEATURE_ITEMS, SYSTEM_ITEMS)
 │  ├─ admin/               admin-permission-guard, admin-list-error, delete-confirm-dialog, admin-loading, admin-access-denied
 │  ├─ form/                field TanStack Form (useAppForm) + block login/forgot-password
-│  └─ shop/                cửa hàng LUT (khách hàng) — xem mục "Khu cửa hàng" bên dưới
+│  ├─ brand/               logo swoosh, Jumpman (dùng chung quản trị + cửa hàng)
+│  └─ shop/                cửa hàng Nike (khách hàng) — xem mục "Khu cửa hàng" bên dưới
 ├─ hooks/                  use-bulk-delete, use-can-view, use-mobile
 └─ lib/
    ├─ types/<domain>.ts    DTO viết tay; api.gen.ts = type sinh từ OpenAPI bằng `pnpm api:types` (để đối chiếu)
@@ -45,15 +47,20 @@ src/
    └─ utils.ts             `cn`
 ```
 
-## Khu cửa hàng (`/luts`, `/pricing`)
+## Khu cửa hàng (layout `_shop`, giao diện Nike)
 
-Giao diện riêng, không dùng token zinc của trang quản trị:
+Khung dựng ở lát `giao-dien-nike` (plan §6, §8). Các lát sau chỉ đặt trang của mình vào khung này.
 
-- Màu lấy từ biến `--sh-*` trong `components/shop/shop-theme.css` (có bản sáng / tối), viết `bg-(--sh-surface)`, `text-(--sh-muted)`… Chữ trắng trên nền hồng dùng `--sh-primary` (đạt AA), `--sh-pink` chỉ để trang trí. Nút dùng `ShopButton`, ô nhập dùng `ShopField` / `ShopCheckbox`. Nội dung portal (Dialog, DropdownMenu, Sheet) phải thêm class `shop` để có biến màu.
-- Layout: `routes/_shop.tsx` (sidebar + header + footer) cho `/luts/**`; `routes/_plain.tsx` (không sidebar) cho `/pricing`. Phần chung (font, hộp thoại, thanh tiến trình) ở `components/shop/layout/shop-shell.tsx`.
-- Hộp thoại đăng nhập / đăng ký / nâng cấp / thanh toán mở bằng `useShopDialog().open({ type, ... })`, render một lần ở `ShopDialogs`. Bấm tải LUT luôn đi qua `useLutDownload()` (kiểm đăng nhập + gói trước khi gọi API).
-- **Dữ liệu đang là giả** ở `lib/mock/**` (cùng chữ ký với hàm axios sau này). Khi lát backend xong: viết `lib/axios/<x>.ts` cùng chữ ký, đổi import trong `lib/tanstack/options/luts.ts` / `account.ts`, xoá hàm giả. Bảng hàm giả → endpoint ở `plan/thiet-ke-tong-quat.md` §8.
-- Tham số lọc của `/luts` nằm trên URL (`lib/search/luts.ts`, zod `.catch(undefined)` để URL sai không vỡ trang).
+- **Layout**: `routes/_shop.tsx` → `ShopLayout` (header → dải thông báo → `<main id="shop-main">` → footer). `main` không có padding chung, trang tự đặt lề (`px-6 lg:px-12`). Trang mới của cửa hàng là file trong `routes/_shop/` (vd `_shop/w.index.tsx` → `/w`). Phần chung (font Oswald, link "Bỏ qua menu", thanh tiến trình, hộp thoại tài khoản) ở `components/shop/layout/shop-shell.tsx`.
+- **Token Nike**: màu lấy từ biến `--sh-*` trong `components/shop/shop-theme.css` (`--sh-fg #111`, `--sh-muted #707072`, `--sh-surface #f5f5f5`, `--sh-badge #d33918`…), viết `bg-(--sh-surface)`, `text-(--sh-muted)`. Chữ thường dùng Helvetica Neue / Arial, tiêu đề lớn `font-display` (Oswald 600, in hoa). Nút dùng `ShopButton` (bo 30px, `primary` nền đen), ô nhập dùng `ShopField`. Nội dung portal (Dialog, DropdownMenu, Sheet) phải thêm class `shop` để có biến màu.
+- **Không có dark mode**: `ShopShell` gỡ class `dark` khỏi `<html>` khi ở cửa hàng (trang quản trị vẫn đổi sáng / tối).
+- **Desktop = `lg` (≥ 1024px)**. Phần tử chỉ có ở một loại màn hình mà trùng tên / testid với bản kia thì render theo `useIsDesktop()` (`hooks/use-media-query.ts`), không render cả hai rồi ẩn bằng CSS (Playwright `getByTestId` / `getByText` vẫn đếm phần tử bị ẩn).
+- **Dùng lại**: `components/shop/product/product-card.tsx` (`ProductCard`, testid `product-card`, con `product-name` / `product-badge` / `product-price`, giá gốc trong `<s>`), `product-rail.tsx` (`ProductRail`, dải cuộn ngang + nút ‹ ›), `formatVnd` (`lib/utils/money.ts`, ra `5.279.000 ₫`).
+- **URL trang danh sách**: `lib/shop/catalog-search.ts` — `catalogSearchSchema` (zod `.catch(undefined)`), `NAV_ITEMS`, `PRICE_RANGES`, `withScope`; link vào `/w` / `/w/$danhMuc` dựng qua `CatalogLink`. `giamGia` là số `1` (chuỗi bị router bọc ngoặc kép).
+- **Header**: `components/shop/layout/header/` — dải trên, mega menu tự làm (`main-nav.tsx`, mục là link nên không dùng `NavigationMenu` của Radix), khung tìm kiếm (`search-overlay.tsx`, debounce 300ms), menu trượt (`mobile-menu.tsx`), ẩn khi cuộn (`use-hide-on-scroll.ts`, nghe `scroll` của `#app-scroll` — vùng cuộn của app, không phải `window`).
+- **Hộp thoại đăng nhập / đăng ký** mở bằng `useShopDialog().open({ type })`, render một lần ở `ShopDialogs`.
+- **Trang tạm**: route chưa làm của lát sau (`/w`, `/w/$danhMuc`, `/t/$slug`, `/yeu-thich`, `/gio-hang`) dùng `ComingSoonSection`; lát nào làm thì ghi đè file route của mình. Trang thông tin tĩnh `/thong-tin/$trang` lấy nội dung ở `lib/shop/info-pages.ts`.
+- Dữ liệu cửa hàng là API thật (`lib/axios/product.ts`, `lib/tanstack/options/product.ts`, query đọc `retry: 1`); query lỗi thì khối đó hiện "Không tải được …" + "Thử lại", không toast.
 
 ## Luồng làm một chức năng mới
 
@@ -88,10 +95,10 @@ Mỗi trang gồm đúng các file dưới đây, ghép từ khối dùng chung 
 
 | Trong khung | Thay bằng | Lấy từ |
 |---|---|---|
-| `xxx` trong tên file `lib/` + `components/` và path API | tên domain kebab-case **theo backend**, ví dụ `lut-category` | plan §5 (`/api/<x>/…`) |
-| `Xxx` trong tên type / hàm / component | PascalCase, ví dụ `LutCategory` | |
-| `XXX_QUERY_KEY = ["xxx"]` | tên domain số nhiều, ví dụ `["lut-categories"]` | |
-| `RESOURCE_CODE` | mã resource, ví dụ `"LUT_CATEGORY"` | plan §2, trùng `resource.code` trong migration |
+| `xxx` trong tên file `lib/` + `components/` và path API | tên domain kebab-case **theo backend**, ví dụ `product-category` | plan §5 (`/api/<x>/…`) |
+| `Xxx` trong tên type / hàm / component | PascalCase, ví dụ `ProductCategory` | |
+| `XXX_QUERY_KEY = ["xxx"]` | tên domain số nhiều, ví dụ `["product-categories"]` | |
+| `RESOURCE_CODE` | mã resource, ví dụ `"PRODUCT_CATEGORY"` | plan §2, trùng `resource.code` trong migration |
 | file route | URL tiếng Việt trong plan: `/admin/danh-muc` → `routes/admin/danh-muc.tsx` | plan §6 |
 | field, chuỗi tiếng Việt (tiêu đề, cột, label, placeholder, toast, lỗi) | đúng **từng chữ** của plan | plan §5 / §6 |
 
@@ -306,7 +313,7 @@ export function XxxFormDialog({ open, item, isLoading, onOpenChange, onSubmit }:
 }
 ```
 
-Form dài, nhiều ràng buộc chéo (ví dụ "Kiểu xem trước" của LUT) thì dùng `useAppForm` + zod như `components/form/block/login-form.tsx`; plan sẽ ghi rõ.
+Form dài, nhiều ràng buộc chéo (ví dụ form có nhiều trường phụ thuộc nhau) thì dùng `useAppForm` + zod như `components/form/block/login-form.tsx`; plan sẽ ghi rõ.
 
 ### 6. `routes/admin/<url>.tsx`
 

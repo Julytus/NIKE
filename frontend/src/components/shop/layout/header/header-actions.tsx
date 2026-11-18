@@ -1,108 +1,80 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, LayoutDashboard, LogOut } from "lucide-react";
-import { ShopButton } from "@/components/shop/ui/shop-button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+import { Heart, Menu, Search, ShoppingBag, UserRound } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useIsDesktop } from "@/hooks/use-media-query";
 import { useShopDialog } from "@/lib/stores/shop-dialog";
 import { useShopSession } from "@/lib/stores/shop-session";
-import { logoutMutationOptions } from "@/lib/tanstack/options/account";
-import { permissionResourceQueryOptions } from "@/lib/tanstack/options/auth";
-import type { ShopUserDTO } from "@/lib/types/account";
+import { AccountMenu } from "./account-menu";
 
-const initials = (name: string) =>
-  name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(-2)
-    .map((w) => w[0]!.toUpperCase())
-    .join("");
+const ICON_BUTTON =
+  "flex size-10 items-center justify-center rounded-full outline-none hover:bg-(--sh-surface-hover) focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50 [&_svg]:size-6";
 
 /**
- * Mục "Trang quản trị" chỉ hiện với tài khoản toàn quyền hoặc có quyền VIEW bất kỳ (plan go-lut §6.1).
- * Lỗi khi lấy quyền thì ẩn (backend vẫn chặn ở API, đây chỉ là đường tắt giao diện).
+ * Cụm bên phải thanh chính (plan giao-dien-nike §6.1).
+ * Desktop: ô "Tìm kiếm" + Yêu thích + Giỏ hàng. Mobile: icon Tìm kiếm, tài khoản, Giỏ hàng, Menu.
+ * Phần chỉ có ở một loại màn hình render theo `useIsDesktop` để không có hai nút trùng tên / testid.
  */
-function useCanOpenAdmin(user: ShopUserDTO) {
-  const { data: resources } = useQuery({
-    ...permissionResourceQueryOptions(),
-    enabled: user.isOperator !== 1
-  });
-  return user.isOperator === 1 || !!resources?.some((r) => r.actions.includes("VIEW"));
-}
-
-function AccountMenu({ user }: { user: ShopUserDTO }) {
-  const logoutMutation = useMutation(logoutMutationOptions);
-  const canOpenAdmin = useCanOpenAdmin(user);
+export function HeaderActions({
+  searchButtonRef,
+  onOpenSearch,
+  onOpenMenu
+}: {
+  searchButtonRef: React.Ref<HTMLButtonElement>;
+  onOpenSearch: () => void;
+  onOpenMenu: () => void;
+}) {
+  const isDesktop = useIsDesktop();
 
   return (
-    // modal=false: không ẩn (aria-hidden) phần còn lại của trang khi mở menu
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        {/* Tên đọc = chữ đang hiện ("Tài khoản " + tên), không dùng aria-label khác chữ (WCAG 2.5.3) */}
-        <ShopButton variant="ghost" className="gap-2 pr-2 pl-1.5" data-testid="account-menu-trigger">
-          <span
-            aria-hidden
-            className="flex size-8 items-center justify-center rounded-full bg-(--sh-fg) text-xs font-bold text-(--sh-bg)"
-          >
-            {initials(user.name)}
-          </span>
-          <span className="sr-only">Tài khoản </span>
-          <span className="sr-only max-w-32 truncate md:not-sr-only">{user.name}</span>
-          <ChevronDown className="size-4" />
-        </ShopButton>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="shop w-64 border-(--sh-border) bg-(--sh-elevated) text-(--sh-fg)">
-        <DropdownMenuLabel className="flex flex-col gap-0.5">
-          <span className="truncate">{user.name}</span>
-          <span className="truncate text-xs font-normal text-(--sh-muted)">{user.email}</span>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {canOpenAdmin && (
-          <DropdownMenuItem asChild>
-            <Link to="/admin" data-testid="account-menu-admin">
-              <LayoutDashboard /> Trang quản trị
-            </Link>
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuItem onSelect={() => logoutMutation.mutate()} data-testid="account-menu-logout">
-          <LogOut /> Đăng xuất
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex items-center gap-1 lg:gap-3">
+      {/* Một nút cho cả hai màn hình: desktop là ô bo tròn có chữ, mobile là icon */}
+      <button
+        ref={searchButtonRef}
+        type="button"
+        aria-label="Tìm kiếm"
+        onClick={onOpenSearch}
+        data-testid="header-search"
+        className={`${ICON_BUTTON} lg:h-10 lg:w-[180px] lg:justify-start lg:gap-2 lg:bg-(--sh-surface) lg:pr-4 lg:pl-1.5`}
+      >
+        <span className="flex size-9 items-center justify-center rounded-full lg:hover:bg-(--sh-surface-hover)">
+          <Search aria-hidden />
+        </span>
+        <span aria-hidden className="hidden text-base font-medium text-(--sh-muted) lg:inline">
+          Tìm kiếm
+        </span>
+      </button>
+      {isDesktop ? (
+        <Link to="/yeu-thich" aria-label="Yêu thích" className={ICON_BUTTON}>
+          <Heart aria-hidden />
+        </Link>
+      ) : (
+        <MobileAccount />
+      )}
+      <Link to="/gio-hang" aria-label="Giỏ hàng" data-testid="header-cart" className={ICON_BUTTON}>
+        <ShoppingBag aria-hidden />
+      </Link>
+      {!isDesktop && (
+        <button type="button" aria-label="Menu" onClick={onOpenMenu} data-testid="header-menu" className={ICON_BUTTON}>
+          <Menu aria-hidden />
+        </button>
+      )}
+    </div>
   );
 }
 
-/** Cụm nút bên phải header: chưa đăng nhập → Đăng nhập / Đăng ký; đã đăng nhập → menu tài khoản. */
-export function HeaderActions() {
+/** Icon tài khoản (mobile): chưa đăng nhập → "Đăng nhập"; đã đăng nhập → menu "Xin chào, <tên>". */
+function MobileAccount() {
   const user = useShopSession((s) => s.user);
   const loading = useShopSession((s) => s.loading);
   const openDialog = useShopDialog((s) => s.open);
 
   if (loading && !user) {
-    return (
-      <Skeleton role="status" aria-label="Đang tải tài khoản" className="size-8 rounded-full bg-(--sh-surface)" />
-    );
+    return <Skeleton role="status" aria-label="Đang tải tài khoản" className="size-8 rounded-full bg-(--sh-surface)" />;
   }
-
-  if (!user) {
-    return (
-      <div className="flex shrink-0 items-center gap-2">
-        <ShopButton variant="secondary" onClick={() => openDialog({ type: "login" })} data-testid="header-login">
-          Đăng nhập
-        </ShopButton>
-        <ShopButton variant="primary" onClick={() => openDialog({ type: "register" })} data-testid="header-register">
-          Đăng ký
-        </ShopButton>
-      </div>
-    );
-  }
-
-  return <AccountMenu user={user} />;
+  if (user) return <AccountMenu user={user} variant="icon" />;
+  return (
+    <button type="button" aria-label="Đăng nhập" onClick={() => openDialog({ type: "login" })} className={ICON_BUTTON}>
+      <UserRound aria-hidden />
+    </button>
+  );
 }

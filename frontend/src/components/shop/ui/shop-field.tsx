@@ -16,7 +16,7 @@ export function ShopField({ label, error, labelAside, className, ...props }: Sho
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       <div className="flex items-center justify-between gap-2">
-        <label htmlFor={id} className="text-sm font-semibold">
+        <label htmlFor={id} className="text-sm font-medium">
           {label}
         </label>
         {labelAside}
@@ -26,8 +26,8 @@ export function ShopField({ label, error, labelAside, className, ...props }: Sho
         aria-invalid={!!error || undefined}
         aria-describedby={error ? errorId : undefined}
         className={cn(
-          "h-11 w-full rounded-[8px] border border-(--sh-input-border) bg-transparent px-3 text-sm text-(--sh-fg) transition-colors outline-none placeholder:text-(--sh-muted)",
-          "focus-visible:border-(--sh-fg) focus-visible:ring-2 focus-visible:ring-(--sh-pink)/40",
+          "h-14 w-full rounded-[8px] border border-(--sh-input-border) bg-transparent px-4 text-base text-(--sh-fg) transition-colors outline-none placeholder:text-(--sh-muted)",
+          "focus-visible:border-(--sh-fg) focus-visible:ring-1 focus-visible:ring-(--sh-fg)",
           error && "border-(--sh-danger)"
         )}
         {...props}

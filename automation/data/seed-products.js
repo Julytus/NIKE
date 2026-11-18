@@ -104,3 +104,89 @@ export function expectedSummary() {
     bestseller: published.filter((p) => p.badge === 'BESTSELLER').length,
   };
 }
+
+/* ---------- Lát giao-dien-nike (plan §7.1): kết quả mong đợi của 3 API công khai ---------- */
+
+/** Giới hạn số dòng của API (plan giao-dien-nike §5.2, §5.3). */
+export const NEW_ARRIVALS_LIMIT = 12;
+export const SUGGEST_LIMIT = 6;
+
+/**
+ * Chuẩn hoá chuỗi để so như collation `utf8mb4_0900_ai_ci`: bỏ dấu, chữ thường.
+ * (Test không dùng chữ "đ" — collation coi "đ" ≠ "d" nhưng NFD không tách được.)
+ * @param {string | null | undefined} s
+ */
+export const normalizeText = (s) => (s ?? '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+
+/** Mới nhất trước: `createdTime` giảm dần, bằng nhau thì id lớn trước. @param {SeedProduct} a @param {SeedProduct} b */
+const newestFirst = (a, b) =>
+  a.createdTime === b.createdTime ? b.id - a.id : a.createdTime < b.createdTime ? 1 : -1;
+
+/** Tổng tồn kho mọi size. @param {SeedProduct} product */
+export const totalStockOf = (product) => stockOf(product).reduce((sum, s) => sum + s.stock, 0);
+
+/**
+ * "Thẻ sản phẩm" mong đợi (các field so được với API, trừ `imageUrl` kiểm theo đuôi).
+ * @param {SeedProduct} p
+ */
+export const cardOf = (p) => ({
+  id: p.id,
+  slug: p.slug,
+  styleCode: p.styleCode,
+  name: p.name,
+  subtitle: p.subtitle,
+  gender: p.gender,
+  price: p.price,
+  salePrice: p.salePrice,
+  badge: p.badge,
+  totalStock: totalStockOf(p),
+});
+
+/** Đuôi URL ảnh số 1 của sản phẩm. @param {string} slug */
+export const imageSuffixOf = (slug) => `/products/${slug}/1.webp`;
+
+/**
+ * `GET /product-category/public/list` mong đợi: theo `sortOrder`; `productCount` = số sản phẩm PUBLISHED;
+ * `imageSlug` = slug sản phẩm PUBLISHED mới nhất của danh mục (không có → null).
+ */
+export function expectedCategories() {
+  const published = publishedProducts();
+  return [...seedCategories]
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.id - b.id)
+    .map((c) => {
+      const inCat = published.filter((p) => p.category === c.slug).sort(newestFirst);
+      return {
+        id: c.id,
+        slug: c.slug,
+        name: c.name,
+        sortOrder: c.sortOrder,
+        productCount: inCat.length,
+        imageSlug: inCat[0]?.slug ?? null,
+      };
+    });
+}
+
+/** `GET /product/public/new-arrivals` mong đợi: PUBLISHED + JUST_IN, mới nhất trước, tối đa 12. */
+export function expectedNewArrivals() {
+  return publishedProducts()
+    .filter((p) => p.badge === 'JUST_IN')
+    .sort(newestFirst)
+    .slice(0, NEW_ARRIVALS_LIMIT)
+    .map(cardOf);
+}
+
+/**
+ * `GET /product/public/suggest?q=` mong đợi (plan §5.3): trim; rỗng → total 0;
+ * PUBLISHED và tên / phụ đề / mã chứa `q` (không phân biệt hoa thường, dấu); tối đa 6.
+ * @param {string | null | undefined} q
+ */
+export function expectedSuggest(q) {
+  const keyword = normalizeText((q ?? '').trim());
+  if (!keyword) return { total: 0, page: 1, items: [] };
+  const matched = publishedProducts()
+    .filter((p) =>
+      [p.name, p.subtitle, p.styleCode].some((f) => normalizeText(f).includes(keyword))
+    )
+    .sort(newestFirst);
+  return { total: matched.length, page: 1, items: matched.slice(0, SUGGEST_LIMIT).map(cardOf) };
+}

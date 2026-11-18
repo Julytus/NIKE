@@ -25,4 +25,9 @@ public class Product {
     private String status;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
+
+    /** Không phải cột: URL ảnh số 1 (product_image.sort_order = 1), lấy bằng subquery. */
+    private String imageUrl;
+    /** Không phải cột: tổng tồn kho mọi size (COALESCE(SUM(product_size.stock), 0)). */
+    private Integer totalStock;
 }

@@ -86,7 +86,7 @@ export function LoginForm({ defaultEmail, onSuccess, onSwitchToRegister }: Login
       </div>
 
       {mutation.isError && (
-        <p role="alert" className="rounded-[8px] bg-(--sh-active-bg) px-3 py-2 text-sm font-medium text-(--sh-active-fg)">
+        <p role="alert" className="rounded-[8px] bg-(--sh-surface) px-3 py-2 text-sm font-medium text-(--sh-danger)">
           {ErrorResponseWarper(mutation.error)}
         </p>
       )}

@@ -1,54 +1,30 @@
-/* Token màu riêng cho khu cửa hàng (không đụng token trang quản trị ở index.css). */
+/* Token màu Nike cho khu cửa hàng (plan giao-dien-nike §8 bước 9). Cửa hàng luôn sáng, không có bản tối. */
 .shop {
   --sh-bg: #ffffff;
-  --sh-fg: #151a20;
-  --sh-nav: #3d4653;
-  --sh-muted: #5a646f;
-  --sh-surface: #edeef0;
-  --sh-surface-hover: #e3e5e7;
-  --sh-border: #e3e5e7;
-  --sh-active-bg: #fff1f4;
-  --sh-active-fg: #d01a5c; /* 4.8:1 trên --sh-active-bg */
-  /* Màu nhấn trang trí (sao, đường chia). Không dùng làm nền cho chữ: chỉ 3.7:1 với chữ trắng */
-  --sh-pink: #f23d75;
-  /* Nền nút chính có chữ trắng: 4.65:1 (WCAG AA) */
-  --sh-primary: #df1f64;
-  --sh-primary-hover: #c8175a;
-  --sh-kicker: #f7789f;
-  /* Nền nổi (hộp thoại, menu thả xuống, thẻ) */
-  /* Chữ màu nhấn trên nền thường (giá, link nổi bật): AA ở cả hai giao diện */
-  --sh-accent: #d01a5c;
-  --sh-elevated: #ffffff;
-  --sh-input-border: #858d97; /* 3.3:1 – viền ô nhập đạt WCAG 1.4.11 */
-  --sh-success: #12805c;
-  --sh-danger: #c4193f;
-  /* Dải màu cố định cho trang chủ (cùng giá trị ở sáng và tối) */
-  --sh-band-pink: #f6b8d1;
-  --sh-band-green: #22382a;
-  font-family: "DM Sans", system-ui, sans-serif;
-}
-
-.dark .shop {
-  --sh-bg: #1b1d24;
-  --sh-fg: #f5f6f7;
-  --sh-nav: #e3e5e7;
-  --sh-muted: #a9afb7;
-  --sh-surface: #3a3d46;
-  --sh-surface-hover: #454952;
-  --sh-border: #33363f;
-  --sh-active-bg: #3a3d46;
-  --sh-active-fg: #ffffff;
-  --sh-accent: #f7789f;
-  --sh-elevated: #262931;
-  --sh-input-border: #757a85;
-  --sh-success: #4ccf9a;
-  --sh-danger: #ff7b93;
-  --sh-band-pink: #f6b8d1;
-  --sh-band-green: #22382a;
+  --sh-fg: #111111;
+  --sh-muted: #707072; /* 4.8:1 trên nền trắng */
+  --sh-surface: #f5f5f5;
+  --sh-surface-hover: #e5e5e5;
+  --sh-border: #e5e5e5;
+  --sh-input-border: #757575; /* 4.6:1 — viền ô nhập đạt WCAG 1.4.11 */
+  --sh-primary: #111111;
+  --sh-primary-hover: #707072;
+  --sh-badge: #d33918; /* nhãn "Mới về", "Giảm giá"… */
+  --sh-warning: #9e3500;
+  --sh-danger: #d30005;
+  --sh-success: #007d48;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color-scheme: light;
 }
 
 .shop .font-display {
-  font-family: "Space Grotesk", "DM Sans", system-ui, sans-serif;
+  font-family: "Oswald", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* Dải cuộn ngang (ProductRail): thanh cuộn mảnh */
+.shop-rail {
+  scrollbar-width: thin;
+  scrollbar-color: #cacacb transparent;
 }
 
 /* Thanh tiến trình chuyển trang (route-progress.tsx) */

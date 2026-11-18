@@ -4,11 +4,12 @@ import { createApi } from '../api/index.js';
 import { accounts } from '../data/accounts.js';
 import { AdminLayout } from '../pages/AdminLayout.js';
 import { AdminLoginPage } from '../pages/AdminLoginPage.js';
+import { HomePage } from '../pages/HomePage.js';
+import { InfoPage } from '../pages/InfoPage.js';
 import { NotFoundPage } from '../pages/NotFoundPage.js';
 import { PermissionPage } from '../pages/PermissionPage.js';
 import { ResourcePage } from '../pages/ResourcePage.js';
 import { RolePage } from '../pages/RolePage.js';
-import { ShopHomePage } from '../pages/ShopHomePage.js';
 
 /** @typedef {'admin' | 'noaccess' | 'customer' | 'khach1' | 'khach2'} Role */
 
@@ -21,7 +22,8 @@ import { ShopHomePage } from '../pages/ShopHomePage.js';
  *   rolePage: RolePage,
  *   permissionPage: PermissionPage,
  *   resourcePage: ResourcePage,
- *   shopHome: ShopHomePage,
+ *   homePage: HomePage,
+ *   infoPage: InfoPage,
  *   notFoundPage: NotFoundPage,
  * }} TestFixtures
  * @typedef {{ tokenCache: { get: (role: Role) => Promise<string> } }} WorkerFixtures
@@ -31,7 +33,7 @@ import { ShopHomePage } from '../pages/ShopHomePage.js';
  * `test` dùng chung cho mọi spec:
  * - `api`: API client chưa đăng nhập.
  * - `apiAs(role)`: API client đã gắn token của vai trò (đăng nhập bằng API một lần mỗi worker).
- * - Page object: `loginPage`, `adminLayout`, `rolePage`, `permissionPage`, `resourcePage`, `shopHome`, `notFoundPage`.
+ * - Page object: `loginPage`, `adminLayout`, `rolePage`, `permissionPage`, `resourcePage`, `homePage`, `infoPage`, `notFoundPage`.
  * Đăng nhập giao diện dùng `test.use({ storageState: storageStateOf('admin') })` (tạo ở auth.setup.js).
  * @type {import('@playwright/test').TestType<
  *   import('@playwright/test').PlaywrightTestArgs & import('@playwright/test').PlaywrightTestOptions & TestFixtures,
@@ -89,8 +91,12 @@ export const test = base.extend({
     await use(new ResourcePage(page));
   },
 
-  shopHome: async ({ page }, use) => {
-    await use(new ShopHomePage(page));
+  homePage: async ({ page }, use) => {
+    await use(new HomePage(page));
+  },
+
+  infoPage: async ({ page }, use) => {
+    await use(new InfoPage(page));
   },
 
   notFoundPage: async ({ page }, use) => {

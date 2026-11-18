@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
-import { NikeSwoosh } from "@/components/admin/nike-swoosh";
+import { NikeSwoosh } from "@/components/brand/nike-swoosh";
 import { ThemeToggle } from "@/components/layout/theme/theme-toggle";
 import { useNikeTheme } from "@/hooks/use-nike-theme";
 import { useAuthStore } from "@/lib/stores/auth";

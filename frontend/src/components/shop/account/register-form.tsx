@@ -98,7 +98,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       {mutation.isError && (
         <div
           role="alert"
-          className="flex flex-col gap-2 rounded-[8px] bg-(--sh-active-bg) px-3 py-2 text-sm font-medium text-(--sh-active-fg)"
+          className="flex flex-col gap-2 rounded-[8px] bg-(--sh-surface) px-3 py-2 text-sm font-medium text-(--sh-danger)"
         >
           <span>{ErrorResponseWarper(mutation.error)}</span>
           {apiErrorOf(mutation.error).errorCode === "EMAIL_EXISTS" && (
