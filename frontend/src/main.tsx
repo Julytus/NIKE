@@ -18,7 +18,7 @@ if (import.meta.env.DEV && import.meta.env.VITE_REACT_SCAN === "true") {
 const router = createRouter({
   routeTree,
   scrollRestoration: true, // enables built-in scroll restoration
-  scrollToTopSelectors: ["main"], // your main scrollable container
+  scrollToTopSelectors: ["#app-scroll"], // vùng cuộn chính (__root.tsx)
   getScrollRestorationKey: (location) => location.pathname, // optional
   scrollRestorationBehavior: "instant" // optional, can be 'smooth', 'instant', 'auto'
 });

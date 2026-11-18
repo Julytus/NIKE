@@ -10,41 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteImport } from './routes/admin'
-import { Route as ShopRouteImport } from './routes/_shop'
-import { Route as PlainRouteImport } from './routes/_plain'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminTaiNguyenRouteImport } from './routes/admin/tai-nguyen'
 import { Route as AdminPhanQuyenRouteImport } from './routes/admin/phan-quyen'
 import { Route as AdminModuleRouteImport } from './routes/admin/module'
-import { Route as AdminGoiYRouteImport } from './routes/admin/goi-y'
-import { Route as AdminDacTrungMauRouteImport } from './routes/admin/dac-trung-mau'
 import { Route as AdminChucVuRouteImport } from './routes/admin/chuc-vu'
-import { Route as ShopGoiCuaToiRouteImport } from './routes/_shop/goi-cua-toi'
-import { Route as PlainPricingRouteImport } from './routes/_plain/pricing'
 import { Route as AuthLogoutRouteImport } from './routes/_auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as AdminLutsIndexRouteImport } from './routes/admin/luts/index'
-import { Route as ShopLutsIndexRouteImport } from './routes/_shop/luts/index'
-import { Route as ShopBoSuuTapIndexRouteImport } from './routes/_shop/bo-suu-tap/index'
-import { Route as AdminLutsIdRouteImport } from './routes/admin/luts/$id'
-import { Route as ShopLutsSlugRouteImport } from './routes/_shop/luts/$slug'
-import { Route as ShopBoSuuTapIdRouteImport } from './routes/_shop/bo-suu-tap/$id'
-import { Route as ShopLutsDanhMucCategoryRouteImport } from './routes/_shop/luts/danh-muc/$category'
-import { Route as PlainThanhToanKetQuaCodeRouteImport } from './routes/_plain/thanh-toan/ket-qua.$code'
 
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShopRoute = ShopRouteImport.update({
-  id: '/_shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlainRoute = PlainRouteImport.update({
-  id: '/_plain',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -76,30 +54,10 @@ const AdminModuleRoute = AdminModuleRouteImport.update({
   path: '/module',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminGoiYRoute = AdminGoiYRouteImport.update({
-  id: '/goi-y',
-  path: '/goi-y',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDacTrungMauRoute = AdminDacTrungMauRouteImport.update({
-  id: '/dac-trung-mau',
-  path: '/dac-trung-mau',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminChucVuRoute = AdminChucVuRouteImport.update({
   id: '/chuc-vu',
   path: '/chuc-vu',
   getParentRoute: () => AdminRoute,
-} as any)
-const ShopGoiCuaToiRoute = ShopGoiCuaToiRouteImport.update({
-  id: '/goi-cua-toi',
-  path: '/goi-cua-toi',
-  getParentRoute: () => ShopRoute,
-} as any)
-const PlainPricingRoute = PlainPricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => PlainRoute,
 } as any)
 const AuthLogoutRoute = AuthLogoutRouteImport.update({
   id: '/logout',
@@ -111,119 +69,40 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
-const AdminLutsIndexRoute = AdminLutsIndexRouteImport.update({
-  id: '/luts/',
-  path: '/luts/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const ShopLutsIndexRoute = ShopLutsIndexRouteImport.update({
-  id: '/luts/',
-  path: '/luts/',
-  getParentRoute: () => ShopRoute,
-} as any)
-const ShopBoSuuTapIndexRoute = ShopBoSuuTapIndexRouteImport.update({
-  id: '/bo-suu-tap/',
-  path: '/bo-suu-tap/',
-  getParentRoute: () => ShopRoute,
-} as any)
-const AdminLutsIdRoute = AdminLutsIdRouteImport.update({
-  id: '/luts/$id',
-  path: '/luts/$id',
-  getParentRoute: () => AdminRoute,
-} as any)
-const ShopLutsSlugRoute = ShopLutsSlugRouteImport.update({
-  id: '/luts/$slug',
-  path: '/luts/$slug',
-  getParentRoute: () => ShopRoute,
-} as any)
-const ShopBoSuuTapIdRoute = ShopBoSuuTapIdRouteImport.update({
-  id: '/bo-suu-tap/$id',
-  path: '/bo-suu-tap/$id',
-  getParentRoute: () => ShopRoute,
-} as any)
-const ShopLutsDanhMucCategoryRoute = ShopLutsDanhMucCategoryRouteImport.update({
-  id: '/luts/danh-muc/$category',
-  path: '/luts/danh-muc/$category',
-  getParentRoute: () => ShopRoute,
-} as any)
-const PlainThanhToanKetQuaCodeRoute =
-  PlainThanhToanKetQuaCodeRouteImport.update({
-    id: '/thanh-toan/ket-qua/$code',
-    path: '/thanh-toan/ket-qua/$code',
-    getParentRoute: () => PlainRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/logout': typeof AuthLogoutRoute
-  '/pricing': typeof PlainPricingRoute
-  '/goi-cua-toi': typeof ShopGoiCuaToiRoute
   '/admin/chuc-vu': typeof AdminChucVuRoute
-  '/admin/dac-trung-mau': typeof AdminDacTrungMauRoute
-  '/admin/goi-y': typeof AdminGoiYRoute
   '/admin/module': typeof AdminModuleRoute
   '/admin/phan-quyen': typeof AdminPhanQuyenRoute
   '/admin/tai-nguyen': typeof AdminTaiNguyenRoute
   '/admin/': typeof AdminIndexRoute
-  '/bo-suu-tap/$id': typeof ShopBoSuuTapIdRoute
-  '/luts/$slug': typeof ShopLutsSlugRoute
-  '/admin/luts/$id': typeof AdminLutsIdRoute
-  '/bo-suu-tap': typeof ShopBoSuuTapIndexRoute
-  '/luts': typeof ShopLutsIndexRoute
-  '/admin/luts': typeof AdminLutsIndexRoute
-  '/thanh-toan/ket-qua/$code': typeof PlainThanhToanKetQuaCodeRoute
-  '/luts/danh-muc/$category': typeof ShopLutsDanhMucCategoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/logout': typeof AuthLogoutRoute
-  '/pricing': typeof PlainPricingRoute
-  '/goi-cua-toi': typeof ShopGoiCuaToiRoute
   '/admin/chuc-vu': typeof AdminChucVuRoute
-  '/admin/dac-trung-mau': typeof AdminDacTrungMauRoute
-  '/admin/goi-y': typeof AdminGoiYRoute
   '/admin/module': typeof AdminModuleRoute
   '/admin/phan-quyen': typeof AdminPhanQuyenRoute
   '/admin/tai-nguyen': typeof AdminTaiNguyenRoute
   '/admin': typeof AdminIndexRoute
-  '/bo-suu-tap/$id': typeof ShopBoSuuTapIdRoute
-  '/luts/$slug': typeof ShopLutsSlugRoute
-  '/admin/luts/$id': typeof AdminLutsIdRoute
-  '/bo-suu-tap': typeof ShopBoSuuTapIndexRoute
-  '/luts': typeof ShopLutsIndexRoute
-  '/admin/luts': typeof AdminLutsIndexRoute
-  '/thanh-toan/ket-qua/$code': typeof PlainThanhToanKetQuaCodeRoute
-  '/luts/danh-muc/$category': typeof ShopLutsDanhMucCategoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
-  '/_plain': typeof PlainRouteWithChildren
-  '/_shop': typeof ShopRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/logout': typeof AuthLogoutRoute
-  '/_plain/pricing': typeof PlainPricingRoute
-  '/_shop/goi-cua-toi': typeof ShopGoiCuaToiRoute
   '/admin/chuc-vu': typeof AdminChucVuRoute
-  '/admin/dac-trung-mau': typeof AdminDacTrungMauRoute
-  '/admin/goi-y': typeof AdminGoiYRoute
   '/admin/module': typeof AdminModuleRoute
   '/admin/phan-quyen': typeof AdminPhanQuyenRoute
   '/admin/tai-nguyen': typeof AdminTaiNguyenRoute
   '/admin/': typeof AdminIndexRoute
-  '/_shop/bo-suu-tap/$id': typeof ShopBoSuuTapIdRoute
-  '/_shop/luts/$slug': typeof ShopLutsSlugRoute
-  '/admin/luts/$id': typeof AdminLutsIdRoute
-  '/_shop/bo-suu-tap/': typeof ShopBoSuuTapIndexRoute
-  '/_shop/luts/': typeof ShopLutsIndexRoute
-  '/admin/luts/': typeof AdminLutsIndexRoute
-  '/_plain/thanh-toan/ket-qua/$code': typeof PlainThanhToanKetQuaCodeRoute
-  '/_shop/luts/danh-muc/$category': typeof ShopLutsDanhMucCategoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -232,78 +111,38 @@ export interface FileRouteTypes {
     | '/admin'
     | '/login'
     | '/logout'
-    | '/pricing'
-    | '/goi-cua-toi'
     | '/admin/chuc-vu'
-    | '/admin/dac-trung-mau'
-    | '/admin/goi-y'
     | '/admin/module'
     | '/admin/phan-quyen'
     | '/admin/tai-nguyen'
     | '/admin/'
-    | '/bo-suu-tap/$id'
-    | '/luts/$slug'
-    | '/admin/luts/$id'
-    | '/bo-suu-tap'
-    | '/luts'
-    | '/admin/luts'
-    | '/thanh-toan/ket-qua/$code'
-    | '/luts/danh-muc/$category'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/logout'
-    | '/pricing'
-    | '/goi-cua-toi'
     | '/admin/chuc-vu'
-    | '/admin/dac-trung-mau'
-    | '/admin/goi-y'
     | '/admin/module'
     | '/admin/phan-quyen'
     | '/admin/tai-nguyen'
     | '/admin'
-    | '/bo-suu-tap/$id'
-    | '/luts/$slug'
-    | '/admin/luts/$id'
-    | '/bo-suu-tap'
-    | '/luts'
-    | '/admin/luts'
-    | '/thanh-toan/ket-qua/$code'
-    | '/luts/danh-muc/$category'
   id:
     | '__root__'
     | '/'
     | '/_auth'
-    | '/_plain'
-    | '/_shop'
     | '/admin'
     | '/_auth/login'
     | '/_auth/logout'
-    | '/_plain/pricing'
-    | '/_shop/goi-cua-toi'
     | '/admin/chuc-vu'
-    | '/admin/dac-trung-mau'
-    | '/admin/goi-y'
     | '/admin/module'
     | '/admin/phan-quyen'
     | '/admin/tai-nguyen'
     | '/admin/'
-    | '/_shop/bo-suu-tap/$id'
-    | '/_shop/luts/$slug'
-    | '/admin/luts/$id'
-    | '/_shop/bo-suu-tap/'
-    | '/_shop/luts/'
-    | '/admin/luts/'
-    | '/_plain/thanh-toan/ket-qua/$code'
-    | '/_shop/luts/danh-muc/$category'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
-  PlainRoute: typeof PlainRouteWithChildren
-  ShopRoute: typeof ShopRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
 }
 
@@ -314,20 +153,6 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_shop': {
-      id: '/_shop'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_plain': {
-      id: '/_plain'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof PlainRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
@@ -372,40 +197,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminModuleRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/goi-y': {
-      id: '/admin/goi-y'
-      path: '/goi-y'
-      fullPath: '/admin/goi-y'
-      preLoaderRoute: typeof AdminGoiYRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/dac-trung-mau': {
-      id: '/admin/dac-trung-mau'
-      path: '/dac-trung-mau'
-      fullPath: '/admin/dac-trung-mau'
-      preLoaderRoute: typeof AdminDacTrungMauRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/chuc-vu': {
       id: '/admin/chuc-vu'
       path: '/chuc-vu'
       fullPath: '/admin/chuc-vu'
       preLoaderRoute: typeof AdminChucVuRouteImport
       parentRoute: typeof AdminRoute
-    }
-    '/_shop/goi-cua-toi': {
-      id: '/_shop/goi-cua-toi'
-      path: '/goi-cua-toi'
-      fullPath: '/goi-cua-toi'
-      preLoaderRoute: typeof ShopGoiCuaToiRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/_plain/pricing': {
-      id: '/_plain/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PlainPricingRouteImport
-      parentRoute: typeof PlainRoute
     }
     '/_auth/logout': {
       id: '/_auth/logout'
@@ -420,62 +217,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
-    }
-    '/admin/luts/': {
-      id: '/admin/luts/'
-      path: '/luts'
-      fullPath: '/admin/luts'
-      preLoaderRoute: typeof AdminLutsIndexRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/_shop/luts/': {
-      id: '/_shop/luts/'
-      path: '/luts'
-      fullPath: '/luts'
-      preLoaderRoute: typeof ShopLutsIndexRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/_shop/bo-suu-tap/': {
-      id: '/_shop/bo-suu-tap/'
-      path: '/bo-suu-tap'
-      fullPath: '/bo-suu-tap'
-      preLoaderRoute: typeof ShopBoSuuTapIndexRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/admin/luts/$id': {
-      id: '/admin/luts/$id'
-      path: '/luts/$id'
-      fullPath: '/admin/luts/$id'
-      preLoaderRoute: typeof AdminLutsIdRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/_shop/luts/$slug': {
-      id: '/_shop/luts/$slug'
-      path: '/luts/$slug'
-      fullPath: '/luts/$slug'
-      preLoaderRoute: typeof ShopLutsSlugRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/_shop/bo-suu-tap/$id': {
-      id: '/_shop/bo-suu-tap/$id'
-      path: '/bo-suu-tap/$id'
-      fullPath: '/bo-suu-tap/$id'
-      preLoaderRoute: typeof ShopBoSuuTapIdRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/_shop/luts/danh-muc/$category': {
-      id: '/_shop/luts/danh-muc/$category'
-      path: '/luts/danh-muc/$category'
-      fullPath: '/luts/danh-muc/$category'
-      preLoaderRoute: typeof ShopLutsDanhMucCategoryRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/_plain/thanh-toan/ket-qua/$code': {
-      id: '/_plain/thanh-toan/ket-qua/$code'
-      path: '/thanh-toan/ket-qua/$code'
-      fullPath: '/thanh-toan/ket-qua/$code'
-      preLoaderRoute: typeof PlainThanhToanKetQuaCodeRouteImport
-      parentRoute: typeof PlainRoute
     }
   }
 }
@@ -492,60 +233,20 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
-interface PlainRouteChildren {
-  PlainPricingRoute: typeof PlainPricingRoute
-  PlainThanhToanKetQuaCodeRoute: typeof PlainThanhToanKetQuaCodeRoute
-}
-
-const PlainRouteChildren: PlainRouteChildren = {
-  PlainPricingRoute: PlainPricingRoute,
-  PlainThanhToanKetQuaCodeRoute: PlainThanhToanKetQuaCodeRoute,
-}
-
-const PlainRouteWithChildren = PlainRoute._addFileChildren(PlainRouteChildren)
-
-interface ShopRouteChildren {
-  ShopGoiCuaToiRoute: typeof ShopGoiCuaToiRoute
-  ShopBoSuuTapIdRoute: typeof ShopBoSuuTapIdRoute
-  ShopLutsSlugRoute: typeof ShopLutsSlugRoute
-  ShopBoSuuTapIndexRoute: typeof ShopBoSuuTapIndexRoute
-  ShopLutsIndexRoute: typeof ShopLutsIndexRoute
-  ShopLutsDanhMucCategoryRoute: typeof ShopLutsDanhMucCategoryRoute
-}
-
-const ShopRouteChildren: ShopRouteChildren = {
-  ShopGoiCuaToiRoute: ShopGoiCuaToiRoute,
-  ShopBoSuuTapIdRoute: ShopBoSuuTapIdRoute,
-  ShopLutsSlugRoute: ShopLutsSlugRoute,
-  ShopBoSuuTapIndexRoute: ShopBoSuuTapIndexRoute,
-  ShopLutsIndexRoute: ShopLutsIndexRoute,
-  ShopLutsDanhMucCategoryRoute: ShopLutsDanhMucCategoryRoute,
-}
-
-const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
-
 interface AdminRouteChildren {
   AdminChucVuRoute: typeof AdminChucVuRoute
-  AdminDacTrungMauRoute: typeof AdminDacTrungMauRoute
-  AdminGoiYRoute: typeof AdminGoiYRoute
   AdminModuleRoute: typeof AdminModuleRoute
   AdminPhanQuyenRoute: typeof AdminPhanQuyenRoute
   AdminTaiNguyenRoute: typeof AdminTaiNguyenRoute
   AdminIndexRoute: typeof AdminIndexRoute
-  AdminLutsIdRoute: typeof AdminLutsIdRoute
-  AdminLutsIndexRoute: typeof AdminLutsIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminChucVuRoute: AdminChucVuRoute,
-  AdminDacTrungMauRoute: AdminDacTrungMauRoute,
-  AdminGoiYRoute: AdminGoiYRoute,
   AdminModuleRoute: AdminModuleRoute,
   AdminPhanQuyenRoute: AdminPhanQuyenRoute,
   AdminTaiNguyenRoute: AdminTaiNguyenRoute,
   AdminIndexRoute: AdminIndexRoute,
-  AdminLutsIdRoute: AdminLutsIdRoute,
-  AdminLutsIndexRoute: AdminLutsIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -553,8 +254,6 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
-  PlainRoute: PlainRouteWithChildren,
-  ShopRoute: ShopRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
 }
 export const routeTree = rootRouteImport

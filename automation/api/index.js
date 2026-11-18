@@ -1,6 +1,7 @@
 import { AccountApi } from './AccountApi.js';
 import { ApiClient } from './ApiClient.js';
 import { AuthApi } from './AuthApi.js';
+import { ResourceApi } from './ResourceApi.js';
 import { RoleApi } from './RoleApi.js';
 
 /**
@@ -15,6 +16,7 @@ export function createApi(request, token = null) {
     auth: new AuthApi(client),
     account: new AccountApi(client),
     role: new RoleApi(client),
+    resource: new ResourceApi(client),
     /** Đổi token cho mọi API trong nhóm. @param {string | null} t */
     useToken(t) {
       client.setToken(t);
@@ -25,4 +27,4 @@ export function createApi(request, token = null) {
 
 /** @typedef {ReturnType<typeof createApi>} Api */
 
-export { AccountApi, ApiClient, AuthApi, RoleApi };
+export { AccountApi, ApiClient, AuthApi, ResourceApi, RoleApi };

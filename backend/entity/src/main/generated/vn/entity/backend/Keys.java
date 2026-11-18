@@ -10,54 +10,18 @@ import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 
-import vn.entity.backend.tables.Collection;
-import vn.entity.backend.tables.CollectionItem;
-import vn.entity.backend.tables.Creator;
-import vn.entity.backend.tables.DownloadLog;
-import vn.entity.backend.tables.Lut;
-import vn.entity.backend.tables.LutCategory;
-import vn.entity.backend.tables.LutCategoryMap;
-import vn.entity.backend.tables.LutColorFeature;
-import vn.entity.backend.tables.LutSimilarity;
-import vn.entity.backend.tables.LutTag;
 import vn.entity.backend.tables.Module;
-import vn.entity.backend.tables.PaymentOrder;
 import vn.entity.backend.tables.Permission;
-import vn.entity.backend.tables.Plan;
-import vn.entity.backend.tables.RecEvalRun;
-import vn.entity.backend.tables.RecEvalTest;
-import vn.entity.backend.tables.RecImpression;
 import vn.entity.backend.tables.RefreshToken;
 import vn.entity.backend.tables.Resource;
 import vn.entity.backend.tables.Role;
-import vn.entity.backend.tables.Subscription;
 import vn.entity.backend.tables.UserApp;
-import vn.entity.backend.tables.UserEvent;
-import vn.entity.backend.tables.UserPreference;
-import vn.entity.backend.tables.records.CollectionItemRecord;
-import vn.entity.backend.tables.records.CollectionRecord;
-import vn.entity.backend.tables.records.CreatorRecord;
-import vn.entity.backend.tables.records.DownloadLogRecord;
-import vn.entity.backend.tables.records.LutCategoryMapRecord;
-import vn.entity.backend.tables.records.LutCategoryRecord;
-import vn.entity.backend.tables.records.LutColorFeatureRecord;
-import vn.entity.backend.tables.records.LutRecord;
-import vn.entity.backend.tables.records.LutSimilarityRecord;
-import vn.entity.backend.tables.records.LutTagRecord;
 import vn.entity.backend.tables.records.ModuleRecord;
-import vn.entity.backend.tables.records.PaymentOrderRecord;
 import vn.entity.backend.tables.records.PermissionRecord;
-import vn.entity.backend.tables.records.PlanRecord;
-import vn.entity.backend.tables.records.RecEvalRunRecord;
-import vn.entity.backend.tables.records.RecEvalTestRecord;
-import vn.entity.backend.tables.records.RecImpressionRecord;
 import vn.entity.backend.tables.records.RefreshTokenRecord;
 import vn.entity.backend.tables.records.ResourceRecord;
 import vn.entity.backend.tables.records.RoleRecord;
-import vn.entity.backend.tables.records.SubscriptionRecord;
 import vn.entity.backend.tables.records.UserAppRecord;
-import vn.entity.backend.tables.records.UserEventRecord;
-import vn.entity.backend.tables.records.UserPreferenceRecord;
 
 
 /**
@@ -71,81 +35,27 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<CollectionRecord> KEY_COLLECTION_PRIMARY = Internal.createUniqueKey(Collection.COLLECTION, DSL.name("KEY_collection_PRIMARY"), new TableField[] { Collection.COLLECTION.ID }, true);
-    public static final UniqueKey<CollectionRecord> KEY_COLLECTION_UQ_COLLECTION_USER_NAME = Internal.createUniqueKey(Collection.COLLECTION, DSL.name("KEY_collection_uq_collection_user_name"), new TableField[] { Collection.COLLECTION.USER_ID, Collection.COLLECTION.NAME }, true);
-    public static final UniqueKey<CollectionItemRecord> KEY_COLLECTION_ITEM_PRIMARY = Internal.createUniqueKey(CollectionItem.COLLECTION_ITEM, DSL.name("KEY_collection_item_PRIMARY"), new TableField[] { CollectionItem.COLLECTION_ITEM.COLLECTION_ID, CollectionItem.COLLECTION_ITEM.LUT_ID }, true);
-    public static final UniqueKey<CreatorRecord> KEY_CREATOR_PRIMARY = Internal.createUniqueKey(Creator.CREATOR, DSL.name("KEY_creator_PRIMARY"), new TableField[] { Creator.CREATOR.ID }, true);
-    public static final UniqueKey<CreatorRecord> KEY_CREATOR_SLUG = Internal.createUniqueKey(Creator.CREATOR, DSL.name("KEY_creator_slug"), new TableField[] { Creator.CREATOR.SLUG }, true);
-    public static final UniqueKey<DownloadLogRecord> KEY_DOWNLOAD_LOG_PRIMARY = Internal.createUniqueKey(DownloadLog.DOWNLOAD_LOG, DSL.name("KEY_download_log_PRIMARY"), new TableField[] { DownloadLog.DOWNLOAD_LOG.ID }, true);
-    public static final UniqueKey<LutRecord> KEY_LUT_PRIMARY = Internal.createUniqueKey(Lut.LUT, DSL.name("KEY_lut_PRIMARY"), new TableField[] { Lut.LUT.ID }, true);
-    public static final UniqueKey<LutRecord> KEY_LUT_SLUG = Internal.createUniqueKey(Lut.LUT, DSL.name("KEY_lut_slug"), new TableField[] { Lut.LUT.SLUG }, true);
-    public static final UniqueKey<LutCategoryRecord> KEY_LUT_CATEGORY_PRIMARY = Internal.createUniqueKey(LutCategory.LUT_CATEGORY, DSL.name("KEY_lut_category_PRIMARY"), new TableField[] { LutCategory.LUT_CATEGORY.ID }, true);
-    public static final UniqueKey<LutCategoryRecord> KEY_LUT_CATEGORY_SLUG = Internal.createUniqueKey(LutCategory.LUT_CATEGORY, DSL.name("KEY_lut_category_slug"), new TableField[] { LutCategory.LUT_CATEGORY.SLUG }, true);
-    public static final UniqueKey<LutCategoryMapRecord> KEY_LUT_CATEGORY_MAP_PRIMARY = Internal.createUniqueKey(LutCategoryMap.LUT_CATEGORY_MAP, DSL.name("KEY_lut_category_map_PRIMARY"), new TableField[] { LutCategoryMap.LUT_CATEGORY_MAP.LUT_ID, LutCategoryMap.LUT_CATEGORY_MAP.CATEGORY_ID }, true);
-    public static final UniqueKey<LutColorFeatureRecord> KEY_LUT_COLOR_FEATURE_PRIMARY = Internal.createUniqueKey(LutColorFeature.LUT_COLOR_FEATURE, DSL.name("KEY_lut_color_feature_PRIMARY"), new TableField[] { LutColorFeature.LUT_COLOR_FEATURE.ID }, true);
-    public static final UniqueKey<LutColorFeatureRecord> KEY_LUT_COLOR_FEATURE_UK_LUT_COLOR_FEATURE_LUT = Internal.createUniqueKey(LutColorFeature.LUT_COLOR_FEATURE, DSL.name("KEY_lut_color_feature_uk_lut_color_feature_lut"), new TableField[] { LutColorFeature.LUT_COLOR_FEATURE.LUT_ID }, true);
-    public static final UniqueKey<LutSimilarityRecord> KEY_LUT_SIMILARITY_PRIMARY = Internal.createUniqueKey(LutSimilarity.LUT_SIMILARITY, DSL.name("KEY_lut_similarity_PRIMARY"), new TableField[] { LutSimilarity.LUT_SIMILARITY.ID }, true);
-    public static final UniqueKey<LutSimilarityRecord> KEY_LUT_SIMILARITY_UK_LUT_SIMILARITY_PAIR = Internal.createUniqueKey(LutSimilarity.LUT_SIMILARITY, DSL.name("KEY_lut_similarity_uk_lut_similarity_pair"), new TableField[] { LutSimilarity.LUT_SIMILARITY.LUT_ID, LutSimilarity.LUT_SIMILARITY.SIMILAR_LUT_ID }, true);
-    public static final UniqueKey<LutTagRecord> KEY_LUT_TAG_PRIMARY = Internal.createUniqueKey(LutTag.LUT_TAG, DSL.name("KEY_lut_tag_PRIMARY"), new TableField[] { LutTag.LUT_TAG.LUT_ID, LutTag.LUT_TAG.TAG }, true);
     public static final UniqueKey<ModuleRecord> KEY_MODULE_MODULE_CODE_UINDEX = Internal.createUniqueKey(Module.MODULE, DSL.name("KEY_module_module_code_uindex"), new TableField[] { Module.MODULE.CODE }, true);
     public static final UniqueKey<ModuleRecord> KEY_MODULE_PRIMARY = Internal.createUniqueKey(Module.MODULE, DSL.name("KEY_module_PRIMARY"), new TableField[] { Module.MODULE.ID }, true);
-    public static final UniqueKey<PaymentOrderRecord> KEY_PAYMENT_ORDER_CODE = Internal.createUniqueKey(PaymentOrder.PAYMENT_ORDER, DSL.name("KEY_payment_order_code"), new TableField[] { PaymentOrder.PAYMENT_ORDER.CODE }, true);
-    public static final UniqueKey<PaymentOrderRecord> KEY_PAYMENT_ORDER_PAYOS_ORDER_CODE = Internal.createUniqueKey(PaymentOrder.PAYMENT_ORDER, DSL.name("KEY_payment_order_payos_order_code"), new TableField[] { PaymentOrder.PAYMENT_ORDER.PAYOS_ORDER_CODE }, true);
-    public static final UniqueKey<PaymentOrderRecord> KEY_PAYMENT_ORDER_PRIMARY = Internal.createUniqueKey(PaymentOrder.PAYMENT_ORDER, DSL.name("KEY_payment_order_PRIMARY"), new TableField[] { PaymentOrder.PAYMENT_ORDER.ID }, true);
     public static final UniqueKey<PermissionRecord> KEY_PERMISSION_PERMISSION_ROLE_RESOURCE_UINDEX = Internal.createUniqueKey(Permission.PERMISSION, DSL.name("KEY_permission_permission_role_resource_uindex"), new TableField[] { Permission.PERMISSION.ROLE_ID, Permission.PERMISSION.RESOURCE_ID }, true);
     public static final UniqueKey<PermissionRecord> KEY_PERMISSION_PRIMARY = Internal.createUniqueKey(Permission.PERMISSION, DSL.name("KEY_permission_PRIMARY"), new TableField[] { Permission.PERMISSION.ID }, true);
-    public static final UniqueKey<PlanRecord> KEY_PLAN_CODE = Internal.createUniqueKey(Plan.PLAN, DSL.name("KEY_plan_code"), new TableField[] { Plan.PLAN.CODE }, true);
-    public static final UniqueKey<PlanRecord> KEY_PLAN_PRIMARY = Internal.createUniqueKey(Plan.PLAN, DSL.name("KEY_plan_PRIMARY"), new TableField[] { Plan.PLAN.ID }, true);
-    public static final UniqueKey<RecEvalRunRecord> KEY_REC_EVAL_RUN_PRIMARY = Internal.createUniqueKey(RecEvalRun.REC_EVAL_RUN, DSL.name("KEY_rec_eval_run_PRIMARY"), new TableField[] { RecEvalRun.REC_EVAL_RUN.ID }, true);
-    public static final UniqueKey<RecEvalTestRecord> KEY_REC_EVAL_TEST_PRIMARY = Internal.createUniqueKey(RecEvalTest.REC_EVAL_TEST, DSL.name("KEY_rec_eval_test_PRIMARY"), new TableField[] { RecEvalTest.REC_EVAL_TEST.ID }, true);
-    public static final UniqueKey<RecEvalTestRecord> KEY_REC_EVAL_TEST_UK_REC_EVAL_TEST = Internal.createUniqueKey(RecEvalTest.REC_EVAL_TEST, DSL.name("KEY_rec_eval_test_uk_rec_eval_test"), new TableField[] { RecEvalTest.REC_EVAL_TEST.BATCH_CODE, RecEvalTest.REC_EVAL_TEST.SCENARIO, RecEvalTest.REC_EVAL_TEST.METRIC, RecEvalTest.REC_EVAL_TEST.K, RecEvalTest.REC_EVAL_TEST.ALGORITHM_A, RecEvalTest.REC_EVAL_TEST.ALGORITHM_B }, true);
-    public static final UniqueKey<RecImpressionRecord> KEY_REC_IMPRESSION_PRIMARY = Internal.createUniqueKey(RecImpression.REC_IMPRESSION, DSL.name("KEY_rec_impression_PRIMARY"), new TableField[] { RecImpression.REC_IMPRESSION.ID }, true);
     public static final UniqueKey<RefreshTokenRecord> KEY_REFRESH_TOKEN_PRIMARY = Internal.createUniqueKey(RefreshToken.REFRESH_TOKEN, DSL.name("KEY_refresh_token_PRIMARY"), new TableField[] { RefreshToken.REFRESH_TOKEN.ID }, true);
     public static final UniqueKey<RefreshTokenRecord> KEY_REFRESH_TOKEN_REFRESH_TOKEN_HASH_UINDEX = Internal.createUniqueKey(RefreshToken.REFRESH_TOKEN, DSL.name("KEY_refresh_token_refresh_token_hash_uindex"), new TableField[] { RefreshToken.REFRESH_TOKEN.TOKEN_HASH }, true);
     public static final UniqueKey<ResourceRecord> KEY_RESOURCE_PRIMARY = Internal.createUniqueKey(Resource.RESOURCE, DSL.name("KEY_resource_PRIMARY"), new TableField[] { Resource.RESOURCE.ID }, true);
     public static final UniqueKey<ResourceRecord> KEY_RESOURCE_RESOURCE_CODE_UINDEX = Internal.createUniqueKey(Resource.RESOURCE, DSL.name("KEY_resource_resource_code_uindex"), new TableField[] { Resource.RESOURCE.CODE }, true);
     public static final UniqueKey<RoleRecord> KEY_ROLE_PRIMARY = Internal.createUniqueKey(Role.ROLE, DSL.name("KEY_role_PRIMARY"), new TableField[] { Role.ROLE.ID }, true);
     public static final UniqueKey<RoleRecord> KEY_ROLE_ROLE_NAME_UINDEX = Internal.createUniqueKey(Role.ROLE, DSL.name("KEY_role_role_name_uindex"), new TableField[] { Role.ROLE.NAME }, true);
-    public static final UniqueKey<SubscriptionRecord> KEY_SUBSCRIPTION_PRIMARY = Internal.createUniqueKey(Subscription.SUBSCRIPTION, DSL.name("KEY_subscription_PRIMARY"), new TableField[] { Subscription.SUBSCRIPTION.ID }, true);
-    public static final UniqueKey<SubscriptionRecord> KEY_SUBSCRIPTION_UQ_SUBSCRIPTION_ACTIVE_USER = Internal.createUniqueKey(Subscription.SUBSCRIPTION, DSL.name("KEY_subscription_uq_subscription_active_user"), new TableField[] { Subscription.SUBSCRIPTION.ACTIVE_USER_ID }, true);
     public static final UniqueKey<UserAppRecord> KEY_USER_APP_PRIMARY = Internal.createUniqueKey(UserApp.USER_APP, DSL.name("KEY_user_app_PRIMARY"), new TableField[] { UserApp.USER_APP.ID }, true);
     public static final UniqueKey<UserAppRecord> KEY_USER_APP_USER_APP_EMAIL_UINDEX = Internal.createUniqueKey(UserApp.USER_APP, DSL.name("KEY_user_app_user_app_email_uindex"), new TableField[] { UserApp.USER_APP.EMAIL }, true);
     public static final UniqueKey<UserAppRecord> KEY_USER_APP_USER_APP_PHONE_UINDEX = Internal.createUniqueKey(UserApp.USER_APP, DSL.name("KEY_user_app_user_app_phone_uindex"), new TableField[] { UserApp.USER_APP.PHONE }, true);
-    public static final UniqueKey<UserEventRecord> KEY_USER_EVENT_PRIMARY = Internal.createUniqueKey(UserEvent.USER_EVENT, DSL.name("KEY_user_event_PRIMARY"), new TableField[] { UserEvent.USER_EVENT.ID }, true);
-    public static final UniqueKey<UserPreferenceRecord> KEY_USER_PREFERENCE_PRIMARY = Internal.createUniqueKey(UserPreference.USER_PREFERENCE, DSL.name("KEY_user_preference_PRIMARY"), new TableField[] { UserPreference.USER_PREFERENCE.ID }, true);
-    public static final UniqueKey<UserPreferenceRecord> KEY_USER_PREFERENCE_UK_USER_PREFERENCE = Internal.createUniqueKey(UserPreference.USER_PREFERENCE, DSL.name("KEY_user_preference_uk_user_preference"), new TableField[] { UserPreference.USER_PREFERENCE.USER_ID, UserPreference.USER_PREFERENCE.CATEGORY_ID }, true);
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<CollectionRecord, UserAppRecord> FK_COLLECTION_USER = Internal.createForeignKey(Collection.COLLECTION, DSL.name("fk_collection_user"), new TableField[] { Collection.COLLECTION.USER_ID }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
-    public static final ForeignKey<CollectionItemRecord, CollectionRecord> FK_COLLECTION_ITEM_COLLECTION = Internal.createForeignKey(CollectionItem.COLLECTION_ITEM, DSL.name("fk_collection_item_collection"), new TableField[] { CollectionItem.COLLECTION_ITEM.COLLECTION_ID }, Keys.KEY_COLLECTION_PRIMARY, new TableField[] { Collection.COLLECTION.ID }, true);
-    public static final ForeignKey<CollectionItemRecord, LutRecord> FK_COLLECTION_ITEM_LUT = Internal.createForeignKey(CollectionItem.COLLECTION_ITEM, DSL.name("fk_collection_item_lut"), new TableField[] { CollectionItem.COLLECTION_ITEM.LUT_ID }, Keys.KEY_LUT_PRIMARY, new TableField[] { Lut.LUT.ID }, true);
-    public static final ForeignKey<DownloadLogRecord, LutRecord> FK_DOWNLOAD_LOG_LUT = Internal.createForeignKey(DownloadLog.DOWNLOAD_LOG, DSL.name("fk_download_log_lut"), new TableField[] { DownloadLog.DOWNLOAD_LOG.LUT_ID }, Keys.KEY_LUT_PRIMARY, new TableField[] { Lut.LUT.ID }, true);
-    public static final ForeignKey<DownloadLogRecord, UserAppRecord> FK_DOWNLOAD_LOG_USER = Internal.createForeignKey(DownloadLog.DOWNLOAD_LOG, DSL.name("fk_download_log_user"), new TableField[] { DownloadLog.DOWNLOAD_LOG.USER_ID }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
-    public static final ForeignKey<LutRecord, UserAppRecord> FK_LUT_CREATED_BY = Internal.createForeignKey(Lut.LUT, DSL.name("fk_lut_created_by"), new TableField[] { Lut.LUT.CREATED_BY }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
-    public static final ForeignKey<LutRecord, CreatorRecord> FK_LUT_CREATOR = Internal.createForeignKey(Lut.LUT, DSL.name("fk_lut_creator"), new TableField[] { Lut.LUT.CREATOR_ID }, Keys.KEY_CREATOR_PRIMARY, new TableField[] { Creator.CREATOR.ID }, true);
-    public static final ForeignKey<LutCategoryMapRecord, LutCategoryRecord> FK_LCM_CATEGORY = Internal.createForeignKey(LutCategoryMap.LUT_CATEGORY_MAP, DSL.name("fk_lcm_category"), new TableField[] { LutCategoryMap.LUT_CATEGORY_MAP.CATEGORY_ID }, Keys.KEY_LUT_CATEGORY_PRIMARY, new TableField[] { LutCategory.LUT_CATEGORY.ID }, true);
-    public static final ForeignKey<LutCategoryMapRecord, LutRecord> FK_LCM_LUT = Internal.createForeignKey(LutCategoryMap.LUT_CATEGORY_MAP, DSL.name("fk_lcm_lut"), new TableField[] { LutCategoryMap.LUT_CATEGORY_MAP.LUT_ID }, Keys.KEY_LUT_PRIMARY, new TableField[] { Lut.LUT.ID }, true);
-    public static final ForeignKey<LutColorFeatureRecord, LutRecord> FK_LUT_COLOR_FEATURE_LUT = Internal.createForeignKey(LutColorFeature.LUT_COLOR_FEATURE, DSL.name("fk_lut_color_feature_lut"), new TableField[] { LutColorFeature.LUT_COLOR_FEATURE.LUT_ID }, Keys.KEY_LUT_PRIMARY, new TableField[] { Lut.LUT.ID }, true);
-    public static final ForeignKey<LutSimilarityRecord, LutRecord> FK_LUT_SIMILARITY_LUT = Internal.createForeignKey(LutSimilarity.LUT_SIMILARITY, DSL.name("fk_lut_similarity_lut"), new TableField[] { LutSimilarity.LUT_SIMILARITY.LUT_ID }, Keys.KEY_LUT_PRIMARY, new TableField[] { Lut.LUT.ID }, true);
-    public static final ForeignKey<LutSimilarityRecord, LutRecord> FK_LUT_SIMILARITY_SIMILAR = Internal.createForeignKey(LutSimilarity.LUT_SIMILARITY, DSL.name("fk_lut_similarity_similar"), new TableField[] { LutSimilarity.LUT_SIMILARITY.SIMILAR_LUT_ID }, Keys.KEY_LUT_PRIMARY, new TableField[] { Lut.LUT.ID }, true);
-    public static final ForeignKey<LutTagRecord, LutRecord> FK_LUT_TAG_LUT = Internal.createForeignKey(LutTag.LUT_TAG, DSL.name("fk_lut_tag_lut"), new TableField[] { LutTag.LUT_TAG.LUT_ID }, Keys.KEY_LUT_PRIMARY, new TableField[] { Lut.LUT.ID }, true);
-    public static final ForeignKey<PaymentOrderRecord, LutRecord> FK_PAYMENT_ORDER_LUT = Internal.createForeignKey(PaymentOrder.PAYMENT_ORDER, DSL.name("fk_payment_order_lut"), new TableField[] { PaymentOrder.PAYMENT_ORDER.SOURCE_LUT_ID }, Keys.KEY_LUT_PRIMARY, new TableField[] { Lut.LUT.ID }, true);
-    public static final ForeignKey<PaymentOrderRecord, PlanRecord> FK_PAYMENT_ORDER_PLAN = Internal.createForeignKey(PaymentOrder.PAYMENT_ORDER, DSL.name("fk_payment_order_plan"), new TableField[] { PaymentOrder.PAYMENT_ORDER.PLAN_ID }, Keys.KEY_PLAN_PRIMARY, new TableField[] { Plan.PLAN.ID }, true);
-    public static final ForeignKey<PaymentOrderRecord, UserAppRecord> FK_PAYMENT_ORDER_USER = Internal.createForeignKey(PaymentOrder.PAYMENT_ORDER, DSL.name("fk_payment_order_user"), new TableField[] { PaymentOrder.PAYMENT_ORDER.USER_ID }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
     public static final ForeignKey<PermissionRecord, ResourceRecord> PERMISSION_RESOURCE_FK = Internal.createForeignKey(Permission.PERMISSION, DSL.name("permission_resource_fk"), new TableField[] { Permission.PERMISSION.RESOURCE_ID }, Keys.KEY_RESOURCE_PRIMARY, new TableField[] { Resource.RESOURCE.ID }, true);
     public static final ForeignKey<PermissionRecord, RoleRecord> PERMISSION_ROLE_FK = Internal.createForeignKey(Permission.PERMISSION, DSL.name("permission_role_fk"), new TableField[] { Permission.PERMISSION.ROLE_ID }, Keys.KEY_ROLE_PRIMARY, new TableField[] { Role.ROLE.ID }, true);
-    public static final ForeignKey<RecImpressionRecord, UserAppRecord> FK_REC_IMPRESSION_USER = Internal.createForeignKey(RecImpression.REC_IMPRESSION, DSL.name("fk_rec_impression_user"), new TableField[] { RecImpression.REC_IMPRESSION.USER_ID }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
     public static final ForeignKey<RefreshTokenRecord, UserAppRecord> REFRESH_TOKEN_USER_FK = Internal.createForeignKey(RefreshToken.REFRESH_TOKEN, DSL.name("refresh_token_user_fk"), new TableField[] { RefreshToken.REFRESH_TOKEN.USER_ID }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
     public static final ForeignKey<ResourceRecord, ModuleRecord> RESOURCE_MODULE_FK = Internal.createForeignKey(Resource.RESOURCE, DSL.name("resource_module_fk"), new TableField[] { Resource.RESOURCE.MODULE_ID }, Keys.KEY_MODULE_PRIMARY, new TableField[] { Module.MODULE.ID }, true);
-    public static final ForeignKey<SubscriptionRecord, PaymentOrderRecord> FK_SUBSCRIPTION_ORDER = Internal.createForeignKey(Subscription.SUBSCRIPTION, DSL.name("fk_subscription_order"), new TableField[] { Subscription.SUBSCRIPTION.ORDER_ID }, Keys.KEY_PAYMENT_ORDER_PRIMARY, new TableField[] { PaymentOrder.PAYMENT_ORDER.ID }, true);
-    public static final ForeignKey<SubscriptionRecord, PlanRecord> FK_SUBSCRIPTION_PLAN = Internal.createForeignKey(Subscription.SUBSCRIPTION, DSL.name("fk_subscription_plan"), new TableField[] { Subscription.SUBSCRIPTION.PLAN_ID }, Keys.KEY_PLAN_PRIMARY, new TableField[] { Plan.PLAN.ID }, true);
-    public static final ForeignKey<SubscriptionRecord, UserAppRecord> FK_SUBSCRIPTION_USER = Internal.createForeignKey(Subscription.SUBSCRIPTION, DSL.name("fk_subscription_user"), new TableField[] { Subscription.SUBSCRIPTION.USER_ID }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
     public static final ForeignKey<UserAppRecord, RoleRecord> USER_APP_ROLE_FK = Internal.createForeignKey(UserApp.USER_APP, DSL.name("user_app_role_fk"), new TableField[] { UserApp.USER_APP.ROLE_ID }, Keys.KEY_ROLE_PRIMARY, new TableField[] { Role.ROLE.ID }, true);
-    public static final ForeignKey<UserEventRecord, LutRecord> FK_USER_EVENT_LUT = Internal.createForeignKey(UserEvent.USER_EVENT, DSL.name("fk_user_event_lut"), new TableField[] { UserEvent.USER_EVENT.LUT_ID }, Keys.KEY_LUT_PRIMARY, new TableField[] { Lut.LUT.ID }, true);
-    public static final ForeignKey<UserEventRecord, UserAppRecord> FK_USER_EVENT_USER = Internal.createForeignKey(UserEvent.USER_EVENT, DSL.name("fk_user_event_user"), new TableField[] { UserEvent.USER_EVENT.USER_ID }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
-    public static final ForeignKey<UserPreferenceRecord, LutCategoryRecord> FK_USER_PREFERENCE_CATEGORY = Internal.createForeignKey(UserPreference.USER_PREFERENCE, DSL.name("fk_user_preference_category"), new TableField[] { UserPreference.USER_PREFERENCE.CATEGORY_ID }, Keys.KEY_LUT_CATEGORY_PRIMARY, new TableField[] { LutCategory.LUT_CATEGORY.ID }, true);
-    public static final ForeignKey<UserPreferenceRecord, UserAppRecord> FK_USER_PREFERENCE_USER = Internal.createForeignKey(UserPreference.USER_PREFERENCE, DSL.name("fk_user_preference_user"), new TableField[] { UserPreference.USER_PREFERENCE.USER_ID }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
 }

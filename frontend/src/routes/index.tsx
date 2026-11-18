@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { HomePage } from "@/components/shop/home/home-page";
+import { ComingSoonPage } from "@/components/shop/coming-soon-page";
+import { ShopLayout } from "@/components/shop/layout/shop-layout";
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      {
-        title: "DownBeat | Kho LUT chỉnh màu cho nhà sáng tạo"
-      }
-    ]
+    meta: [{ title: "Nike. Just Do It." }]
   }),
-  component: HomePage
+  component: () => (
+    <ShopLayout>
+      <ComingSoonPage />
+    </ShopLayout>
+  )
 });
