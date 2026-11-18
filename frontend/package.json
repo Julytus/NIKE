@@ -9,9 +9,6 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report",
     "api:types": "openapi-typescript http://localhost:9500/api/v3/api-docs -o src/lib/types/api.gen.ts"
   },
   "dependencies": {
@@ -52,9 +49,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^9.36.0",
-    "@playwright/test": "1.63.0",
     "@tanstack/eslint-plugin-query": "^5.91.1",
     "@tanstack/router-plugin": "^1.133.3",
     "@types/node": "^24.6.0",

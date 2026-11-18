@@ -1,8 +1,8 @@
-# DownBeat Frontend — quy tắc cho worker agy (Antigravity)
+# Frontend — quy tắc code (Claude tự code và tự review theo file này)
 
-Đọc `../AGENTS.md` (giao thức worker chung) trước file này.
+Đọc `../AGENTS.md` (quy tắc chung) trước file này.
 
-React 19 · Vite 7 · TypeScript · TanStack Router / Query / Table / Form · Zustand · axios · Tailwind 4 + shadcn · Playwright. Package manager: **pnpm**.
+React 19 · Vite 7 · TypeScript · TanStack Router / Query / Table / Form · Zustand · axios · Tailwind 4 + shadcn. Package manager: **pnpm**.
 
 ## Lệnh (chạy trong `frontend/`)
 
@@ -10,7 +10,6 @@ React 19 · Vite 7 · TypeScript · TanStack Router / Query / Table / Form · Zu
 pnpm dev            # :4500, gọi backend theo VITE_API_URL (frontend/.env)
 pnpm build          # tsc -b + vite build = type-check; cũng sinh lại src/routeTree.gen.ts
 pnpm lint           # eslint (0 error mới được coi là xong; warning cũ chấp nhận)
-pnpm test:e2e tests/e2e/<slug>.spec.ts --reporter=line   # chạy test nghiệm thu của Claude; CẦN backend :9500
 pnpm api:types      # sinh src/lib/types/api.gen.ts từ OpenAPI (backend phải đang chạy)
 ```
 
@@ -44,7 +43,6 @@ src/
    ├─ stores/auth.ts       Zustand: accessToken, refreshToken, userId, remember
    ├─ utils/form-errors.ts toFieldErrors (lỗi zod → lỗi từng field)
    └─ utils.ts             `cn`
-tests/e2e/                 DO CLAUDE VIẾT — chỉ chạy, không sửa
 ```
 
 ## Khu cửa hàng (`/luts`, `/pricing`)
@@ -62,12 +60,12 @@ Giao diện riêng, không dùng token zinc của trang quản trị:
 ```
 plan §5 (hợp đồng API) ──► 1. viết type tay theo §5 ──► 2. axios ──► 3. tanstack options (meta toast) ──► 4. components ──► 5. route ──► 6. sidebar
                                      ▲
-backend xong + đang chạy :9500 ──► pnpm api:types ──► đối chiếu api.gen.ts với type tay, lệch thì `ask` (không tự sửa theo BE)
-                                                                                         ──► 7. pnpm build + pnpm lint ──► 8. pnpm test:e2e tests/e2e/<slug>.spec.ts
+backend xong + đang chạy :9500 ──► pnpm api:types ──► đối chiếu api.gen.ts với type tay, lệch thì sửa backend / plan trước (ghi §12)
+                                                                                         ──► 7. pnpm build + pnpm lint ──► 8. cd ../automation && pnpm exec playwright test tests/<khu-vực>/<slug>.spec.js
 ```
 
 1. **Không chờ backend.** Viết `lib/types/<domain>.ts` từ plan §5 ngay (JSON mẫu trong plan là nguồn sự thật).
-2. **Khi backend đã xong và đang chạy** (`curl -s -o /dev/null -w "%{http_code}" http://localhost:9500/api/v3/api-docs` trả 200): chạy `pnpm api:types`, file `src/lib/types/api.gen.ts` được sinh lại từ OpenAPI. Mở phần schema của domain trong đó, so tên field / kiểu / nullable với type viết tay. Khớp thì giữ type tay; lệch thì `ask` Claude kèm đoạn lệch, vì hoặc backend sai hoặc plan cần sửa. Không import trực tiếp `api.gen.ts` vào component; type tay là thứ code dùng.
+2. **Khi backend đã xong và đang chạy** (`curl -s -o /dev/null -w "%{http_code}" http://localhost:9500/api/v3/api-docs` trả 200): chạy `pnpm api:types`, file `src/lib/types/api.gen.ts` được sinh lại từ OpenAPI. Mở phần schema của domain trong đó, so tên field / kiểu / nullable với type viết tay. Khớp thì giữ type tay; lệch thì xác định backend sai hay plan sai, sửa bên sai (đổi plan thì ghi §12). Không import trực tiếp `api.gen.ts` vào component; type tay là thứ code dùng.
 3. Viết tiếp theo thứ tự file ở mục dưới, rồi `pnpm build` (cũng sinh lại `routeTree.gen.ts` khi thêm route) và `pnpm lint`.
 4. Chạy E2E của Claude nếu backend đã sẵn sàng. Đỏ do giao diện thì sửa code, không sửa test.
 
@@ -75,7 +73,7 @@ backend xong + đang chạy :9500 ──► pnpm api:types ──► đối chi�
 
 ## Trang quản trị: khung mẫu
 
-**Code mẫu để chép** (4 trang phân quyền, nhóm "Hệ thống" ở sidebar, đã qua E2E `tests/e2e/phan-quyen.spec.ts`):
+**Code mẫu để chép** (4 trang phân quyền, nhóm "Hệ thống" ở sidebar, trang Chức vụ đã có E2E `automation/tests/admin/role.spec.js`):
 
 | Trang | File route | Chép khi trang mới có |
 |---|---|---|
@@ -420,7 +418,7 @@ Mẫu tải file lên (multipart `FormData`, không tự đặt `Content-Type`, 
 
 Chưa có mẫu (làm khi plan yêu cầu): số / tiền trong form (giữ chuỗi, zod regex, `Number()` khi dựng payload, hiện bằng `formatVnd`); trang chỉ xem có `Sheet` chi tiết.
 
-### Tự kiểm trước khi gửi `worker_done`
+### Tự kiểm trước khi coi là xong
 
 - [ ] Chuỗi khớp §6 từng chữ: `title`, `addLabel`, `header` của cột, mục menu ⋮, label, placeholder lọc, mục sidebar, toast, message lỗi zod.
 - [ ] Nút ⋮, checkbox, switch có `aria-label` chứa tên bản ghi.
@@ -452,7 +450,7 @@ Chưa có mẫu (làm khi plan yêu cầu): số / tiền trong form (giữ chu�
 Cách dùng trong dự án này:
 
 1. **Trước khi viết component**, đọc `.agents/skills/shadcn/SKILL.md` và các file `rules/*.md` liên quan. Xem component đang có: `pnpm dlx shadcn@latest info --json` (dòng ``!`npx shadcn@latest info --json` `` trong SKILL.md chỉ chạy được ở Claude Code, ở đây phải tự chạy). Dự án là base **radix** (style new-york): dùng `asChild`, toast dùng `sonner`.
-2. **Ưu tiên component shadcn có sẵn** (`src/components/ui/`) rồi mới đến component chính thức chưa cài: `pnpm dlx shadcn@latest search @shadcn -q "<từ khoá>"`, `pnpm dlx shadcn@latest docs <component>`, rồi `pnpm dlx shadcn@latest add <component>`. Không viết `div` tự style khi đã có component tương ứng (`Alert`, `Badge`, `Skeleton`, `Separator`, `Empty`…). Không dùng registry cộng đồng (`@xxx/...`, `owner/repo`) trừ khi task cho phép. **Không bao giờ `--overwrite`** component trong `src/components/ui/` (nhiều file đã sửa tay); cần cập nhật thì `ask`.
+2. **Ưu tiên component shadcn có sẵn** (`src/components/ui/`) rồi mới đến component chính thức chưa cài: `pnpm dlx shadcn@latest search @shadcn -q "<từ khoá>"`, `pnpm dlx shadcn@latest docs <component>`, rồi `pnpm dlx shadcn@latest add <component>`. Không viết `div` tự style khi đã có component tương ứng (`Alert`, `Badge`, `Skeleton`, `Separator`, `Empty`…). Không dùng registry cộng đồng (`@xxx/...`, `owner/repo`) trừ khi task cho phép. **Không bao giờ `--overwrite`** component trong `src/components/ui/` (nhiều file đã sửa tay); cần cập nhật thì hỏi người dùng.
 3. **Tra UX khi gặp chỗ cần quyết định** (form, bảng, dialog xoá, trạng thái rỗng, focus bàn phím…), mỗi lần một ý, chạy từ gốc repo:
    ```bash
    python .agents/skills/ui-ux-pro-max/scripts/search.py "form validation error" --domain ux
@@ -461,13 +459,23 @@ Cách dùng trong dự án này:
    ```
    Không dùng `--design-system`, `--persist` hay đổi theme/màu/font toàn app: giao diện trang quản trị giữ nguyên token zinc ở `src/index.css`. Kết quả tra là gợi ý, không phải lệnh.
 4. **Thứ tự ưu tiên khi mâu thuẫn**: plan §5/§6 (nhãn, hợp đồng) > file này và `AGENTS.md` > code hiện có > skill. Ví dụ: dialog trang quản trị vẫn dùng `FormDialog` dù skill shadcn khuyên `FieldGroup` + `Field`; toast vẫn chỉ đặt ở `meta` của mutation.
-5. Không sửa gì trong `.agents/**`. Ghi vào báo cáo `worker_done` một dòng "Skill: …" nêu component shadcn đã thêm và quy tắc UX đã áp (nếu có).
+5. Không sửa gì trong `.agents/**`. Ghi vào §12 của plan component shadcn đã thêm và quy tắc UX đã áp (nếu có).
 
-## Nghiệm thu chuẩn (task không ghi gì thêm thì dùng mục này)
+## Nghiệm thu chuẩn (plan không ghi gì thêm thì dùng mục này)
 
 1. `pnpm build` xanh (type-check + sinh routeTree).
 2. `pnpm lint` 0 error.
-3. Nếu backend đã sẵn sàng: `pnpm test:e2e tests/e2e/<slug>.spec.ts --reporter=line`, dán kết quả vào báo cáo. Test đỏ vì backend chưa xong thì ghi rõ trong báo cáo, không coi là lỗi của bạn.
+3. Spec nghiệm thu của lát ở `automation/` xanh: `cd ../automation && pnpm exec playwright test tests/<khu-vực>/<slug>.spec.js --project=chromium --reporter=line`. Đỏ do giao diện thì sửa code, không sửa spec.
+
+## Quy ước để dễ kiểm thử tự động (thiết kế tổng §8.4)
+
+Bộ test ở `automation/` (Playwright + JavaScript) chọn phần tử theo các quy ước dưới đây; áp dụng cho mọi màn hình mới từ lát `giao-dien-nike`.
+
+- **Ưu tiên role + tên hiển thị**: nút, link, ô nhập có tên truy cập được đúng chuỗi §6 (`getByRole('button', { name: 'Thêm vào giỏ' })`). Nút chỉ có biểu tượng phải có `aria-label`; nút có chữ ẩn ở màn hẹp (`hidden lg:inline`) cũng thêm `aria-label` để tên không mất trên điện thoại.
+- **`data-testid` cho phần tử tương tác chính** hoặc khi không có tên ổn định, dạng `<khu-vực>-<phần-tử>[-<khoá>]`, chữ thường, gạch nối: `filter-gender-men`, `product-card`, `pdp-size-42`, `pdp-add-to-cart`, `cart-item-qty`, `admin-role-add`. Phần tử lặp lại dùng chung một testid và phân biệt bằng nội dung / khoá (`product-card` + tên sản phẩm).
+- Không đổi hoặc xoá `data-testid` đã có mà không sửa page object tương ứng trong `automation/pages/`.
+- Trạng thái tải có `aria-busy="true"` trên vùng đang tải; không dùng animation chặn tương tác (test chờ theo trạng thái, không chờ thời gian).
+- Thông báo (toast) và lỗi form hiển thị nguyên văn chuỗi §6 / message backend §5.4.
 
 ## Code cũ chưa theo chuẩn (đừng chép)
 

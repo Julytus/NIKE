@@ -9,8 +9,7 @@ const stamp = () => `${Date.now().toString(36)}${faker.string.alphanumeric(4).to
 export const uniqueEmail = () => `auto-${stamp()}@test.local`;
 
 /** Tên duy nhất có tiền tố, vd `AUTO-lx3k9a1b2c` hoặc `AUTO-role-lx3k9a1b2c`. */
-export const uniqueName = (prefix = '') =>
-  `${AUTO_PREFIX}${prefix ? `${prefix}-` : ''}${stamp()}`;
+export const uniqueName = (prefix = '') => `${AUTO_PREFIX}${prefix ? `${prefix}-` : ''}${stamp()}`;
 
 /**
  * Tên duy nhất dài đúng `length` ký tự (dùng cho giá trị biên), bắt đầu bằng `AUTO-`.

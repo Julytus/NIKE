@@ -153,13 +153,15 @@ Tài khoản cửa hàng và tài khoản quản trị là hai hệ riêng: tài
 
 ```bash
 cd frontend && pnpm build && pnpm lint
-cd frontend && pnpm test:e2e                       # Playwright, cần dev server :4500 (và backend cho auth.spec)
 cd backend  && mvn -q "-Djooq.codegen.skip=true" test
+cd automation && pnpm install && pnpm exec playwright install   # lần đầu
+cd automation && pnpm test:smoke                   # nhóm @smoke, mọi trình duyệt (cần backend :9500; frontend :4500 tự bật)
+cd automation && pnpm test                         # toàn bộ: api + chromium + firefox + webkit + mobile-chrome
+cd automation && pnpm report                       # mở báo cáo HTML; pnpm allure:generate && pnpm allure:open cho Allure
 ```
 
-Bộ E2E của cửa hàng chạy trên 4 cỡ màn hình × 2 giao diện sáng/tối, kiểm tra luồng tải LUT, đăng ký, nâng cấp, thanh toán, và quét lỗi truy cập bằng axe (độ tương phản, cỡ vùng bấm tối thiểu 24px…).
-
-Mã test (`frontend/tests/`, `backend/**/src/test/`) đang nằm trong `.gitignore` nên chỉ có trên máy phát triển.
+Bộ automation test (Playwright + JavaScript, Page Object Model) nằm ở [`automation/`](automation/README.md); GitHub Actions chạy nhóm `@smoke` (API + Chromium) mỗi lần push / mở PR vào `main` (`.github/workflows/e2e-smoke.yml`).
+Mã test JUnit của backend (`backend/**/src/test/`) đang nằm trong `.gitignore` nên chỉ có trên máy phát triển.
 
 ## Tài liệu
 

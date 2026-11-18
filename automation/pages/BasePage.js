@@ -10,9 +10,9 @@ export class BasePage {
     this.page = page;
   }
 
-  /** Mở trang và chờ DOM tải xong. @param {string} [path] */
+  /** Mở trang và chờ tải xong (gồm script của Vite dev). @param {string} [path] */
   async goto(path = this.path) {
-    await this.page.goto(path, { waitUntil: 'domcontentloaded' });
+    await this.page.goto(path, { waitUntil: 'load' });
   }
 
   /** Màn hẹp (điện thoại): thanh bên ẩn trong menu trượt. */
