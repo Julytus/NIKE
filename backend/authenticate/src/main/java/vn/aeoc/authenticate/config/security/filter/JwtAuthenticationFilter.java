@@ -1,0 +1,176 @@
+
+package vn.aeoc.authenticate.config.security.filter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import vn.aeoc.base.config.web.PrincipalRequestWrapper;
+import vn.aeoc.base.constant.ErrorCode;
+import vn.aeoc.base.exception.AppException;
+import vn.aeoc.base.util.HttpResponseUtils;
+import vn.aeoc.authenticate.service.auth.JWTService;
+
+import java.io.IOException;
+import java.security.Principal;
+import java.util.List;
+import java.util.regex.Pattern;
+
+@Component
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final JWTService jwtService;
+
+    /**
+     * Các API không cần xác thực JWT.
+     * Các đường dẫn được khai báo tương đối với context path.
+     */
+    private static final List<String> WHITE_LIST_API = List.of(
+            "/user/authenticate"
+    );
+
+    /**
+     * Quên/đặt lại mật khẩu: người dùng chưa đăng nhập nên không có token.
+     * Refresh/logout: access token có thể đã hết hạn, xác thực bằng refresh token trong body.
+     */
+    private static final List<String> WHITE_LIST_POST_API = List.of(
+            "/account/register",
+            "/auth/refresh",
+            "/auth/logout",
+            "/payment/payos/webhook"
+    );
+
+    /** Các API public nhưng chỉ cho method GET. */
+    private static final List<String> WHITE_LIST_GET_API = List.of(
+            "/actuator/health" // healthcheck của docker/nginx
+    );
+    private static final Pattern PUBLIC_FILE_PATH = Pattern.compile("^/[a-z0-9-]+/public/.*");
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // Bỏ qua preflight request của CORS
+        return "OPTIONS".equalsIgnoreCase(request.getMethod())
+                && request.getHeader("Origin") != null
+                && request.getHeader("Access-Control-Request-Method") != null;
+    }
+
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+
+        String requestUri = request.getRequestURI();
+        String contextPath = request.getContextPath() != null ? request.getContextPath() : "";
+        String path = (contextPath.isEmpty() || !requestUri.startsWith(contextPath))
+                ? requestUri
+                : requestUri.substring(contextPath.length());
+
+        if (isPublicPath(path)) {
+            String token = extractTokenFromRequest(request);
+            if (token != null) {
+                try {
+                    if (!jwtService.isTokenExpired(token)) {
+                        Principal principal = jwtService.extractPrincipal(token, request);
+                        if (principal != null) {
+                            request = new PrincipalRequestWrapper(request, principal);
+                        }
+                    }
+                } catch (Exception ignored) {
+                    // Thiếu / sai / hết hạn -> đi tiếp không principal, không 401
+                }
+            }
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (isWhiteListed(request, path)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String apiKey = request.getHeader("x-api-key");
+
+        if (apiKey != null
+                && !apiKey.isBlank()
+                && jwtService.isValidApiKey(apiKey)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = extractTokenFromRequest(request);
+
+        try {
+            if (token == null) {
+                HttpResponseUtils.writeError(
+                        response, request, ErrorCode.LOGIN
+                );
+                return;
+            }
+
+            if (jwtService.isTokenExpired(token)) {
+                HttpResponseUtils.writeError(
+                        response, request, ErrorCode.TOKEN_EXPIRED
+                );
+                return;
+            }
+
+            Principal principal = jwtService.extractPrincipal(token, request);
+
+            if (principal == null) {
+                HttpResponseUtils.writeError(
+                        response, request, ErrorCode.UNAUTHORIZED
+                );
+                return;
+            }
+
+            request = new PrincipalRequestWrapper(request, principal);
+            filterChain.doFilter(request, response);
+
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            HttpResponseUtils.writeError(
+                    response, request, ErrorCode.TOKEN_EXPIRED
+            );
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
+            HttpResponseUtils.writeError(
+                    response, request, ErrorCode.UNAUTHORIZED
+            );
+        } catch (AppException e) {
+            HttpResponseUtils.writeError(
+                    response, request,
+                    e.getStatusCode(), e.getMessage()
+            );
+        }
+    }
+
+    private boolean isPublicPath(String path) {
+        return path != null && (path.startsWith("/public/") || PUBLIC_FILE_PATH.matcher(path).matches());
+    }
+
+    private boolean isWhiteListed(HttpServletRequest request, String path) {
+        return WHITE_LIST_API.contains(path)
+                || ("POST".equalsIgnoreCase(request.getMethod()) && WHITE_LIST_POST_API.contains(path))
+                || ("GET".equalsIgnoreCase(request.getMethod()) && WHITE_LIST_GET_API.contains(path))
+                || path.equals("/swagger-ui.html")
+                || path.equals("/swagger-ui/index.html")
+                || path.startsWith("/swagger-ui/")
+                || path.equals("/v3/api-docs")
+                || path.startsWith("/v3/api-docs/")
+                || path.equals("/v3/api-docs.yaml");
+    }
+
+    private String extractTokenFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+
+        return null;
+    }
+}

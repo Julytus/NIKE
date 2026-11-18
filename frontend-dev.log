@@ -1,0 +1,21 @@
+$ vite
+(node:6136) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+  [32m[1mVITE[22m v7.3.0[39m  [2mready in [0m[1m1880[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m4500[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.16.0.2:[1m4500[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.25.64.1:[1m4500[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.1.247:[1m4500[22m/[39m
+[2m16:35:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m16:35:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m16:35:31[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[2m16:35:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m16:35:31[22m [36m[1m[vite][22m[39m server restarted.
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m4500[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.16.0.2:[1m4500[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.25.64.1:[1m4500[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.1.247:[1m4500[22m/[39m
+[ELIFECYCLE] Command failed with exit code 1.
