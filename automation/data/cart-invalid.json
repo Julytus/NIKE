@@ -1,0 +1,27 @@
+{
+  "$comment": "Lát gio-hang (plan §5.2, §5.3, §9 TC-05): body sai của POST /cart/public/check → 400 + message nguyên văn. `lines: n` = body là n size id khác nhau (quantity 1); `noBody: true` = không gửi body.",
+  "cases": [
+    { "name": "quantity 0", "body": [{ "sizeId": 206, "quantity": 0 }], "message": "Quantity must be between 1 and 10." },
+    { "name": "quantity 11", "body": [{ "sizeId": 206, "quantity": 11 }], "message": "Quantity must be between 1 and 10." },
+    { "name": "quantity -1", "body": [{ "sizeId": 206, "quantity": -1 }], "message": "Quantity must be between 1 and 10." },
+    { "name": "thiếu quantity", "body": [{ "sizeId": 206 }], "message": "Quantity must be between 1 and 10." },
+    { "name": "sizeId 0", "body": [{ "sizeId": 0, "quantity": 1 }], "message": "Invalid size in bag." },
+    { "name": "thiếu sizeId", "body": [{ "quantity": 1 }], "message": "Invalid size in bag." },
+    { "name": "phần tử null", "body": [null], "message": "Invalid size in bag." },
+    {
+      "name": "trùng sizeId",
+      "body": [{ "sizeId": 206, "quantity": 1 }, { "sizeId": 206, "quantity": 2 }],
+      "message": "Each size can only appear once in the bag."
+    },
+    { "name": "51 dòng", "lines": 51, "message": "Your bag can hold up to 50 different items." },
+    { "name": "body {}", "body": {}, "message": "Malformed request body" },
+    { "name": "body \"abc\"", "body": "abc", "message": "Malformed request body" },
+    { "name": "không gửi body", "noBody": true, "message": "Malformed request body" },
+    { "name": "quantity \"abc\"", "body": [{ "sizeId": 206, "quantity": "abc" }], "message": "Malformed request body" },
+    {
+      "name": "lỗi đầu tiên thắng",
+      "body": [{ "sizeId": 206, "quantity": 11 }, { "sizeId": 0, "quantity": 1 }],
+      "message": "Quantity must be between 1 and 10."
+    }
+  ]
+}

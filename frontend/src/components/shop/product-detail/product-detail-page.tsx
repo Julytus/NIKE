@@ -1,8 +1,11 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { ShopButton } from "@/components/shop/ui/shop-button";
 import { useIsDesktop } from "@/hooks/use-media-query";
+import { MAX_QUANTITY } from "@/lib/shop/cart-storage";
 import { showLowStock } from "@/lib/shop/product-detail";
+import { useCart } from "@/lib/stores/cart";
 import type { ProductDetailDTO } from "@/lib/types/product";
+import { AddedToBagDialog, type AddedToBagItem } from "./added-to-bag-dialog";
 import { DeliveryReturns } from "./delivery-returns";
 import { LowStockNotice } from "./low-stock-notice";
 import { ProductDescription } from "./product-description";
@@ -26,6 +29,11 @@ export function ProductDetailPage({ product }: { product: ProductDetailDTO }) {
   const [imageIndex, setImageIndex] = useState(0);
   const [selectedSizeId, setSelectedSizeId] = useState<number | null>(null);
   const [sizeError, setSizeError] = useState(false);
+  // Lát gio-hang §6.2, §6.3: lỗi "đã đủ số lượng" + popup "Added to Bag"
+  const [maxReached, setMaxReached] = useState(false);
+  const [added, setAdded] = useState<AddedToBagItem | null>(null);
+  const [addedOpen, setAddedOpen] = useState(false);
+  const closeAdded = useCallback(() => setAddedOpen(false), []);
 
   const selectedSize = product.sizes.find((s) => s.id === selectedSizeId) ?? null;
   const soldOut = product.totalStock === 0;
@@ -33,11 +41,29 @@ export function ProductDetailPage({ product }: { product: ProductDetailDTO }) {
   const selectSize = (id: number) => {
     setSelectedSizeId(id);
     setSizeError(false);
+    setMaxReached(false);
   };
 
-  /** Lát này chỉ kiểm tra "chưa chọn size"; thêm vào giỏ thuộc lát `gio-hang` (§11 câu 1). */
+  /**
+   * Chưa chọn size → lỗi "Please select a size." (chi-tiet-giay §6.4). Đã chọn → thêm một đôi, tối đa
+   * `min(10, tồn kho)` (gio-hang §6.2); đủ rồi thì báo lỗi, không mở popup.
+   */
   const addToBag = () => {
-    if (selectedSize) return;
+    if (selectedSize) {
+      const ok = useCart.getState().add(selectedSize.id, Math.min(MAX_QUANTITY, selectedSize.stock));
+      setMaxReached(!ok);
+      if (!ok) return;
+      const image = product.images.find((i) => i.sortOrder === 1) ?? product.images[0];
+      setAdded({
+        name: product.name,
+        subtitle: product.subtitle,
+        sizeLabel: selectedSize.sizeLabel,
+        unitPrice: product.salePrice ?? product.price,
+        imageUrl: image?.url ?? null
+      });
+      setAddedOpen(true);
+      return;
+    }
     setSizeError(true);
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     sizeGrid.current?.scrollIntoView({ block: "center", behavior: reduce ? "instant" : "smooth" });
@@ -80,6 +106,11 @@ export function ProductDetailPage({ product }: { product: ProductDetailDTO }) {
       >
         {soldOut ? "Sold Out" : "Add to Bag"}
       </ShopButton>
+      {maxReached && (
+        <p data-testid="pdp-add-error" role="alert" className="-mt-3 text-sm text-(--sh-danger)">
+          You&apos;ve reached the maximum quantity for this size.
+        </p>
+      )}
       <div className="mt-4 flex flex-col gap-10">
         <ProductDescription description={product.description} styleCode={product.styleCode} />
         <DeliveryReturns />
@@ -110,6 +141,7 @@ export function ProductDetailPage({ product }: { product: ProductDetailDTO }) {
       <div className="mt-20 px-6 lg:px-12">
         <RelatedProducts slug={product.slug} />
       </div>
+      <AddedToBagDialog open={addedOpen} item={added} onClose={closeAdded} />
     </div>
   );
 }

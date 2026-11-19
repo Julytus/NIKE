@@ -2,6 +2,8 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Heart, Menu, Search, ShoppingBag, UserRound } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIsDesktop } from "@/hooks/use-media-query";
+import { cartCount } from "@/lib/shop/cart-storage";
+import { useCart } from "@/lib/stores/cart";
 import { signInSearch } from "@/lib/sign-in-redirect";
 import { useShopSession } from "@/lib/stores/shop-session";
 import { AccountMenu } from "./account-menu";
@@ -50,15 +52,36 @@ export function HeaderActions({
       ) : (
         <MobileAccount />
       )}
-      <Link to="/cart" aria-label="Bag" data-testid="header-cart" className={ICON_BUTTON}>
-        <ShoppingBag aria-hidden />
-      </Link>
+      <CartLink />
       {!isDesktop && (
         <button type="button" aria-label="Menu" onClick={onOpenMenu} data-testid="header-menu" className={ICON_BUTTON}>
           <Menu aria-hidden />
         </button>
       )}
     </div>
+  );
+}
+
+/**
+ * Icon túi + số món trong giỏ (plan gio-hang §6.1): số nằm giữa icon (9px / 500), `aria-hidden` vì tên link đã
+ * có số ("Bag, 2 items"); giỏ trống → tên "Bag", không có số; quá 99 → hiện "99+" (tên vẫn số thật).
+ */
+function CartLink() {
+  const count = useCart((s) => cartCount(s.items));
+  const label = count > 0 ? `Bag, ${count} ${count === 1 ? "item" : "items"}` : "Bag";
+  return (
+    <Link to="/cart" aria-label={label} data-testid="header-cart" className={`${ICON_BUTTON} relative`}>
+      <ShoppingBag aria-hidden />
+      {count > 0 && (
+        <span
+          data-testid="header-cart-count"
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-[17px] text-center text-[9px] leading-none font-medium"
+        >
+          {count > 99 ? "99+" : count}
+        </span>
+      )}
+    </Link>
   );
 }
 

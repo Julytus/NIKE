@@ -32,7 +32,9 @@ export class HeaderComponent {
     this.nav = this.root.getByRole('navigation', { name: 'Main menu' });
     this.searchButton = this.root.getByRole('button', { name: 'Search', exact: true });
     this.favoritesLink = this.root.getByRole('link', { name: 'Favourites', exact: true });
-    this.cartLink = this.root.getByRole('link', { name: 'Bag', exact: true });
+    // Tên link túi: "Bag" (giỏ trống) hoặc "Bag, 2 items" — lát gio-hang §6.1
+    this.cartLink = this.root.getByRole('link', { name: /^Bag(, \d+ items?)?$/ });
+    this.cartCount = this.root.getByTestId('header-cart-count');
     this.menuButton = this.root.getByRole('button', { name: 'Menu', exact: true });
     this.megaMenu = page.getByTestId('mega-menu');
 

@@ -1,5 +1,6 @@
 /* global getComputedStyle -- dùng trong locator.evaluate (chạy ở trình duyệt) */
 import { BasePage } from './BasePage.js';
+import { AddedToBagDialog } from './components/AddedToBagDialog.js';
 import { FooterComponent } from './components/FooterComponent.js';
 import { HeaderComponent } from './components/HeaderComponent.js';
 import { ProductCard } from './components/ProductCard.js';
@@ -44,6 +45,9 @@ export class ProductDetailPage extends BasePage {
     this.sizes = this.sizeGrid.getByRole('radio');
     this.sizeError = page.getByTestId('pdp-size-error');
     this.addToBag = page.getByTestId('pdp-add-to-bag');
+    // Lát gio-hang §6.2, §6.3: lỗi đã đủ số lượng + popup "Added to Bag"
+    this.addError = page.getByTestId('pdp-add-error');
+    this.addedToBag = new AddedToBagDialog(page);
 
     // Mô tả + accordion (§6.4 mục 10, 11)
     this.description = page.getByTestId('pdp-description');
@@ -104,6 +108,15 @@ export class ProductDetailPage extends BasePage {
    */
   size(value) {
     return this.page.getByTestId(`pdp-size-${Number(value)}`);
+  }
+
+  /**
+   * Chọn size theo nhãn (vd "EU 42") rồi bấm "Add to Bag" (lát gio-hang §6.2).
+   * @param {string} label
+   */
+  async addSize(label) {
+    await this.sizeByLabel(label).click();
+    await this.addToBag.click();
   }
 
   /** Ô size theo tên radio (vd "EU 42"). @param {string} label */

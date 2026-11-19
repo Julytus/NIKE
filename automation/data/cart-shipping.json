@@ -1,0 +1,11 @@
+{
+  "$comment": "Lát gio-hang (plan §5.1 'Ví dụ tóm tắt', §9 TC-03, TC-15): tạm tính / phí giao hàng / tổng theo giá trị biên. `ui: true` = dùng lại ở TC-15 (trang /cart).",
+  "cases": [
+    { "name": "giỏ rỗng", "items": [], "subtotal": 0, "shippingFee": 0, "total": 0 },
+    { "name": "4.999.000 (dưới ngưỡng)", "items": [{ "sizeId": 2506, "quantity": 1 }], "subtotal": 4999000, "shippingFee": 30000, "total": 5029000 },
+    { "name": "5.000.000 (1 đôi Zoom Fly 6)", "items": [{ "sizeId": 1705, "quantity": 1 }], "subtotal": 5000000, "shippingFee": 0, "total": 5000000, "ui": true },
+    { "name": "5 × 1.000.000", "items": [{ "sizeId": 605, "quantity": 5 }], "subtotal": 5000000, "shippingFee": 0, "total": 5000000, "ui": true },
+    { "name": "2 × 2.000.000 (giá giảm)", "items": [{ "sizeId": 1906, "quantity": 2 }], "subtotal": 4000000, "shippingFee": 30000, "total": 4030000 },
+    { "name": "chỉ dòng hết hàng", "items": [{ "sizeId": 201, "quantity": 1 }], "subtotal": 0, "shippingFee": 0, "total": 0 }
+  ]
+}

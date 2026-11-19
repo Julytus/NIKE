@@ -20,6 +20,7 @@ import { Route as AdminResourcesRouteImport } from './routes/admin/resources'
 import { Route as AdminPermissionsRouteImport } from './routes/admin/permissions'
 import { Route as AdminModulesRouteImport } from './routes/admin/modules'
 import { Route as ShopFavoritesRouteImport } from './routes/_shop/favorites'
+import { Route as ShopCheckoutRouteImport } from './routes/_shop/checkout'
 import { Route as ShopCartRouteImport } from './routes/_shop/cart'
 import { Route as AuthLogoutRouteImport } from './routes/_auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
@@ -81,6 +82,11 @@ const ShopFavoritesRoute = ShopFavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => ShopRoute,
 } as any)
+const ShopCheckoutRoute = ShopCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => ShopRoute,
+} as any)
 const ShopCartRoute = ShopCartRouteImport.update({
   id: '/cart',
   path: '/cart',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/logout': typeof AuthLogoutRoute
   '/cart': typeof ShopCartRoute
+  '/checkout': typeof ShopCheckoutRoute
   '/favorites': typeof ShopFavoritesRoute
   '/admin/modules': typeof AdminModulesRoute
   '/admin/permissions': typeof AdminPermissionsRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/logout': typeof AuthLogoutRoute
   '/cart': typeof ShopCartRoute
+  '/checkout': typeof ShopCheckoutRoute
   '/favorites': typeof ShopFavoritesRoute
   '/admin/modules': typeof AdminModulesRoute
   '/admin/permissions': typeof AdminPermissionsRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/logout': typeof AuthLogoutRoute
   '/_shop/cart': typeof ShopCartRoute
+  '/_shop/checkout': typeof ShopCheckoutRoute
   '/_shop/favorites': typeof ShopFavoritesRoute
   '/admin/modules': typeof AdminModulesRoute
   '/admin/permissions': typeof AdminPermissionsRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/cart'
+    | '/checkout'
     | '/favorites'
     | '/admin/modules'
     | '/admin/permissions'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/cart'
+    | '/checkout'
     | '/favorites'
     | '/admin/modules'
     | '/admin/permissions'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/logout'
     | '/_shop/cart'
+    | '/_shop/checkout'
     | '/_shop/favorites'
     | '/admin/modules'
     | '/admin/permissions'
@@ -317,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopFavoritesRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/_shop/checkout': {
+      id: '/_shop/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof ShopCheckoutRouteImport
+      parentRoute: typeof ShopRoute
+    }
     '/_shop/cart': {
       id: '/_shop/cart'
       path: '/cart'
@@ -383,6 +402,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface ShopRouteChildren {
   ShopCartRoute: typeof ShopCartRoute
+  ShopCheckoutRoute: typeof ShopCheckoutRoute
   ShopFavoritesRoute: typeof ShopFavoritesRoute
   ShopIndexRoute: typeof ShopIndexRoute
   ShopInfoPageRoute: typeof ShopInfoPageRoute
@@ -393,6 +413,7 @@ interface ShopRouteChildren {
 
 const ShopRouteChildren: ShopRouteChildren = {
   ShopCartRoute: ShopCartRoute,
+  ShopCheckoutRoute: ShopCheckoutRoute,
   ShopFavoritesRoute: ShopFavoritesRoute,
   ShopIndexRoute: ShopIndexRoute,
   ShopInfoPageRoute: ShopInfoPageRoute,

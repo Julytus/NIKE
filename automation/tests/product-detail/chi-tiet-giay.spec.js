@@ -266,10 +266,15 @@ test.describe('Chi tiết giày desktop', () => {
         await expect(pdp.sizeGrid).not.toHaveAttribute('aria-invalid', 'true');
       });
 
+      // Lát gio-hang (plan gio-hang §7.1 bước 8): "Add to Bag" nay thêm thật và mở popup modal
+      // "Added to Bag" (chặn bàn phím phía sau) → đóng bằng Esc rồi mới thử phím mũi tên.
       await test.step('bấm "Add to Bag" khi đã chọn size', async () => {
         await pdp.addToBag.click();
         await expect(pdp.sizeError).toHaveCount(0);
+        await expect(pdp.addedToBag.root).toBeVisible();
         await expectUrl(page, `/t/${DUNK}`);
+        await page.keyboard.press('Escape');
+        await expect(pdp.addedToBag.root).toHaveCount(0);
       });
 
       await test.step('phím mũi tên', async () => {

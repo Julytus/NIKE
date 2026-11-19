@@ -487,3 +487,105 @@ export function lowStockShown(p, selectedSizeLabel = null) {
       : (stockOf(p).find((s) => s.sizeLabel === selectedSizeLabel)?.stock ?? 0);
   return n >= 1 && n <= LOW_STOCK_MAX;
 }
+
+/* ---------- Lát gio-hang (plan §4, §5.1): giỏ localStorage + `POST /cart/public/check` ---------- */
+
+/** Số đôi tối đa của một size trong giỏ và số dòng tối đa của giỏ (plan gio-hang §5.2). */
+export const MAX_CART_QUANTITY = 10;
+export const MAX_CART_LINES = 50;
+/** Phí giao hàng (D12): 30.000 ₫, miễn phí khi tạm tính từ 5.000.000 ₫. */
+export const FREE_SHIPPING_THRESHOLD = 5_000_000;
+export const SHIPPING_FEE = 30_000;
+
+/**
+ * Size id của dữ liệu mẫu = productId × 100 + thứ tự (1-based) trong lưới size.
+ * @param {string} slug
+ * @param {string} label vd "EU 42"
+ */
+export function sizeIdOf(slug, label) {
+  const p = seedBySlug(slug);
+  const index = sizesOf(p.gender).findIndex((s) => s.sizeLabel === label);
+  if (index < 0) throw new Error(`"${slug}" không có size "${label}"`);
+  return p.id * 100 + index + 1;
+}
+
+/**
+ * Sản phẩm + size theo size id; không có → null.
+ * @param {number} sizeId
+ */
+export function seedSizeOf(sizeId) {
+  const product = seedProducts.find((p) => p.id === Math.floor(sizeId / 100));
+  const size = product ? stockOf(product)[(sizeId % 100) - 1] : undefined;
+  return product && size ? { product, size } : null;
+}
+
+/** Phí giao hàng theo tạm tính (plan §5.1). @param {number} subtotal */
+export const shippingFeeOf = (subtotal) =>
+  subtotal <= 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+
+/**
+ * Kết quả `POST /cart/public/check` mong đợi (plan §5.1), `imageUrl` thay bằng đuôi `/products/<slug>/1.webp`.
+ * @param {{ sizeId: number, quantity: number }[]} items
+ */
+export function expectedCartCheck(items) {
+  const lines = items.map(({ sizeId, quantity }) => {
+    const found = seedSizeOf(sizeId);
+    if (!found) {
+      return {
+        sizeId,
+        quantity,
+        status: 'UNAVAILABLE',
+        availableQuantity: 0,
+        stock: 0,
+        productId: null,
+        slug: null,
+        name: null,
+        subtitle: null,
+        imageUrl: null,
+        sizeLabel: null,
+        price: null,
+        salePrice: null,
+        unitPrice: null,
+        lineTotal: 0,
+      };
+    }
+    const { product: p, size } = found;
+    const status =
+      p.status !== 'PUBLISHED'
+        ? 'UNAVAILABLE'
+        : size.stock === 0
+          ? 'OUT_OF_STOCK'
+          : size.stock < quantity
+            ? 'INSUFFICIENT_STOCK'
+            : 'AVAILABLE';
+    const availableQuantity =
+      status === 'AVAILABLE' ? quantity : status === 'INSUFFICIENT_STOCK' ? size.stock : 0;
+    const unitPrice = sellingPrice(p);
+    return {
+      sizeId,
+      quantity,
+      status,
+      availableQuantity,
+      stock: status === 'UNAVAILABLE' ? 0 : size.stock,
+      productId: p.id,
+      slug: p.slug,
+      name: p.name,
+      subtitle: p.subtitle,
+      imageUrl: imageSuffixOf(p.slug),
+      sizeLabel: size.sizeLabel,
+      price: p.price,
+      salePrice: p.salePrice,
+      unitPrice,
+      lineTotal: unitPrice * availableQuantity,
+    };
+  });
+  const subtotal = lines.reduce((sum, l) => sum + l.lineTotal, 0);
+  const shippingFee = shippingFeeOf(subtotal);
+  return {
+    items: lines,
+    itemCount: lines.reduce((sum, l) => sum + l.availableQuantity, 0),
+    subtotal,
+    shippingFee,
+    total: subtotal + shippingFee,
+  };
+}

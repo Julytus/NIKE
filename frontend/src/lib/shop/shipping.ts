@@ -4,3 +4,6 @@
  */
 export const FREE_SHIPPING_THRESHOLD = 5_000_000;
 export const SHIPPING_FEE = 30_000;
+
+/** Số tiền còn thiếu để được miễn phí giao hàng (plan gio-hang §6.6); đã đủ → 0. */
+export const amountToFreeShipping = (subtotal: number) => Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);

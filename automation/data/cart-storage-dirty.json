@@ -1,0 +1,18 @@
+{
+  "$comment": "Lát gio-hang (plan §4 sanitizeCart, §9 TC-19): chuỗi thô ghi vào localStorage `nike.cart` → giỏ mong đợi sau khi trang /cart làm sạch. `cart: []` = giỏ trống, không gọi check.",
+  "cases": [
+    { "name": "không phải JSON", "raw": "not json", "cart": [] },
+    { "name": "không phải mảng", "raw": "{}", "cart": [] },
+    { "name": "số lượng 999", "raw": "[{\"sizeId\":206,\"quantity\":999}]", "cart": [{ "sizeId": 206, "quantity": 10 }] },
+    {
+      "name": "phần tử sai kiểu",
+      "raw": "[{\"sizeId\":-1,\"quantity\":1},{\"sizeId\":206,\"quantity\":0},\"x\",null]",
+      "cart": []
+    },
+    {
+      "name": "trùng size",
+      "raw": "[{\"sizeId\":206,\"quantity\":3},{\"sizeId\":206,\"quantity\":4}]",
+      "cart": [{ "sizeId": 206, "quantity": 7 }]
+    }
+  ]
+}
