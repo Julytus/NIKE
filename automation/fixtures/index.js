@@ -4,10 +4,12 @@ import { createApi } from '../api/index.js';
 import { accounts } from '../data/accounts.js';
 import { AdminLayout } from '../pages/AdminLayout.js';
 import { AdminLoginPage } from '../pages/AdminLoginPage.js';
+import { CartPage } from '../pages/CartPage.js';
 import { HomePage } from '../pages/HomePage.js';
 import { InfoPage } from '../pages/InfoPage.js';
 import { NotFoundPage } from '../pages/NotFoundPage.js';
 import { PermissionPage } from '../pages/PermissionPage.js';
+import { ProductDetailPage } from '../pages/ProductDetailPage.js';
 import { ProductListPage } from '../pages/ProductListPage.js';
 import { ResourcePage } from '../pages/ResourcePage.js';
 import { RolePage } from '../pages/RolePage.js';
@@ -29,6 +31,8 @@ import { SignInPage } from '../pages/SignInPage.js';
  *   notFoundPage: NotFoundPage,
  *   signInPage: SignInPage,
  *   productListPage: ProductListPage,
+ *   productDetailPage: ProductDetailPage,
+ *   cartPage: CartPage,
  * }} TestFixtures
  * @typedef {{ tokenCache: { get: (role: Role) => Promise<string> } }} WorkerFixtures
  */
@@ -37,7 +41,7 @@ import { SignInPage } from '../pages/SignInPage.js';
  * `test` dùng chung cho mọi spec:
  * - `api`: API client chưa đăng nhập.
  * - `apiAs(role)`: API client đã gắn token của vai trò (đăng nhập bằng API một lần mỗi worker).
- * - Page object: `loginPage`, `adminLayout`, `rolePage`, `permissionPage`, `resourcePage`, `homePage`, `infoPage`, `notFoundPage`, `signInPage`, `productListPage`.
+ * - Page object: `loginPage`, `adminLayout`, `rolePage`, `permissionPage`, `resourcePage`, `homePage`, `infoPage`, `notFoundPage`, `signInPage`, `productListPage`, `productDetailPage`, `cartPage`.
  * Đăng nhập giao diện dùng `test.use({ storageState: storageStateOf('admin') })` (tạo ở auth.setup.js).
  * @type {import('@playwright/test').TestType<
  *   import('@playwright/test').PlaywrightTestArgs & import('@playwright/test').PlaywrightTestOptions & TestFixtures,
@@ -113,6 +117,14 @@ export const test = base.extend({
 
   productListPage: async ({ page }, use) => {
     await use(new ProductListPage(page));
+  },
+
+  productDetailPage: async ({ page }, use) => {
+    await use(new ProductDetailPage(page));
+  },
+
+  cartPage: async ({ page }, use) => {
+    await use(new CartPage(page));
   },
 });
 

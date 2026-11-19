@@ -64,7 +64,7 @@ export function ProductRail({
           <div className="hidden gap-3 lg:flex">
             <button
               type="button"
-              aria-label="Xem sản phẩm trước"
+              aria-label="Previous products"
               disabled={edges.atStart}
               onClick={() => scroll(-1)}
               className={navButton}
@@ -73,7 +73,7 @@ export function ProductRail({
             </button>
             <button
               type="button"
-              aria-label="Xem sản phẩm tiếp theo"
+              aria-label="Next products"
               disabled={edges.atEnd}
               onClick={() => scroll(1)}
               className={navButton}
@@ -87,7 +87,8 @@ export function ProductRail({
         ref={rail}
         aria-labelledby={headingId}
         className={cn(
-          "shop-rail flex snap-x snap-mandatory gap-3 overflow-x-auto pb-6",
+          // `relative`: chữ `sr-only` (absolute) trong thẻ bị cắt theo dải, không làm trang cuộn ngang
+          "shop-rail relative flex snap-x snap-mandatory gap-3 overflow-x-auto pb-6",
           "[&>li]:shrink-0 [&>li]:basis-[66%] [&>li]:snap-start sm:[&>li]:basis-[45%] lg:[&>li]:basis-[31.5%]"
         )}
       >

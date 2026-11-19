@@ -1,0 +1,29 @@
+{
+  "$comment": "Lát tieng-anh-cua-hang (plan §7.1 bước 2, TC-10): 22 trang cửa hàng quét chữ có dấu tiếng Việt. Lát chi-tiet-giay (plan §7.1 bước 6) thêm trang \"Product Not Found\" (sản phẩm ẩn). Lát gio-hang (plan §7.1 bước 7) thêm trang tạm /checkout.",
+  "routes": [
+    { "path": "/", "name": "Home" },
+    { "path": "/w", "name": "Catalog" },
+    { "path": "/w/basketball", "name": "Catalog Basketball" },
+    { "path": "/t/nike-dunk-low-retro", "name": "Product" },
+    { "path": "/t/nike-air-max-plus-premium", "name": "Product Not Found" },
+    { "path": "/favorites", "name": "Favourites" },
+    { "path": "/cart", "name": "Bag" },
+    { "path": "/checkout", "name": "Checkout" },
+    { "path": "/info/find-a-store", "name": "Find a Store" },
+    { "path": "/info/membership", "name": "Become a Member" },
+    { "path": "/info/feedback", "name": "Send Us Feedback" },
+    { "path": "/info/help", "name": "Get Help" },
+    { "path": "/info/order-status", "name": "Order Status" },
+    { "path": "/info/delivery", "name": "Delivery" },
+    { "path": "/info/returns", "name": "Returns" },
+    { "path": "/info/payment-options", "name": "Payment Options" },
+    { "path": "/info/contact-us", "name": "Contact Us" },
+    { "path": "/info/about-nike", "name": "About Nike" },
+    { "path": "/info/news", "name": "News" },
+    { "path": "/info/careers", "name": "Careers" },
+    { "path": "/info/terms-of-sale", "name": "Terms of Sale" },
+    { "path": "/info/terms-of-use", "name": "Terms of Use" },
+    { "path": "/info/privacy-policy", "name": "Privacy Policy" },
+    { "path": "/khong-co-trang-nay", "name": "404" }
+  ]
+}

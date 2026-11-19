@@ -72,3 +72,29 @@ export interface ProductListParams extends ProductFilterParams {
   page?: number;
   limit?: number;
 }
+
+/** Một ảnh của sản phẩm (plan chi-tiet-giay §5.1): 5 ảnh, `sortOrder` 1 → 5. */
+export interface ProductImageDTO {
+  id: number;
+  productId: number;
+  url: string;
+  sortOrder: number;
+}
+
+/** Một ô size (plan chi-tiet-giay §5.1). `sizeValue` có thể là 42 hoặc 42.0 → so theo số; `stock` ≥ 0. */
+export interface ProductSizeDTO {
+  id: number;
+  productId: number;
+  sizeLabel: string;
+  sizeValue: number;
+  stock: number;
+}
+
+/** `GET /product/public/get?slug=` — thẻ sản phẩm + mô tả + 5 ảnh + lưới size (plan chi-tiet-giay §5.1). */
+export interface ProductDetailDTO extends ProductCardDTO {
+  description: string;
+  status: string;
+  updatedTime: string;
+  images: ProductImageDTO[];
+  sizes: ProductSizeDTO[];
+}

@@ -398,3 +398,194 @@ export function catalogTitle(filter, categoryName = null) {
   const audience = audiences[`${(filter.gender ?? '').trim()}|${(filter.kids ?? '').trim()}`];
   return [audience, categoryName, 'Shoes'].filter(Boolean).join(' ');
 }
+
+/* ---------- Lát chi-tiet-giay (plan §5.1, §5.2, §6.4): chi tiết, "You Might Also Like", giảm giá, sắp hết hàng ---------- */
+
+/** Số thẻ tối đa của `related` (plan chi-tiet-giay §5.2). */
+export const RELATED_LIMIT = 8;
+/** Tồn kho tối đa còn hiện "Just a few left. Order soon." (plan §6.4 mục 5). */
+export const LOW_STOCK_MAX = 3;
+
+/**
+ * Sản phẩm theo slug (mọi trạng thái); không có → ném lỗi để test hỏng rõ ràng.
+ * @param {string} slug
+ * @returns {SeedProduct}
+ */
+export function seedBySlug(slug) {
+  const p = seedProducts.find((x) => x.slug === slug);
+  if (!p) throw new Error(`Không có sản phẩm "${slug}" trong products.json`);
+  return p;
+}
+
+/** id danh mục theo slug danh mục. @param {SeedProduct} p */
+const categoryIdOf = (p) =>
+  /** @type {SeedCategory} */ (seedCategories.find((c) => c.slug === p.category)).id;
+
+/**
+ * `GET /product/public/get?slug=` mong đợi (plan §5.1), trừ `url` ảnh kiểm theo đuôi `urlSuffix`.
+ * Ảnh id = productId × 10 + sortOrder; size id = productId × 100 + thứ tự (1-based) trong lưới.
+ * @param {string} slug
+ */
+export function expectedDetail(slug) {
+  const p = seedBySlug(slug);
+  return {
+    ...cardOf(p),
+    categoryId: categoryIdOf(p),
+    description: p.description,
+    images: Array.from({ length: IMAGES_PER_PRODUCT }, (_, i) => ({
+      id: p.id * 10 + i + 1,
+      productId: p.id,
+      sortOrder: i + 1,
+      urlSuffix: `/products/${p.slug}/${i + 1}.webp`,
+    })),
+    sizes: stockOf(p).map((s, i) => ({
+      id: p.id * 100 + i + 1,
+      productId: p.id,
+      sizeLabel: s.sizeLabel,
+      sizeValue: s.sizeValue,
+      stock: s.stock,
+    })),
+  };
+}
+
+/**
+ * `GET /product/public/related?slug=` mong đợi (plan §5.2): PUBLISHED, khác chính nó,
+ * cùng danh mục trước rồi danh mục khác, trong mỗi phần theo "Featured"; tối đa 8.
+ * @param {string} slug
+ */
+export function expectedRelated(slug) {
+  const current = seedBySlug(slug);
+  const featured = catalogComparator('featured');
+  return publishedProducts()
+    .filter((p) => p.id !== current.id)
+    .sort(
+      (a, b) =>
+        Number(a.category !== current.category) - Number(b.category !== current.category) ||
+        featured(a, b)
+    )
+    .slice(0, RELATED_LIMIT)
+    .map(cardOf);
+}
+
+/**
+ * Phần trăm giảm làm tròn xuống (plan §6.4 mục 3); không giảm → 0.
+ * @param {SeedProduct} p
+ */
+export const discountPercent = (p) =>
+  p.salePrice === null ? 0 : Math.floor(((p.price - p.salePrice) * 100) / p.price);
+
+/**
+ * Có hiện "Just a few left. Order soon." không (plan §6.4 mục 5): tồn của size đang chọn,
+ * hoặc tổng tồn khi chưa chọn size, nằm trong 1 → 3.
+ * @param {SeedProduct} p
+ * @param {string | null} [selectedSizeLabel] vd "EU 42"
+ */
+export function lowStockShown(p, selectedSizeLabel = null) {
+  const n =
+    selectedSizeLabel === null
+      ? totalStockOf(p)
+      : (stockOf(p).find((s) => s.sizeLabel === selectedSizeLabel)?.stock ?? 0);
+  return n >= 1 && n <= LOW_STOCK_MAX;
+}
+
+/* ---------- Lát gio-hang (plan §4, §5.1): giỏ localStorage + `POST /cart/public/check` ---------- */
+
+/** Số đôi tối đa của một size trong giỏ và số dòng tối đa của giỏ (plan gio-hang §5.2). */
+export const MAX_CART_QUANTITY = 10;
+export const MAX_CART_LINES = 50;
+/** Phí giao hàng (D12): 30.000 ₫, miễn phí khi tạm tính từ 5.000.000 ₫. */
+export const FREE_SHIPPING_THRESHOLD = 5_000_000;
+export const SHIPPING_FEE = 30_000;
+
+/**
+ * Size id của dữ liệu mẫu = productId × 100 + thứ tự (1-based) trong lưới size.
+ * @param {string} slug
+ * @param {string} label vd "EU 42"
+ */
+export function sizeIdOf(slug, label) {
+  const p = seedBySlug(slug);
+  const index = sizesOf(p.gender).findIndex((s) => s.sizeLabel === label);
+  if (index < 0) throw new Error(`"${slug}" không có size "${label}"`);
+  return p.id * 100 + index + 1;
+}
+
+/**
+ * Sản phẩm + size theo size id; không có → null.
+ * @param {number} sizeId
+ */
+export function seedSizeOf(sizeId) {
+  const product = seedProducts.find((p) => p.id === Math.floor(sizeId / 100));
+  const size = product ? stockOf(product)[(sizeId % 100) - 1] : undefined;
+  return product && size ? { product, size } : null;
+}
+
+/** Phí giao hàng theo tạm tính (plan §5.1). @param {number} subtotal */
+export const shippingFeeOf = (subtotal) =>
+  subtotal <= 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+
+/**
+ * Kết quả `POST /cart/public/check` mong đợi (plan §5.1), `imageUrl` thay bằng đuôi `/products/<slug>/1.webp`.
+ * @param {{ sizeId: number, quantity: number }[]} items
+ */
+export function expectedCartCheck(items) {
+  const lines = items.map(({ sizeId, quantity }) => {
+    const found = seedSizeOf(sizeId);
+    if (!found) {
+      return {
+        sizeId,
+        quantity,
+        status: 'UNAVAILABLE',
+        availableQuantity: 0,
+        stock: 0,
+        productId: null,
+        slug: null,
+        name: null,
+        subtitle: null,
+        imageUrl: null,
+        sizeLabel: null,
+        price: null,
+        salePrice: null,
+        unitPrice: null,
+        lineTotal: 0,
+      };
+    }
+    const { product: p, size } = found;
+    const status =
+      p.status !== 'PUBLISHED'
+        ? 'UNAVAILABLE'
+        : size.stock === 0
+          ? 'OUT_OF_STOCK'
+          : size.stock < quantity
+            ? 'INSUFFICIENT_STOCK'
+            : 'AVAILABLE';
+    const availableQuantity =
+      status === 'AVAILABLE' ? quantity : status === 'INSUFFICIENT_STOCK' ? size.stock : 0;
+    const unitPrice = sellingPrice(p);
+    return {
+      sizeId,
+      quantity,
+      status,
+      availableQuantity,
+      stock: status === 'UNAVAILABLE' ? 0 : size.stock,
+      productId: p.id,
+      slug: p.slug,
+      name: p.name,
+      subtitle: p.subtitle,
+      imageUrl: imageSuffixOf(p.slug),
+      sizeLabel: size.sizeLabel,
+      price: p.price,
+      salePrice: p.salePrice,
+      unitPrice,
+      lineTotal: unitPrice * availableQuantity,
+    };
+  });
+  const subtotal = lines.reduce((sum, l) => sum + l.lineTotal, 0);
+  const shippingFee = shippingFeeOf(subtotal);
+  return {
+    items: lines,
+    itemCount: lines.reduce((sum, l) => sum + l.availableQuantity, 0),
+    subtotal,
+    shippingFee,
+    total: subtotal + shippingFee,
+  };
+}
