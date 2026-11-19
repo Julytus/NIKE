@@ -250,8 +250,9 @@ Mỗi lát đi theo luồng `/plan-feature` → `/cook` → `/doc-chuc-nang`. E2
 | **1. Nền cửa hàng** |
 | 1.1 | `go-lut` | V18 gỡ bảng; xoá code BE / FE / seed LUT (§6); `/` tạm trống; `/admin` chỉ còn phân quyền | 0.1 (cần `automation/`; không cook song song vì chung worktree) |
 | 1.2 | `du-lieu-giay` | V19 schema §4, 30 sản phẩm × 5 ảnh, seed MinIO, resource `PRODUCT`, `test-support/reset` (BE) | 1.1 |
-| 1.3 | `giao-dien-nike` | Header Nike (ẩn / hiện khi cuộn, mega menu, khung tìm kiếm), footer, dải thông báo, font, token màu, trang đăng nhập kiểu nhập email trước, trang chủ `/` (hero + "Mới về" + danh mục) (FE, theo [ui-nike/README.md](ui-nike/README.md)) | 1.1 |
-| 1.4 | `danh-sach-giay` | `product-category/public/list`, `product/public/list` + facets, `suggest`; trang `/w`, `/w/$danhMuc`, tìm kiếm | 1.2, 1.3 |
+| 1.3 | `giao-dien-nike` | Header Nike (ẩn / hiện khi cuộn, mega menu, khung tìm kiếm), footer, dải thông báo, font, token màu, trang chủ `/` (hero + "Mới về" + danh mục), trang thông tin, trang tạm; API `product-category/public/list`, `product/public/new-arrivals`, `product/public/suggest`; hợp đồng URL `/w` (theo [ui-nike/README.md](ui-nike/README.md)) | 1.2 |
+| 1.3b | `dang-nhap-nike` | Trang `/dang-nhap` kiểu nhập email trước (mật khẩu hoặc đăng ký), `POST /account/public/check-email`, quay lại trang trước sau khi đăng nhập, thay hộp thoại đăng nhập / đăng ký | 1.3 |
+| 1.4 | `danh-sach-giay` | `product/public/list` + facets (dùng điều kiện tìm kiếm của `suggest`); trang `/w`, `/w/$danhMuc` theo hợp đồng URL của 1.3 | 1.2, 1.3 |
 | 1.5 | `chi-tiet-giay` | `product/public/get`, `related`; trang `/t/$slug`, xem ảnh lớn, bảng size | 1.4 |
 | **2. Mua hàng** |
 | 2.1 | `yeu-thich` | `favorite` + 3 API, ♡ ở thẻ / chi tiết, trang `/yeu-thich` | 1.5 |

@@ -104,3 +104,297 @@ export function expectedSummary() {
     bestseller: published.filter((p) => p.badge === 'BESTSELLER').length,
   };
 }
+
+/* ---------- Lát giao-dien-nike (plan §7.1): kết quả mong đợi của 3 API công khai ---------- */
+
+/** Giới hạn số dòng của API (plan giao-dien-nike §5.2, §5.3). */
+export const NEW_ARRIVALS_LIMIT = 12;
+export const SUGGEST_LIMIT = 6;
+
+/**
+ * Chuẩn hoá chuỗi để so như collation `utf8mb4_0900_ai_ci`: bỏ dấu, chữ thường.
+ * (Test không dùng chữ "đ" — collation coi "đ" ≠ "d" nhưng NFD không tách được.)
+ * @param {string | null | undefined} s
+ */
+export const normalizeText = (s) => (s ?? '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+
+/** Mới nhất trước: `createdTime` giảm dần, bằng nhau thì id lớn trước. @param {SeedProduct} a @param {SeedProduct} b */
+const newestFirst = (a, b) =>
+  a.createdTime === b.createdTime ? b.id - a.id : a.createdTime < b.createdTime ? 1 : -1;
+
+/** Tổng tồn kho mọi size. @param {SeedProduct} product */
+export const totalStockOf = (product) => stockOf(product).reduce((sum, s) => sum + s.stock, 0);
+
+/**
+ * "Thẻ sản phẩm" mong đợi (các field so được với API, trừ `imageUrl` kiểm theo đuôi).
+ * @param {SeedProduct} p
+ */
+export const cardOf = (p) => ({
+  id: p.id,
+  slug: p.slug,
+  styleCode: p.styleCode,
+  name: p.name,
+  subtitle: p.subtitle,
+  gender: p.gender,
+  price: p.price,
+  salePrice: p.salePrice,
+  badge: p.badge,
+  totalStock: totalStockOf(p),
+});
+
+/** Đuôi URL ảnh số 1 của sản phẩm. @param {string} slug */
+export const imageSuffixOf = (slug) => `/products/${slug}/1.webp`;
+
+/**
+ * `GET /product-category/public/list` mong đợi: theo `sortOrder`; `productCount` = số sản phẩm PUBLISHED;
+ * `imageSlug` = slug sản phẩm PUBLISHED mới nhất của danh mục (không có → null).
+ */
+export function expectedCategories() {
+  const published = publishedProducts();
+  return [...seedCategories]
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.id - b.id)
+    .map((c) => {
+      const inCat = published.filter((p) => p.category === c.slug).sort(newestFirst);
+      return {
+        id: c.id,
+        slug: c.slug,
+        name: c.name,
+        sortOrder: c.sortOrder,
+        productCount: inCat.length,
+        imageSlug: inCat[0]?.slug ?? null,
+      };
+    });
+}
+
+/** `GET /product/public/new-arrivals` mong đợi: PUBLISHED + JUST_IN, mới nhất trước, tối đa 12. */
+export function expectedNewArrivals() {
+  return publishedProducts()
+    .filter((p) => p.badge === 'JUST_IN')
+    .sort(newestFirst)
+    .slice(0, NEW_ARRIVALS_LIMIT)
+    .map(cardOf);
+}
+
+/**
+ * `GET /product/public/suggest?q=` mong đợi (plan §5.3): trim; rỗng → total 0;
+ * PUBLISHED và tên / phụ đề / mã chứa `q` (không phân biệt hoa thường, dấu); tối đa 6.
+ * @param {string | null | undefined} q
+ */
+export function expectedSuggest(q) {
+  const keyword = normalizeText((q ?? '').trim());
+  if (!keyword) return { total: 0, page: 1, items: [] };
+  const matched = publishedProducts()
+    .filter((p) =>
+      [p.name, p.subtitle, p.styleCode].some((f) => normalizeText(f).includes(keyword))
+    )
+    .sort(newestFirst);
+  return { total: matched.length, page: 1, items: matched.slice(0, SUGGEST_LIMIT).map(cardOf) };
+}
+
+/* ---------- Lát danh-sach-giay (plan §5.0 – §5.2, §6.1): lọc / sắp xếp / đếm theo bộ lọc ---------- */
+
+/** Số thẻ mỗi trang mặc định và trần `limit` (plan danh-sach-giay §5.1). */
+export const CATALOG_PAGE_SIZE = 12;
+export const CATALOG_MAX_LIMIT = 48;
+
+/** 4 khoảng giá đang bán, hai đầu đều tính (plan §5.0). Thứ tự = thứ tự hiển thị. */
+export const PRICE_BOUNDS = {
+  'under-1m': [0, 999_999],
+  '1m-2m': [1_000_000, 2_000_000],
+  '2m-5m': [2_000_001, 4_999_999],
+  '5m-plus': [5_000_000, Number.MAX_SAFE_INTEGER],
+};
+
+/** Giá trị URL → giá trị cột `product.gender` (gender + kids là một nhóm). @type {Record<string, Gender>} */
+const GENDER_VALUES = { men: 'MEN', women: 'WOMEN', unisex: 'UNISEX' };
+/** @type {Record<string, Gender>} */
+const KIDS_VALUES = { boys: 'BOYS', girls: 'GIRLS' };
+/** @type {Record<string, 'JUST_IN' | 'BESTSELLER'>} */
+const BADGE_VALUES = { 'just-in': 'JUST_IN', bestseller: 'BESTSELLER' };
+
+/**
+ * Bộ lọc dạng query string (khoá giống URL `/w`), vd `{ gender: 'men,women', size: '42' }`.
+ * @typedef {Partial<Record<'category' | 'gender' | 'kids' | 'price' | 'sale' | 'badge' | 'size' | 'q' | 'sort', string>>} CatalogFilter
+ * @typedef {{
+ *   category: string | null, genders: Set<string>, prices: Set<string>, sale: boolean,
+ *   badges: Set<string>, sizes: Set<number>, keyword: string | null
+ * }} ParsedCatalogFilter
+ * @typedef {'gender' | 'price' | 'sale' | 'badge' | 'size'} CatalogGroup
+ */
+
+/** Tách dấu phẩy, trim, chữ thường, bỏ phần rỗng. @param {string | undefined} v */
+const splitValues = (v) =>
+  (v ?? '')
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+
+/**
+ * Chuẩn hoá bộ lọc như server (§5.0): giá trị lạ bị bỏ, slug danh mục giữ nguyên (server 404 nếu lạ).
+ * @param {CatalogFilter} filter
+ * @returns {ParsedCatalogFilter}
+ */
+export function parseCatalogFilter(filter) {
+  const genders = new Set(
+    [
+      ...splitValues(filter.gender).map((v) => GENDER_VALUES[v]),
+      ...splitValues(filter.kids).map((v) => KIDS_VALUES[v]),
+    ].filter(Boolean)
+  );
+  const prices = new Set(splitValues(filter.price).filter((v) => v in PRICE_BOUNDS));
+  const badges = new Set(
+    splitValues(filter.badge)
+      .map((v) => BADGE_VALUES[v])
+      .filter(Boolean)
+  );
+  const sizes = new Set(
+    splitValues(filter.size)
+      .filter((v) => /^\d+(\.\d+)?$/.test(v))
+      .map(Number)
+  );
+  const keyword = normalizeText((filter.q ?? '').trim()) || null;
+  const category = (filter.category ?? '').trim().toLowerCase() || null;
+  return { category, genders, prices, sale: filter.sale?.trim() === '1', badges, sizes, keyword };
+}
+
+/**
+ * Sản phẩm khớp bộ lọc (chỉ PUBLISHED), bỏ điều kiện của nhóm `skip` (đếm facets "bỏ nhóm của chính mình").
+ * @param {SeedProduct} p
+ * @param {ParsedCatalogFilter} f
+ * @param {CatalogGroup | null} [skip]
+ */
+export function matchesCatalog(p, f, skip = null) {
+  if (p.status !== 'PUBLISHED') return false;
+  if (f.category && p.category !== f.category) return false;
+  const keyword = f.keyword;
+  if (
+    keyword &&
+    ![p.name, p.subtitle, p.styleCode].some((s) => normalizeText(s).includes(keyword))
+  ) {
+    return false;
+  }
+  if (skip !== 'gender' && f.genders.size && !f.genders.has(p.gender)) return false;
+  if (skip !== 'price' && f.prices.size) {
+    const price = sellingPrice(p);
+    const inRange = [...f.prices].some((r) => {
+      const [lo, hi] = PRICE_BOUNDS[/** @type {keyof typeof PRICE_BOUNDS} */ (r)];
+      return price >= lo && price <= hi;
+    });
+    if (!inRange) return false;
+  }
+  if (skip !== 'sale' && f.sale && p.salePrice === null) return false;
+  if (skip !== 'badge' && f.badges.size && !(p.badge && f.badges.has(p.badge))) return false;
+  if (skip !== 'size' && f.sizes.size) {
+    if (!stockOf(p).some((s) => f.sizes.has(s.sizeValue) && s.stock > 0)) return false;
+  }
+  return true;
+}
+
+/** Thứ hạng nhãn trong "Featured": Just In → Bestseller → không nhãn. @param {SeedProduct} p */
+const badgeRank = (p) => (p.badge === 'JUST_IN' ? 0 : p.badge === 'BESTSELLER' ? 1 : 2);
+
+/**
+ * Hàm so sánh theo `sort` (plan §5.1); giá trị lạ → `featured`. Luôn kết thúc bằng mới nhất trước.
+ * @param {string | undefined} sort
+ * @returns {(a: SeedProduct, b: SeedProduct) => number}
+ */
+export function catalogComparator(sort) {
+  const key = (sort ?? '').trim().toLowerCase();
+  if (key === 'newest') return newestFirst;
+  if (key === 'price-desc') return (a, b) => sellingPrice(b) - sellingPrice(a) || newestFirst(a, b);
+  if (key === 'price-asc') return (a, b) => sellingPrice(a) - sellingPrice(b) || newestFirst(a, b);
+  return (a, b) =>
+    Number(totalStockOf(a) === 0) - Number(totalStockOf(b) === 0) ||
+    badgeRank(a) - badgeRank(b) ||
+    newestFirst(a, b);
+}
+
+/** Mọi sản phẩm khớp bộ lọc, đã sắp xếp (chưa phân trang). @param {CatalogFilter} filter */
+export function catalogProducts(filter) {
+  const parsed = parseCatalogFilter(filter);
+  return seedProducts.filter((p) => matchesCatalog(p, parsed)).sort(catalogComparator(filter.sort));
+}
+
+/**
+ * `GET /product/public/list` mong đợi: `page` < 1 → 1; `limit` < 1 → 12, > 48 → 48.
+ * @param {CatalogFilter} filter
+ * @param {{ page?: number, limit?: number }} [paging]
+ */
+export function expectedList(filter, { page = 1, limit = CATALOG_PAGE_SIZE } = {}) {
+  const p = page < 1 ? 1 : page;
+  const l = limit < 1 ? CATALOG_PAGE_SIZE : Math.min(limit, CATALOG_MAX_LIMIT);
+  const all = catalogProducts(filter);
+  return { total: all.length, page: p, items: all.slice((p - 1) * l, p * l).map(cardOf) };
+}
+
+/** Mọi size có trong `product_size` của sản phẩm PUBLISHED, tăng dần. */
+export function publishedSizeValues() {
+  const values = new Set(
+    publishedProducts().flatMap((p) => sizesOf(p.gender).map((s) => s.sizeValue))
+  );
+  return [...values].sort((a, b) => a - b);
+}
+
+/**
+ * `GET /product/public/facets` mong đợi (plan §5.2): mỗi số = số sản phẩm khớp các nhóm khác + lựa chọn đó.
+ * @param {CatalogFilter} filter
+ */
+export function expectedFacets(filter) {
+  const f = parseCatalogFilter(filter);
+  /** @param {CatalogGroup} skip */
+  const pool = (skip) => seedProducts.filter((p) => matchesCatalog(p, f, skip));
+  const genderPool = pool('gender');
+  /** @param {Record<string, string>} values */
+  const byGender = (values) =>
+    Object.fromEntries(
+      Object.entries(values).map(([k, g]) => [k, genderPool.filter((p) => p.gender === g).length])
+    );
+  const pricePool = pool('price');
+  const badgePool = pool('badge');
+  const sizePool = pool('size');
+  return {
+    gender: byGender(GENDER_VALUES),
+    kids: byGender(KIDS_VALUES),
+    price: Object.fromEntries(
+      Object.entries(PRICE_BOUNDS).map(([k, [lo, hi]]) => [
+        k,
+        pricePool.filter((p) => sellingPrice(p) >= lo && sellingPrice(p) <= hi).length,
+      ])
+    ),
+    sale: pool('sale').filter((p) => p.salePrice !== null).length,
+    badge: Object.fromEntries(
+      Object.entries(BADGE_VALUES).map(([k, b]) => [
+        k,
+        badgePool.filter((p) => p.badge === b).length,
+      ])
+    ),
+    size: publishedSizeValues().map((value) => ({
+      value,
+      label: sizeLabel(value),
+      count: sizePool.filter((p) => stockOf(p).some((s) => s.sizeValue === value && s.stock > 0))
+        .length,
+    })),
+  };
+}
+
+/**
+ * Tiêu đề trang danh sách (không có số) — plan §6.1: có `q` → `q` đã trim; không thì
+ * `[đối tượng] [tên danh mục] Shoes`.
+ * @param {CatalogFilter} filter
+ * @param {string | null} [categoryName]
+ */
+export function catalogTitle(filter, categoryName = null) {
+  const q = (filter.q ?? '').trim();
+  if (q) return q;
+  /** @type {Record<string, string>} */
+  const audiences = {
+    'men|': "Men's",
+    'women|': "Women's",
+    'unisex|': 'Unisex',
+    '|boys': "Boys'",
+    '|girls': "Girls'",
+    '|boys,girls': "Kids'",
+  };
+  const audience = audiences[`${(filter.gender ?? '').trim()}|${(filter.kids ?? '').trim()}`];
+  return [audience, categoryName, 'Shoes'].filter(Boolean).join(' ');
+}

@@ -12,7 +12,8 @@ import { useEffect } from "react";
 const RootLayout = () => {
   const location = useLocation();
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    // Vùng cuộn là `#app-scroll` (không phải window): về đầu trang khi đổi đường dẫn
+    document.getElementById("app-scroll")?.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [location.pathname]);
   return (
     <>

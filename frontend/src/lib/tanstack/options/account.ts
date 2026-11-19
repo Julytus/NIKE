@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { getAccountMe, loginShop, register } from "@/lib/axios/account";
+import { checkEmail, getAccountMe, loginShop, register } from "@/lib/axios/account";
 import { logoutRemote } from "@/lib/axios/auth";
 import { useAuthStore } from "@/lib/stores/auth";
 import { useShopSession } from "@/lib/stores/shop-session";
@@ -37,11 +37,19 @@ async function startSession(res: LoginResponseDTO): Promise<ShopUserDTO> {
   return user;
 }
 
+/** Bước email của `/signin`: lỗi hiện trong form (role="alert"), không toast cả khi thành công. */
+export const checkEmailMutationOptions = mutationOptions({
+  mutationFn: checkEmail,
+  meta: {
+    silentError: true
+  }
+});
+
 /** Lỗi đăng nhập / đăng ký hiện ngay trong form (role="alert"), nên tắt toast lỗi */
 export const loginMutationOptions = mutationOptions({
   mutationFn: async (req: ShopLoginRequest): Promise<ShopUserDTO> => startSession(await loginShop(req)),
   meta: {
-    successMessage: (u) => `Xin chào, ${(u as ShopUserDTO).name}`,
+    successMessage: (u) => `Welcome back, ${(u as ShopUserDTO).name}!`,
     silentError: true
   }
 });
@@ -49,7 +57,7 @@ export const loginMutationOptions = mutationOptions({
 export const registerMutationOptions = mutationOptions({
   mutationFn: async (req: ShopRegisterRequest): Promise<ShopUserDTO> => startSession(await register(req)),
   meta: {
-    successMessage: (u) => `Đã tạo tài khoản, chào mừng ${(u as ShopUserDTO).name}`,
+    successMessage: (u) => `Account created. Welcome, ${(u as ShopUserDTO).name}!`,
     silentError: true
   }
 });
@@ -63,6 +71,6 @@ export const logoutMutationOptions = mutationOptions({
     clearUserQueries();
   },
   meta: {
-    successMessage: "Đã đăng xuất"
+    successMessage: "Signed out"
   }
 });

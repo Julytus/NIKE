@@ -1,0 +1,26 @@
+[
+  {
+    "redirect": "/w/basketball?gender=men",
+    "expected": "/w/basketball?gender=men"
+  },
+  {
+    "redirect": "https://example.com",
+    "expected": "/"
+  },
+  {
+    "redirect": "//example.com",
+    "expected": "/"
+  },
+  {
+    "redirect": "/\\example.com",
+    "expected": "/"
+  },
+  {
+    "redirect": "javascript:alert(1)",
+    "expected": "/"
+  },
+  {
+    "redirect": "/signin?redirect=/cart",
+    "expected": "/"
+  }
+]

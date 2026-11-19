@@ -9,29 +9,41 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ShopRouteImport } from './routes/_shop'
 import { Route as AuthRouteImport } from './routes/_auth'
-import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
-import { Route as AdminTaiNguyenRouteImport } from './routes/admin/tai-nguyen'
-import { Route as AdminPhanQuyenRouteImport } from './routes/admin/phan-quyen'
-import { Route as AdminModuleRouteImport } from './routes/admin/module'
-import { Route as AdminChucVuRouteImport } from './routes/admin/chuc-vu'
+import { Route as ShopIndexRouteImport } from './routes/_shop/index'
+import { Route as AdminRolesRouteImport } from './routes/admin/roles'
+import { Route as AdminResourcesRouteImport } from './routes/admin/resources'
+import { Route as AdminPermissionsRouteImport } from './routes/admin/permissions'
+import { Route as AdminModulesRouteImport } from './routes/admin/modules'
+import { Route as ShopFavoritesRouteImport } from './routes/_shop/favorites'
+import { Route as ShopCartRouteImport } from './routes/_shop/cart'
 import { Route as AuthLogoutRouteImport } from './routes/_auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as ShopWIndexRouteImport } from './routes/_shop/w.index'
+import { Route as ShopWCategoryRouteImport } from './routes/_shop/w.$category'
+import { Route as ShopTSlugRouteImport } from './routes/_shop/t.$slug'
+import { Route as ShopInfoPageRouteImport } from './routes/_shop/info.$page'
 
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/_auth',
+const ShopRoute = ShopRouteImport.update({
+  id: '/_shop',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -39,25 +51,40 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminTaiNguyenRoute = AdminTaiNguyenRouteImport.update({
-  id: '/tai-nguyen',
-  path: '/tai-nguyen',
+const ShopIndexRoute = ShopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopRoute,
+} as any)
+const AdminRolesRoute = AdminRolesRouteImport.update({
+  id: '/roles',
+  path: '/roles',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminPhanQuyenRoute = AdminPhanQuyenRouteImport.update({
-  id: '/phan-quyen',
-  path: '/phan-quyen',
+const AdminResourcesRoute = AdminResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminModuleRoute = AdminModuleRouteImport.update({
-  id: '/module',
-  path: '/module',
+const AdminPermissionsRoute = AdminPermissionsRouteImport.update({
+  id: '/permissions',
+  path: '/permissions',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminChucVuRoute = AdminChucVuRouteImport.update({
-  id: '/chuc-vu',
-  path: '/chuc-vu',
+const AdminModulesRoute = AdminModulesRouteImport.update({
+  id: '/modules',
+  path: '/modules',
   getParentRoute: () => AdminRoute,
+} as any)
+const ShopFavoritesRoute = ShopFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopCartRoute = ShopCartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => ShopRoute,
 } as any)
 const AuthLogoutRoute = AuthLogoutRouteImport.update({
   id: '/logout',
@@ -69,90 +96,169 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
+const ShopWIndexRoute = ShopWIndexRouteImport.update({
+  id: '/w/',
+  path: '/w/',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopWCategoryRoute = ShopWCategoryRouteImport.update({
+  id: '/w/$category',
+  path: '/w/$category',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopTSlugRoute = ShopTSlugRouteImport.update({
+  id: '/t/$slug',
+  path: '/t/$slug',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopInfoPageRoute = ShopInfoPageRouteImport.update({
+  id: '/info/$page',
+  path: '/info/$page',
+  getParentRoute: () => ShopRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/signin': typeof SigninRoute
   '/login': typeof AuthLoginRoute
   '/logout': typeof AuthLogoutRoute
-  '/admin/chuc-vu': typeof AdminChucVuRoute
-  '/admin/module': typeof AdminModuleRoute
-  '/admin/phan-quyen': typeof AdminPhanQuyenRoute
-  '/admin/tai-nguyen': typeof AdminTaiNguyenRoute
+  '/cart': typeof ShopCartRoute
+  '/favorites': typeof ShopFavoritesRoute
+  '/admin/modules': typeof AdminModulesRoute
+  '/admin/permissions': typeof AdminPermissionsRoute
+  '/admin/resources': typeof AdminResourcesRoute
+  '/admin/roles': typeof AdminRolesRoute
+  '/': typeof ShopIndexRoute
   '/admin/': typeof AdminIndexRoute
+  '/info/$page': typeof ShopInfoPageRoute
+  '/t/$slug': typeof ShopTSlugRoute
+  '/w/$category': typeof ShopWCategoryRoute
+  '/w': typeof ShopWIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/signin': typeof SigninRoute
   '/login': typeof AuthLoginRoute
   '/logout': typeof AuthLogoutRoute
-  '/admin/chuc-vu': typeof AdminChucVuRoute
-  '/admin/module': typeof AdminModuleRoute
-  '/admin/phan-quyen': typeof AdminPhanQuyenRoute
-  '/admin/tai-nguyen': typeof AdminTaiNguyenRoute
+  '/cart': typeof ShopCartRoute
+  '/favorites': typeof ShopFavoritesRoute
+  '/admin/modules': typeof AdminModulesRoute
+  '/admin/permissions': typeof AdminPermissionsRoute
+  '/admin/resources': typeof AdminResourcesRoute
+  '/admin/roles': typeof AdminRolesRoute
+  '/': typeof ShopIndexRoute
   '/admin': typeof AdminIndexRoute
+  '/info/$page': typeof ShopInfoPageRoute
+  '/t/$slug': typeof ShopTSlugRoute
+  '/w/$category': typeof ShopWCategoryRoute
+  '/w': typeof ShopWIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
+  '/_shop': typeof ShopRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
+  '/signin': typeof SigninRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/logout': typeof AuthLogoutRoute
-  '/admin/chuc-vu': typeof AdminChucVuRoute
-  '/admin/module': typeof AdminModuleRoute
-  '/admin/phan-quyen': typeof AdminPhanQuyenRoute
-  '/admin/tai-nguyen': typeof AdminTaiNguyenRoute
+  '/_shop/cart': typeof ShopCartRoute
+  '/_shop/favorites': typeof ShopFavoritesRoute
+  '/admin/modules': typeof AdminModulesRoute
+  '/admin/permissions': typeof AdminPermissionsRoute
+  '/admin/resources': typeof AdminResourcesRoute
+  '/admin/roles': typeof AdminRolesRoute
+  '/_shop/': typeof ShopIndexRoute
   '/admin/': typeof AdminIndexRoute
+  '/_shop/info/$page': typeof ShopInfoPageRoute
+  '/_shop/t/$slug': typeof ShopTSlugRoute
+  '/_shop/w/$category': typeof ShopWCategoryRoute
+  '/_shop/w/': typeof ShopWIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/admin'
+    | '/signin'
     | '/login'
     | '/logout'
-    | '/admin/chuc-vu'
-    | '/admin/module'
-    | '/admin/phan-quyen'
-    | '/admin/tai-nguyen'
+    | '/cart'
+    | '/favorites'
+    | '/admin/modules'
+    | '/admin/permissions'
+    | '/admin/resources'
+    | '/admin/roles'
+    | '/'
     | '/admin/'
+    | '/info/$page'
+    | '/t/$slug'
+    | '/w/$category'
+    | '/w'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
+    | '/signin'
     | '/login'
     | '/logout'
-    | '/admin/chuc-vu'
-    | '/admin/module'
-    | '/admin/phan-quyen'
-    | '/admin/tai-nguyen'
+    | '/cart'
+    | '/favorites'
+    | '/admin/modules'
+    | '/admin/permissions'
+    | '/admin/resources'
+    | '/admin/roles'
+    | '/'
     | '/admin'
+    | '/info/$page'
+    | '/t/$slug'
+    | '/w/$category'
+    | '/w'
   id:
     | '__root__'
-    | '/'
     | '/_auth'
+    | '/_shop'
     | '/admin'
+    | '/signin'
     | '/_auth/login'
     | '/_auth/logout'
-    | '/admin/chuc-vu'
-    | '/admin/module'
-    | '/admin/phan-quyen'
-    | '/admin/tai-nguyen'
+    | '/_shop/cart'
+    | '/_shop/favorites'
+    | '/admin/modules'
+    | '/admin/permissions'
+    | '/admin/resources'
+    | '/admin/roles'
+    | '/_shop/'
     | '/admin/'
+    | '/_shop/info/$page'
+    | '/_shop/t/$slug'
+    | '/_shop/w/$category'
+    | '/_shop/w/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
+  ShopRoute: typeof ShopRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
+  SigninRoute: typeof SigninRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_shop': {
+      id: '/_shop'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
@@ -162,13 +268,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/': {
       id: '/admin/'
       path: '/'
@@ -176,33 +275,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/tai-nguyen': {
-      id: '/admin/tai-nguyen'
-      path: '/tai-nguyen'
-      fullPath: '/admin/tai-nguyen'
-      preLoaderRoute: typeof AdminTaiNguyenRouteImport
+    '/_shop/': {
+      id: '/_shop/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof ShopIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/admin/roles': {
+      id: '/admin/roles'
+      path: '/roles'
+      fullPath: '/admin/roles'
+      preLoaderRoute: typeof AdminRolesRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/phan-quyen': {
-      id: '/admin/phan-quyen'
-      path: '/phan-quyen'
-      fullPath: '/admin/phan-quyen'
-      preLoaderRoute: typeof AdminPhanQuyenRouteImport
+    '/admin/resources': {
+      id: '/admin/resources'
+      path: '/resources'
+      fullPath: '/admin/resources'
+      preLoaderRoute: typeof AdminResourcesRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/module': {
-      id: '/admin/module'
-      path: '/module'
-      fullPath: '/admin/module'
-      preLoaderRoute: typeof AdminModuleRouteImport
+    '/admin/permissions': {
+      id: '/admin/permissions'
+      path: '/permissions'
+      fullPath: '/admin/permissions'
+      preLoaderRoute: typeof AdminPermissionsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/chuc-vu': {
-      id: '/admin/chuc-vu'
-      path: '/chuc-vu'
-      fullPath: '/admin/chuc-vu'
-      preLoaderRoute: typeof AdminChucVuRouteImport
+    '/admin/modules': {
+      id: '/admin/modules'
+      path: '/modules'
+      fullPath: '/admin/modules'
+      preLoaderRoute: typeof AdminModulesRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/_shop/favorites': {
+      id: '/_shop/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof ShopFavoritesRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/_shop/cart': {
+      id: '/_shop/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof ShopCartRouteImport
+      parentRoute: typeof ShopRoute
     }
     '/_auth/logout': {
       id: '/_auth/logout'
@@ -217,6 +337,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/_shop/w/': {
+      id: '/_shop/w/'
+      path: '/w'
+      fullPath: '/w'
+      preLoaderRoute: typeof ShopWIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/_shop/w/$category': {
+      id: '/_shop/w/$category'
+      path: '/w/$category'
+      fullPath: '/w/$category'
+      preLoaderRoute: typeof ShopWCategoryRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/_shop/t/$slug': {
+      id: '/_shop/t/$slug'
+      path: '/t/$slug'
+      fullPath: '/t/$slug'
+      preLoaderRoute: typeof ShopTSlugRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/_shop/info/$page': {
+      id: '/_shop/info/$page'
+      path: '/info/$page'
+      fullPath: '/info/$page'
+      preLoaderRoute: typeof ShopInfoPageRouteImport
+      parentRoute: typeof ShopRoute
     }
   }
 }
@@ -233,28 +381,51 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface ShopRouteChildren {
+  ShopCartRoute: typeof ShopCartRoute
+  ShopFavoritesRoute: typeof ShopFavoritesRoute
+  ShopIndexRoute: typeof ShopIndexRoute
+  ShopInfoPageRoute: typeof ShopInfoPageRoute
+  ShopTSlugRoute: typeof ShopTSlugRoute
+  ShopWCategoryRoute: typeof ShopWCategoryRoute
+  ShopWIndexRoute: typeof ShopWIndexRoute
+}
+
+const ShopRouteChildren: ShopRouteChildren = {
+  ShopCartRoute: ShopCartRoute,
+  ShopFavoritesRoute: ShopFavoritesRoute,
+  ShopIndexRoute: ShopIndexRoute,
+  ShopInfoPageRoute: ShopInfoPageRoute,
+  ShopTSlugRoute: ShopTSlugRoute,
+  ShopWCategoryRoute: ShopWCategoryRoute,
+  ShopWIndexRoute: ShopWIndexRoute,
+}
+
+const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
+
 interface AdminRouteChildren {
-  AdminChucVuRoute: typeof AdminChucVuRoute
-  AdminModuleRoute: typeof AdminModuleRoute
-  AdminPhanQuyenRoute: typeof AdminPhanQuyenRoute
-  AdminTaiNguyenRoute: typeof AdminTaiNguyenRoute
+  AdminModulesRoute: typeof AdminModulesRoute
+  AdminPermissionsRoute: typeof AdminPermissionsRoute
+  AdminResourcesRoute: typeof AdminResourcesRoute
+  AdminRolesRoute: typeof AdminRolesRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminChucVuRoute: AdminChucVuRoute,
-  AdminModuleRoute: AdminModuleRoute,
-  AdminPhanQuyenRoute: AdminPhanQuyenRoute,
-  AdminTaiNguyenRoute: AdminTaiNguyenRoute,
+  AdminModulesRoute: AdminModulesRoute,
+  AdminPermissionsRoute: AdminPermissionsRoute,
+  AdminResourcesRoute: AdminResourcesRoute,
+  AdminRolesRoute: AdminRolesRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
+  ShopRoute: ShopRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
+  SigninRoute: SigninRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

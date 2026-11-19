@@ -1,33 +1,57 @@
+import "@fontsource-variable/inter";
+import "@fontsource/anton";
 import "@/components/shop/shop-theme.css";
-import { ShopDialogs } from "@/components/shop/account/shop-dialogs";
+import { useEffect } from "react";
 import { ShopSessionSync } from "@/components/shop/account/shop-session-sync";
 import { cn } from "@/lib/utils";
 import { RouteProgress } from "./route-progress";
 
-const FONTS_HREF =
-  "https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=Space+Grotesk:wght@500;600;700&family=Playfair+Display:ital,wght@1,500&family=Chivo+Mono:wght@400;800&display=swap";
+/**
+ * Cửa hàng luôn giao diện sáng (Nike không có dark mode, plan giao-dien-nike §11 câu 7):
+ * gỡ class `dark` khỏi `<html>` khi vào khu cửa hàng, trả lại khi rời đi (trang quản trị vẫn đổi được).
+ */
+function useForceLight() {
+  useEffect(() => {
+    const root = document.documentElement;
+    // ThemeProvider (cha) chạy effect sau con và có thể gắn lại `dark` → canh bằng MutationObserver
+    let wantsDark = false;
+    const strip = () => {
+      if (root.classList.contains("dark")) {
+        wantsDark = true;
+        root.classList.remove("dark");
+      }
+    };
+    strip();
+    const observer = new MutationObserver(strip);
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => {
+      observer.disconnect();
+      if (wantsDark) root.classList.add("dark");
+    };
+  }, []);
+}
 
 /**
- * Phần chung của mọi layout cửa hàng: token màu (.shop), font, link "Bỏ qua menu",
- * thanh tiến trình chuyển trang và các hộp thoại tài khoản.
+ * Phần chung của mọi trang cửa hàng: token màu (.shop), font, link "Skip to main content",
+ * thanh tiến trình chuyển trang và đồng bộ phiên đăng nhập.
  */
 export function ShopShell({ className, children }: { className?: string; children: React.ReactNode }) {
+  useForceLight();
+
   return (
     <div className={cn("shop min-h-full shrink-0 bg-(--sh-bg) text-(--sh-fg)", className)}>
-      {/* React 19 tự đưa các thẻ này lên <head> */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      <link rel="stylesheet" href={FONTS_HREF} precedence="default" />
-
       <a
         href="#shop-main"
-        className="sr-only z-50 rounded-[8px] bg-(--sh-primary) px-4 py-2 font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        onClick={(e) => {
+          e.preventDefault();
+          document.getElementById("shop-main")?.focus();
+        }}
+        className="sr-only z-50 rounded-[30px] bg-(--sh-primary) px-5 py-2 font-medium text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
       >
-        Bỏ qua menu
+        Skip to main content
       </a>
       <RouteProgress />
       {children}
-      <ShopDialogs />
       <ShopSessionSync />
     </div>
   );

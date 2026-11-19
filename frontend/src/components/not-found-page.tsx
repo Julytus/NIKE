@@ -5,9 +5,10 @@ import { cn } from "@/lib/utils";
 
 /**
  * Trang "không tìm thấy" dùng chung. `embedded` = hiện bên trong một layout đã có `<main>`
- * (vd khung quản trị) nên không tạo thêm landmark `main` và không chiếm cả màn hình.
+ * (khung quản trị, khung cửa hàng) nên không tạo thêm landmark `main` và không chiếm cả màn hình.
+ * `home` = nơi nút "Về Trang Chủ" dẫn tới (mặc định: `/admin` khi embedded, `/` khi không).
  */
-export function NotFoundPage({ embedded = false }: { embedded?: boolean }) {
+export function NotFoundPage({ embedded = false, home }: { embedded?: boolean; home?: "/" | "/admin" }) {
   const navigate = useNavigate();
   const Wrapper = embedded ? "div" : "main";
 
@@ -24,7 +25,7 @@ export function NotFoundPage({ embedded = false }: { embedded?: boolean }) {
           <p className="text-muted-foreground text-lg md:text-xl">Trang bạn đang tìm kiếm không tồn tại.</p>
           <div className="flex flex-col gap-4 pt-4 sm:flex-row sm:justify-center">
             <Button
-              onClick={() => navigate({ to: embedded ? "/admin" : "/" })}
+              onClick={() => navigate({ to: home ?? (embedded ? "/admin" : "/") })}
               size="lg"
               className="rounded-full"
               data-testid="not-found-home"

@@ -29,7 +29,16 @@ export default [
       // Thao tác + khẳng định nằm trong page object / ApiClient (expectOk, expectError)
       'playwright/expect-expect': [
         'warn',
-        { assertFunctionNames: ['expectOk', 'expectError', 'loginOk', 'create', 'expectAllRemoved'] },
+        {
+          assertFunctionNames: [
+            'expectOk',
+            'expectError',
+            'loginOk',
+            'create',
+            'expectAllRemoved',
+            'expectLoggedOut',
+          ],
+        },
       ],
       'playwright/no-conditional-in-test': 'off',
       'playwright/no-skipped-test': ['warn', { allowConditional: true }],

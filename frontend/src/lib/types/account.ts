@@ -22,3 +22,14 @@ export interface ShopRegisterRequest {
   email: string;
   password: string;
 }
+
+/** Body `POST /account/public/check-email` (plan dang-nhap-nike §5.1). */
+export interface CheckEmailRequest {
+  email: string;
+}
+
+/** `result` của check-email: `email` đã chuẩn hoá (trim + chữ thường), `exists` = đã có tài khoản. */
+export interface CheckEmailResponse {
+  email: string;
+  exists: boolean;
+}

@@ -29,7 +29,7 @@ export function RouteProgress() {
         visible ? "opacity-100" : "opacity-0"
       )}
     >
-      <div className="shop-progress h-full w-1/3 rounded-full bg-(--sh-pink)" />
+      <div className="shop-progress h-full w-1/3 rounded-full bg-(--sh-fg)" />
     </div>
   );
 }

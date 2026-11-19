@@ -1,6 +1,7 @@
 import { AccountApi } from './AccountApi.js';
 import { ApiClient } from './ApiClient.js';
 import { AuthApi } from './AuthApi.js';
+import { ProductApi } from './ProductApi.js';
 import { ResourceApi } from './ResourceApi.js';
 import { RoleApi } from './RoleApi.js';
 import { TestSupportApi } from './TestSupportApi.js';
@@ -18,6 +19,7 @@ export function createApi(request, token = null) {
     account: new AccountApi(client),
     role: new RoleApi(client),
     resource: new ResourceApi(client),
+    product: new ProductApi(client),
     testSupport: new TestSupportApi(client),
     /** Đổi token cho mọi API trong nhóm. @param {string | null} t */
     useToken(t) {
@@ -29,4 +31,4 @@ export function createApi(request, token = null) {
 
 /** @typedef {ReturnType<typeof createApi>} Api */
 
-export { AccountApi, ApiClient, AuthApi, ResourceApi, RoleApi, TestSupportApi };
+export { AccountApi, ApiClient, AuthApi, ProductApi, ResourceApi, RoleApi, TestSupportApi };
