@@ -1,0 +1,64 @@
+[
+  {
+    "id": "a",
+    "case": "bỏ trống cả form",
+    "name": "",
+    "password": "",
+    "terms": false,
+    "errors": [
+      "Please enter your full name.",
+      "Password must be at least 8 characters.",
+      "You must agree to the terms to continue."
+    ]
+  },
+  {
+    "id": "b",
+    "case": "mật khẩu không có số",
+    "name": "Join Test",
+    "password": "abcdefgh",
+    "terms": true,
+    "errors": [
+      "Password must contain a number."
+    ]
+  },
+  {
+    "id": "c",
+    "case": "mật khẩu không có chữ",
+    "name": "Join Test",
+    "password": "12345678",
+    "terms": true,
+    "errors": [
+      "Password must contain a letter."
+    ]
+  },
+  {
+    "id": "d",
+    "case": "mật khẩu 7 ký tự",
+    "name": "Join Test",
+    "password": "Abc1234",
+    "terms": true,
+    "errors": [
+      "Password must be at least 8 characters."
+    ]
+  },
+  {
+    "id": "e",
+    "case": "mật khẩu 73 ký tự",
+    "name": "Join Test",
+    "password": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
+    "terms": true,
+    "errors": [
+      "Password must be at most 72 characters."
+    ]
+  },
+  {
+    "id": "f",
+    "case": "họ tên 101 ký tự",
+    "name": "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN",
+    "password": "Abc12345",
+    "terms": true,
+    "errors": [
+      "Full name must be at most 100 characters."
+    ]
+  }
+]

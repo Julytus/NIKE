@@ -12,6 +12,7 @@ import vn.aeoc.authenticate.util.SecurityUtils;
 import vn.aeoc.base.config.model.ApiResponse;
 import vn.aeoc.business.account.service.AccountService;
 import vn.aeoc.entity.data.mysql.auth.User;
+import vn.aeoc.entity.data.response.CheckEmailResponse;
 import vn.aeoc.entity.data.response.TokenResponse;
 
 import java.security.Principal;
@@ -28,6 +29,12 @@ public class AccountController extends BaseController {
     @PostMapping("/account/register")
     public ResponseEntity<ApiResponse<TokenResponse>> register(@RequestBody User request) {
         return Mapper.map(accountService.register(request), ApiResponse::okEntity);
+    }
+
+    /** Công khai (mẫu {@code /<x>/public/} của JwtAuthenticationFilter) — plan dang-nhap-nike §5.1. Body chỉ dùng {@code email}. */
+    @PostMapping("/account/public/check-email")
+    public ResponseEntity<ApiResponse<CheckEmailResponse>> checkEmail(@RequestBody(required = false) User request) {
+        return Mapper.map(accountService.checkEmail(request), ApiResponse::okEntity);
     }
 
     @GetMapping("/account/me")

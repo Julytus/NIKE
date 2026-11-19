@@ -1,18 +1,18 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Fragment } from "react";
 import { JordanJumpman } from "@/components/brand/jordan-jumpman";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useShopDialog } from "@/lib/stores/shop-dialog";
+import { signInSearch } from "@/lib/sign-in-redirect";
 import { useShopSession } from "@/lib/stores/shop-session";
 import { AccountMenu } from "./account-menu";
 
 const ITEM = "rounded-sm outline-none hover:text-(--sh-muted) focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50";
 
-/** Dải trên 36px (chỉ desktop): Jumpman bên trái; Tìm cửa hàng | Trợ giúp | Tham gia | Đăng nhập bên phải (§6.1). */
+/** Dải trên 36px (chỉ desktop): Jumpman bên trái; Find a Store | Help | Join Us | Sign In bên phải (§6.1). */
 export function TopBar() {
   const user = useShopSession((s) => s.user);
   const loading = useShopSession((s) => s.loading);
-  const openDialog = useShopDialog((s) => s.open);
+  const location = useLocation();
 
   let account: React.ReactNode[];
   if (loading && !user) {
@@ -20,7 +20,7 @@ export function TopBar() {
       <Skeleton
         key="loading"
         role="status"
-        aria-label="Đang tải tài khoản"
+        aria-label="Loading account"
         className="h-3 w-24 bg-(--sh-surface-hover)"
       />
     ];
@@ -28,42 +28,30 @@ export function TopBar() {
     account = [<AccountMenu key="account" user={user} variant="text" />];
   } else {
     account = [
-      <button
-        key="register"
-        type="button"
-        className={ITEM}
-        onClick={() => openDialog({ type: "register" })}
-        data-testid="header-register"
-      >
-        Tham gia
-      </button>,
-      <button
-        key="login"
-        type="button"
-        className={ITEM}
-        onClick={() => openDialog({ type: "login" })}
-        data-testid="header-login"
-      >
-        Đăng nhập
-      </button>
+      <Link key="register" to="/signin" search={signInSearch(location)} className={ITEM} data-testid="header-register">
+        Join Us
+      </Link>,
+      <Link key="login" to="/signin" search={signInSearch(location)} className={ITEM} data-testid="header-login">
+        Sign In
+      </Link>
     ];
   }
 
   const items = [
-    <Link key="store" to="/thong-tin/$trang" params={{ trang: "tim-cua-hang" }} className={ITEM}>
-      Tìm cửa hàng
+    <Link key="store" to="/info/$page" params={{ page: "find-a-store" }} className={ITEM}>
+      Find a Store
     </Link>,
-    <Link key="help" to="/thong-tin/$trang" params={{ trang: "tro-giup" }} className={ITEM}>
-      Trợ giúp
+    <Link key="help" to="/info/$page" params={{ page: "help" }} className={ITEM}>
+      Help
     </Link>,
     ...account
   ];
 
   return (
-    <div className="flex h-9 items-center justify-between bg-(--sh-surface) px-12 text-xs font-medium">
+    <div className="flex h-9 items-center justify-between bg-(--sh-surface) px-12 text-xs font-semibold">
       <Link
-        to="/w/$danhMuc"
-        params={{ danhMuc: "jordan" }}
+        to="/w/$category"
+        params={{ category: "jordan" }}
         aria-label="Jordan"
         className={`${ITEM} inline-flex h-9 items-center`}
       >

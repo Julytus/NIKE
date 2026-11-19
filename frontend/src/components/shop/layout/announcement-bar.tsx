@@ -1,26 +1,26 @@
-import { Link } from "@tanstack/react-router";
-import { useShopDialog } from "@/lib/stores/shop-dialog";
+import { Link, useLocation } from "@tanstack/react-router";
+import { signInSearch } from "@/lib/sign-in-redirect";
 import { useShopSession } from "@/lib/stores/shop-session";
 
-const UNDERLINE = "rounded-sm font-medium underline underline-offset-2 outline-none focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50";
+const UNDERLINE = "rounded-sm font-semibold underline underline-offset-2 outline-none focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50";
 
 /** Dải thông báo dưới header (ngoài `<header>`, cuộn mất bình thường) — plan giao-dien-nike §6.1. */
 export function AnnouncementBar() {
   const user = useShopSession((s) => s.user);
   const loading = useShopSession((s) => s.loading);
-  const openDialog = useShopDialog((s) => s.open);
+  const location = useLocation();
 
   return (
-    <div data-testid="announcement-bar" className="bg-(--sh-surface) px-4 py-3 text-center text-sm">
-      <p>Miễn phí giao hàng cho đơn từ 5.000.000 ₫ &amp; đổi trả trong 30 ngày</p>
-      <p className="mt-1 flex justify-center gap-3">
+    <div data-testid="announcement-bar" className="bg-(--sh-surface) px-4 py-2 text-center text-base">
+      <p>Free delivery on orders from 5.000.000 ₫ &amp; free 30-day returns</p>
+      <p className="mt-0.5 flex justify-center gap-1.5 text-xs">
         {!user && !loading && (
-          <button type="button" className={UNDERLINE} onClick={() => openDialog({ type: "register" })}>
-            Tham gia ngay
-          </button>
+          <Link to="/signin" search={signInSearch(location)} className={UNDERLINE}>
+            Join Us
+          </Link>
         )}
-        <Link to="/thong-tin/$trang" params={{ trang: "giao-hang" }} className={UNDERLINE}>
-          Xem chi tiết
+        <Link to="/info/$page" params={{ page: "delivery" }} className={UNDERLINE}>
+          Learn More
         </Link>
       </p>
     </div>

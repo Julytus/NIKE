@@ -1,8 +1,8 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Heart, Menu, Search, ShoppingBag, UserRound } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIsDesktop } from "@/hooks/use-media-query";
-import { useShopDialog } from "@/lib/stores/shop-dialog";
+import { signInSearch } from "@/lib/sign-in-redirect";
 import { useShopSession } from "@/lib/stores/shop-session";
 import { AccountMenu } from "./account-menu";
 
@@ -31,7 +31,7 @@ export function HeaderActions({
       <button
         ref={searchButtonRef}
         type="button"
-        aria-label="Tìm kiếm"
+        aria-label="Search"
         onClick={onOpenSearch}
         data-testid="header-search"
         className={`${ICON_BUTTON} lg:h-10 lg:w-[180px] lg:justify-start lg:gap-2 lg:bg-(--sh-surface) lg:pr-4 lg:pl-1.5`}
@@ -40,17 +40,17 @@ export function HeaderActions({
           <Search aria-hidden />
         </span>
         <span aria-hidden className="hidden text-base font-medium text-(--sh-muted) lg:inline">
-          Tìm kiếm
+          Search
         </span>
       </button>
       {isDesktop ? (
-        <Link to="/yeu-thich" aria-label="Yêu thích" className={ICON_BUTTON}>
+        <Link to="/favorites" aria-label="Favourites" className={ICON_BUTTON}>
           <Heart aria-hidden />
         </Link>
       ) : (
         <MobileAccount />
       )}
-      <Link to="/gio-hang" aria-label="Giỏ hàng" data-testid="header-cart" className={ICON_BUTTON}>
+      <Link to="/cart" aria-label="Bag" data-testid="header-cart" className={ICON_BUTTON}>
         <ShoppingBag aria-hidden />
       </Link>
       {!isDesktop && (
@@ -62,19 +62,19 @@ export function HeaderActions({
   );
 }
 
-/** Icon tài khoản (mobile): chưa đăng nhập → "Đăng nhập"; đã đăng nhập → menu "Xin chào, <tên>". */
+/** Icon tài khoản (mobile): chưa đăng nhập → link "Sign In" tới `/signin`; đã đăng nhập → menu "Hi, <tên>". */
 function MobileAccount() {
   const user = useShopSession((s) => s.user);
   const loading = useShopSession((s) => s.loading);
-  const openDialog = useShopDialog((s) => s.open);
+  const location = useLocation();
 
   if (loading && !user) {
-    return <Skeleton role="status" aria-label="Đang tải tài khoản" className="size-8 rounded-full bg-(--sh-surface)" />;
+    return <Skeleton role="status" aria-label="Loading account" className="size-8 rounded-full bg-(--sh-surface)" />;
   }
   if (user) return <AccountMenu user={user} variant="icon" />;
   return (
-    <button type="button" aria-label="Đăng nhập" onClick={() => openDialog({ type: "login" })} className={ICON_BUTTON}>
+    <Link to="/signin" search={signInSearch(location)} aria-label="Sign In" className={ICON_BUTTON}>
       <UserRound aria-hidden />
-    </button>
+    </Link>
   );
 }

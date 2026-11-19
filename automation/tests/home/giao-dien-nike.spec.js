@@ -15,10 +15,12 @@ import { formatVnd } from '../../utils/format.js';
  * Lát `giao-dien-nike` (plan/giao-dien-nike.md §6, §9 TC-10 → TC-30): khung giao diện Nike —
  * header, mega menu, khung tìm kiếm, dải thông báo, footer, menu trượt; trang chủ; trang thông tin; trang tạm.
  * Href mong đợi dựng từ `data/nav-links.json` + `expectedCategories()`, sản phẩm từ `products.json`.
+ * Lát tieng-anh-cua-hang: chuỗi / URL / khoá query đổi sang tiếng Anh (D6, plan tieng-anh-cua-hang §6) — chỉ đổi
+ * chữ mong đợi, không đổi hành vi được kiểm.
  */
 
-const NOT_FOUND = 'Trang bạn đang tìm kiếm không tồn tại.';
-const ANNOUNCEMENT = 'Miễn phí giao hàng cho đơn từ 5.000.000 ₫ & đổi trả trong 30 ngày';
+const NOT_FOUND = "We can't find the page you're looking for.";
+const ANNOUNCEMENT = 'Free delivery on orders from 5.000.000 ₫ & free 30-day returns';
 const MOBILE = 'mobile-chrome';
 
 const API = {
@@ -28,7 +30,7 @@ const API = {
 };
 
 /**
- * Ghép đường dẫn gốc với tham số phạm vi (vd `/w/bong-ro` + `{gioiTinh: 'nam'}`).
+ * Ghép đường dẫn gốc với tham số phạm vi (vd `/w/basketball` + `{gender: 'men'}`).
  * @param {string} base
  * @param {Record<string, string>} scope
  */
@@ -79,7 +81,7 @@ function megaLinksOf(scope) {
 
 /** Trả 500 cho một API. @param {import('@playwright/test').Route} route */
 const fail500 = (route) =>
-  route.fulfill({ status: 500, json: { code: 500, message: 'Lỗi giả lập' } });
+  route.fulfill({ status: 500, json: { code: 500, message: 'Simulated error' } });
 
 test.describe('Khung cửa hàng desktop', () => {
   test.beforeEach(({}, testInfo) => {
@@ -95,7 +97,7 @@ test.describe('Khung cửa hàng desktop', () => {
 
     await expect(page).toHaveTitle('Nike. Just Do It.');
     await expect(homePage.heroHeading).toBeVisible();
-    await expectHref(homePage.shopNowLink, '/w?nhan=moi-ve');
+    await expectHref(homePage.shopNowLink, '/w?badge=just-in');
     await expectHref(homePage.allShoesLink, '/w');
 
     await expect(homePage.newArrivalCards).toHaveCount(arrivals.length);
@@ -103,7 +105,7 @@ test.describe('Khung cửa hàng desktop', () => {
     for (const [i, product] of arrivals.entries()) {
       const card = homePage.newArrivalCard(i);
       await expect(card.name).toHaveText(product.name);
-      await expect(card.badge).toHaveText('Mới về');
+      await expect(card.badge).toHaveText('Just In');
       await expect(card.price).toHaveText(formatVnd(product.salePrice ?? product.price));
     }
     const first = homePage.newArrivalCard(0);
@@ -117,17 +119,17 @@ test.describe('Khung cửa hàng desktop', () => {
     for (const [i, category] of categories.entries()) {
       const tile = homePage.categoryTiles.nth(i);
       await expect(tile).toContainText(category.name);
-      await expect(tile).toContainText(`${category.productCount} sản phẩm`);
+      await expect(tile).toContainText(`${category.productCount} products`);
       await expectHref(tile, `/w/${category.slug}`);
     }
-    await expect(homePage.categoryTile('Lifestyle')).toContainText('12 sản phẩm');
+    await expect(homePage.categoryTile('Lifestyle')).toContainText('12 products');
 
     await expect(homePage.footer.root).toBeVisible();
     await docShot(page, testInfo, '01-trang-chu');
     expect(errors).toEqual([]);
   });
 
-  test('TC-11 dải "Mới về" cuộn ngang', { tag: '@regression' }, async ({ homePage }) => {
+  test('TC-11 dải "Just In" cuộn ngang', { tag: '@regression' }, async ({ homePage }) => {
     await homePage.goto();
     await expect(homePage.newArrivalCards).toHaveCount(expectedNewArrivals().length);
     await expect(homePage.prevButton).toBeDisabled();
@@ -159,7 +161,7 @@ test.describe('Khung cửa hàng desktop', () => {
     'TC-12 trạng thái tải / lỗi (network mocking)',
     { tag: '@regression' },
     async ({ page, homePage }) => {
-      await test.step('(a) "Mới về" lỗi rồi thử lại', async () => {
+      await test.step('(a) "Just In" lỗi rồi thử lại', async () => {
         await page.route(API.newArrivals, fail500);
         await homePage.goto();
         await expect(homePage.newArrivalsError).toBeVisible();
@@ -183,16 +185,16 @@ test.describe('Khung cửa hàng desktop', () => {
         await page.unroute(API.categories);
       });
 
-      await test.step('(c) danh mục lỗi: khối lỗi, mega menu không có cột "Danh mục"', async () => {
+      await test.step('(c) danh mục lỗi: khối lỗi, mega menu không có cột "Categories"', async () => {
         await page.route(API.categories, fail500);
         await homePage.goto();
         await expect(homePage.categoriesError).toBeVisible();
         await expect(homePage.categoriesRetry).toBeVisible();
 
-        await homePage.header.hoverNav('Nam');
-        await expect(homePage.header.megaColumn('Nổi bật')).toBeVisible();
-        await expect(homePage.header.megaColumn('Theo giá')).toBeVisible();
-        await expect(homePage.header.megaColumn('Danh mục')).toHaveCount(0);
+        await homePage.header.hoverNav('Men');
+        await expect(homePage.header.megaColumn('Featured')).toBeVisible();
+        await expect(homePage.header.megaColumn('Shop by Price')).toBeVisible();
+        await expect(homePage.header.megaColumn('Categories')).toHaveCount(0);
       });
     }
   );
@@ -204,22 +206,22 @@ test.describe('Khung cửa hàng desktop', () => {
     await expect(header.jordanLink).toBeVisible();
     await expect(header.jordanLink.locator('svg')).toHaveCount(1);
     await expectHref(header.jordanLink, '/w/jordan');
-    await expectHref(header.findStoreLink, '/thong-tin/tim-cua-hang');
-    await expectHref(header.helpLink, '/thong-tin/tro-giup');
-    await expect(header.registerButton).toHaveText('Tham gia');
+    await expectHref(header.findStoreLink, '/info/find-a-store');
+    await expectHref(header.helpLink, '/info/help');
+    await expect(header.registerButton).toHaveText('Join Us');
     await expect(header.loginButton).toBeVisible();
     await expectHref(header.logo, '/');
     for (const item of nav.navItems) {
       await expect(header.navLink(item.label)).toBeVisible();
       await expectHref(header.navLink(item.label), item.href);
     }
-    await expectHref(header.favoritesLink, '/yeu-thich');
-    await expectHref(header.cartLink, '/gio-hang');
+    await expectHref(header.favoritesLink, '/favorites');
+    await expectHref(header.cartLink, '/cart');
 
     await expect(header.announcement).toContainText(ANNOUNCEMENT);
     await header.announcementDetails.click();
-    await expect(page).toHaveURL(/\/thong-tin\/giao-hang$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'Giao hàng' })).toBeVisible();
+    await expect(page).toHaveURL(/\/info\/delivery$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Delivery' })).toBeVisible();
   });
 
   test(
@@ -242,20 +244,20 @@ test.describe('Khung cửa hàng desktop', () => {
           for (const link of expected) {
             await expectHref(header.megaLink(link.label), link.href);
           }
-          if (item.label === 'Nam') await docShot(page, testInfo, '02-mega-menu');
+          if (item.label === 'Men') await docShot(page, testInfo, '02-mega-menu');
 
           await homePage.heroHeading.hover();
           await expect(header.megaMenu).toBeHidden();
         });
       }
 
-      await header.hoverNav('Nam');
-      await expectHref(header.megaLink('Bóng rổ'), '/w/bong-ro?gioiTinh=nam');
+      await header.hoverNav('Men');
+      await expectHref(header.megaLink('Basketball'), '/w/basketball?gender=men');
       await page.keyboard.press('Escape');
       await expect(header.megaMenu).toBeHidden();
 
-      await header.hoverNav('Giảm giá');
-      await expectHref(header.megaLink('Dưới 1.000.000 ₫'), '/w?giamGia=1&gia=duoi-1tr');
+      await header.hoverNav('Sale');
+      await expectHref(header.megaLink('Under 1.000.000 ₫'), '/w?sale=1&price=under-1m');
     }
   );
 
@@ -266,21 +268,21 @@ test.describe('Khung cửa hàng desktop', () => {
       const { header } = homePage;
       await homePage.goto();
 
-      await header.navLink('Nam').click();
+      await header.navLink('Men').click();
       await expect(page).toHaveURL(/\/w\?/);
       expect(currentUrl(page).pathname).toBe('/w');
-      expect(currentUrl(page).searchParams.get('gioiTinh')).toBe('nam');
+      expect(currentUrl(page).searchParams.get('gender')).toBe('men');
       await expect(page.getByText(NOT_FOUND)).toHaveCount(0);
       await expect(header.root).toBeVisible();
       await expect(homePage.footer.root).toBeVisible();
 
       await homePage.goto();
       await expect(homePage.categoryTiles.first()).toBeVisible();
-      await header.hoverNav('Nữ');
-      await header.megaLink('Chạy bộ').click();
-      await expect(page).toHaveURL(/\/w\/chay-bo/);
-      expect(currentUrl(page).pathname).toBe('/w/chay-bo');
-      expect(currentUrl(page).searchParams.get('gioiTinh')).toBe('nu');
+      await header.hoverNav('Women');
+      await header.megaLink('Running').click();
+      await expect(page).toHaveURL(/\/w\/running/);
+      expect(currentUrl(page).pathname).toBe('/w/running');
+      expect(currentUrl(page).searchParams.get('gender')).toBe('women');
       await expect(header.megaMenu).toBeHidden();
       await expect(page.getByText(NOT_FOUND)).toHaveCount(0);
       await expect(header.root).toBeVisible();
@@ -338,47 +340,62 @@ test.describe('Khung cửa hàng desktop', () => {
   });
 
   test(
-    'TC-24 "Tham gia" / "Tham gia ngay" mở đăng ký',
+    'TC-24 "Join Us" (dải trên / dải thông báo) mở đăng ký',
     { tag: '@regression' },
-    async ({ homePage }) => {
-      const { header, registerDialog } = homePage;
+    async ({ page, homePage, signInPage }) => {
+      // Lát dang-nhap-nike: "Join Us" là link tới /signin (không còn hộp thoại)
+      const { header } = homePage;
       await homePage.goto();
 
       await header.registerButton.click();
-      await expect(registerDialog.nameInput).toBeVisible();
-      await expect(registerDialog.submitButton).toBeVisible();
-      await homePage.page.keyboard.press('Escape');
-      await expect(registerDialog.root).toBeHidden();
+      await expect(page).toHaveURL(/\/signin\?redirect=%2F$/);
+      await signInPage.expectStep('email');
+      await page.goBack();
 
       await header.joinNowButton.click();
-      await expect(registerDialog.nameInput).toBeVisible();
-      await expect(registerDialog.submitButton).toBeVisible();
+      await expect(page).toHaveURL(/\/signin\?redirect=%2F$/);
+      await signInPage.expectStep('email');
     }
   );
 
-  test('TC-26 khả năng truy cập cơ bản', { tag: '@regression' }, async ({ page, homePage }) => {
-    for (const path of ['/', '/thong-tin/giao-hang']) {
-      await test.step(`axe ${path}`, async () => {
-        await homePage.goto(path);
-        await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-        const { violations } = await new AxeBuilder({ page })
-          .withTags(['wcag2a', 'wcag2aa'])
-          .analyze();
-        const serious = violations
-          .filter((v) => v.impact === 'serious' || v.impact === 'critical')
-          .map((v) => `${v.id}: ${v.help} (${v.nodes.length})`);
-        expect(serious).toEqual([]);
-      });
-    }
+  test(
+    'TC-26 khả năng truy cập cơ bản',
+    { tag: '@regression' },
+    async ({ page, homePage, browserName }) => {
+      for (const path of ['/', '/info/delivery']) {
+        await test.step(`axe ${path}`, async () => {
+          await homePage.goto(path);
+          await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+          const { violations } = await new AxeBuilder({ page })
+            .withTags(['wcag2a', 'wcag2aa'])
+            .analyze();
+          const serious = violations
+            .filter((v) => v.impact === 'serious' || v.impact === 'critical')
+            .map((v) => `${v.id}: ${v.help} (${v.nodes.length})`);
+          expect(serious).toEqual([]);
+        });
+      }
 
-    await homePage.goto();
-    await expect(homePage.heroHeading).toBeVisible();
-    await page.keyboard.press('Tab');
-    await expect(homePage.header.skipLink).toBeFocused();
-    await expect(homePage.header.skipLink).toBeVisible();
-    await page.keyboard.press('Enter');
-    await expect(page.locator('#shop-main:focus, #shop-main :focus')).toHaveCount(1);
-  });
+      // WebKit (như Safari) mặc định Tab bỏ qua mọi link, Playwright trên Windows không bật lại được
+      // → bước bàn phím chỉ kiểm ở chromium / firefox / mobile-chrome; phần axe ở trên vẫn chạy mọi trình duyệt
+      if (browserName === 'webkit') {
+        test
+          .info()
+          .annotations.push({
+            type: 'skip-step',
+            description: 'Tab tới link: WebKit tắt mặc định',
+          });
+        return;
+      }
+      await homePage.goto();
+      await expect(homePage.heroHeading).toBeVisible();
+      await page.keyboard.press('Tab');
+      await expect(homePage.header.skipLink).toBeFocused();
+      await expect(homePage.header.skipLink).toBeVisible();
+      await page.keyboard.press('Enter');
+      await expect(page.locator('#shop-main:focus, #shop-main :focus')).toHaveCount(1);
+    }
+  );
 });
 
 test.describe('Khung tìm kiếm', () => {
@@ -403,7 +420,7 @@ test.describe('Khung tìm kiếm', () => {
     const first = search.suggestion(0);
     await expect(first.name).toHaveText("Air Jordan 1 Low SE 'Magic Ball'");
     await expect(first.price).toHaveText('3.669.000 ₫');
-    await expect(search.viewAllLink).toHaveText(`Xem tất cả ${expected.total} kết quả`);
+    await expect(search.viewAllLink).toHaveText(`View All ${expected.total} Results`);
     await expectHref(search.viewAllLink, '/w?q=jordan');
     await docShot(page, testInfo, '03-tim-kiem');
 
@@ -434,9 +451,9 @@ test.describe('Khung tìm kiếm', () => {
     await expect(search.root).toBeVisible();
     expect(page.url()).toBe(before);
 
-    await search.popularPill('giày bóng rổ').click();
+    await search.popularPill('basketball shoes').click();
     await expect(search.root).toBeHidden();
-    await expect.poll(() => currentUrl(page).searchParams.get('q')).toBe('giày bóng rổ');
+    await expect.poll(() => currentUrl(page).searchParams.get('q')).toBe('basketball shoes');
     expect(currentUrl(page).pathname).toBe('/w');
   });
 
@@ -460,7 +477,7 @@ test.describe('Khung tìm kiếm', () => {
       await search.type('mule');
       await expect(search.suggestions).toHaveCount(1);
       const card = search.suggestion(0);
-      await expect(card.badge).toHaveText('Giảm giá');
+      await expect(card.badge).toHaveText('Sale');
       await expect(card.price).toHaveText('3.759.000 ₫');
       await expect(card.originalPrice).toHaveText('4.699.000 ₫');
     }
@@ -496,7 +513,7 @@ test.describe('Footer và trang thông tin', () => {
       await expect(footer.copyright).toBeVisible();
       expect(nav.infoPages).toHaveLength(15);
       for (const info of nav.infoPages) {
-        await expectHref(footer.link(info.label), `/thong-tin/${info.slug}`);
+        await expectHref(footer.link(info.label), `/info/${info.slug}`);
       }
 
       for (const info of nav.infoPages) {
@@ -507,27 +524,21 @@ test.describe('Footer và trang thông tin', () => {
         });
       }
 
-      await infoPage.open('giao-hang');
+      await infoPage.open('delivery');
       await expect(infoPage.main).toContainText('30.000 ₫');
       await expect(infoPage.main).toContainText('5.000.000 ₫');
       await docShot(page, testInfo, '04-trang-thong-tin');
-      await infoPage.open('ve-nike');
-      await expect(infoPage.main).toContainText('dự án học tập');
+      await infoPage.open('about-nike');
+      await expect(infoPage.main).toContainText('student project');
 
-      await notFoundPage.goto('/thong-tin/khong-co');
+      await notFoundPage.goto('/info/khong-co');
       await expect(notFoundPage.message).toBeVisible();
     }
   );
 
   test('TC-25 trang tạm không 404', { tag: '@regression' }, async ({ page, homePage }) => {
     const errors = collectPageErrors(page);
-    for (const path of [
-      '/w',
-      '/w/lifestyle',
-      '/t/nike-dunk-low-retro',
-      '/yeu-thich',
-      '/gio-hang',
-    ]) {
+    for (const path of ['/w', '/w/lifestyle', '/t/nike-dunk-low-retro', '/favorites', '/cart']) {
       await test.step(path, async () => {
         await homePage.goto(path);
         await expect(homePage.header.root).toBeVisible();
@@ -541,17 +552,18 @@ test.describe('Footer và trang thông tin', () => {
 
 test.describe('Tài khoản ở header (khách)', () => {
   test(
-    'TC-23a đăng nhập qua hộp thoại, menu tài khoản khách',
+    'TC-23a đăng nhập qua /signin, menu tài khoản khách',
     { tag: '@regression' },
-    async ({ homePage }) => {
-      const { header, loginDialog } = homePage;
+    async ({ page, homePage, signInPage }) => {
+      // Lát dang-nhap-nike: đăng nhập ở trang /signin rồi quay về trang chủ
+      const { header } = homePage;
       await homePage.goto();
 
       await header.openLogin();
-      await loginDialog.login(accounts.customer);
-      await expect(loginDialog.root).toBeHidden();
+      await signInPage.signIn(accounts.customer);
+      await expect(page).toHaveURL(/\/$/);
 
-      const account = header.accountButton('Khách Miễn Phí');
+      const account = header.accountButton('Free Member');
       await expect(account).toBeVisible();
       await expect(header.registerButton).toBeHidden();
       await expect(header.loginButton).toHaveCount(0);
@@ -561,8 +573,8 @@ test.describe('Tài khoản ở header (khách)', () => {
       await expect(
         header.accountMenu.getByText(accounts.customer.email, { exact: true })
       ).toBeVisible();
-      await expect(header.menuItem('Đăng xuất')).toBeVisible();
-      await expect(header.accountMenu.getByText('Trang quản trị')).toHaveCount(0);
+      await expect(header.menuItem('Sign Out')).toBeVisible();
+      await expect(header.menuItem('Admin')).toHaveCount(0);
     }
   );
 });
@@ -570,18 +582,14 @@ test.describe('Tài khoản ở header (khách)', () => {
 test.describe('Tài khoản ở header (quản trị)', () => {
   test.use({ storageState: storageStateOf('admin') });
 
-  test(
-    'TC-23b quản trị thấy "Trang quản trị"',
-    { tag: '@regression' },
-    async ({ page, homePage }) => {
-      const { header } = homePage;
-      await homePage.goto();
+  test('TC-23b quản trị thấy "Admin"', { tag: '@regression' }, async ({ page, homePage }) => {
+    const { header } = homePage;
+    await homePage.goto();
 
-      await header.accountButton('Administrator').click();
-      await header.menuItem('Trang quản trị').click();
-      await expect(page).toHaveURL(/\/admin$/);
-    }
-  );
+    await header.accountButton('Administrator').click();
+    await header.menuItem('Admin').click();
+    await expect(page).toHaveURL(/\/admin$/);
+  });
 });
 
 test.describe('Khung cửa hàng mobile', () => {
@@ -597,7 +605,7 @@ test.describe('Khung cửa hàng mobile', () => {
       await homePage.goto();
 
       await expect(header.findStoreLink).toBeHidden();
-      await expect(header.navLink('Nam')).toBeHidden();
+      await expect(header.navLink('Men')).toBeHidden();
       await expect(header.searchButton).toBeVisible();
       await expect(header.loginButton).toBeVisible();
       await expect(header.menuButton).toBeVisible();
@@ -609,12 +617,12 @@ test.describe('Khung cửa hàng mobile', () => {
       await docShot(page, testInfo, '05-trang-chu-mobile');
 
       await header.openLogin();
-      await expect(homePage.loginDialog.root).toBeVisible();
+      await expect(page).toHaveURL(/\/signin\?redirect=%2F$/);
     }
   );
 
-  test('TC-28 menu trượt mobile', { tag: '@regression' }, async ({ page, homePage }) => {
-    const { header, registerDialog } = homePage;
+  test('TC-28 menu trượt mobile', { tag: '@regression' }, async ({ page, homePage }, testInfo) => {
+    const { header } = homePage;
     await homePage.goto();
 
     const menu = await header.openMobileMenu();
@@ -622,24 +630,25 @@ test.describe('Khung cửa hàng mobile', () => {
     await expect(menu.jordanLink).toBeVisible();
     await expectHref(menu.jordanLink, '/w/jordan');
 
-    await menu.item('Nam').click();
-    await expect(menu.panelHeading('Nam')).toBeVisible();
-    await expectHref(menu.link('Xem tất cả'), '/w?gioiTinh=nam');
-    await expectHref(menu.link('Bóng rổ'), '/w/bong-ro?gioiTinh=nam');
-    await expectHref(menu.link('Từ 5.000.000 ₫'), '/w?gioiTinh=nam&gia=tu-5tr');
+    await menu.item('Men').click();
+    await expect(menu.panelHeading('Men')).toBeVisible();
+    await expectHref(menu.link('Shop All'), '/w?gender=men');
+    await expectHref(menu.link('Basketball'), '/w/basketball?gender=men');
+    await expectHref(menu.link('5.000.000 ₫ & Above'), '/w?gender=men&price=5m-plus');
+    await docShot(page, testInfo, '06-menu-truot-mobile');
     await menu.backButton.click();
-    await expect(menu.panelHeading('Nam')).toBeHidden();
-    await expect(menu.item('Nam')).toBeVisible();
+    await expect(menu.panelHeading('Men')).toBeHidden();
+    await expect(menu.item('Men')).toBeVisible();
 
+    // Lát dang-nhap-nike: "Join Us" trong menu trượt là link tới /signin
     await menu.joinButton.click();
     await expect(menu.root).toBeHidden();
-    await expect(registerDialog.nameInput).toBeVisible();
-    await page.keyboard.press('Escape');
-    await expect(registerDialog.root).toBeHidden();
+    await expect(page).toHaveURL(/\/signin\?redirect=%2F$/);
+    await page.goBack();
 
     await header.openMobileMenu();
-    await menu.link('Trợ giúp').click();
-    await expect(page).toHaveURL(/\/thong-tin\/tro-giup$/);
+    await menu.link('Help').click();
+    await expect(page).toHaveURL(/\/info\/help$/);
     await expect(menu.root).toBeHidden();
 
     await header.openMobileMenu();
@@ -651,22 +660,22 @@ test.describe('Khung cửa hàng mobile', () => {
     const { footer } = homePage;
     await homePage.goto();
 
-    const toggle = footer.groupToggle('Trợ giúp');
+    const toggle = footer.groupToggle('Help');
     await toggle.scrollIntoViewIfNeeded();
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    await expect(footer.link('Giao hàng')).toBeHidden();
+    await expect(footer.link('Delivery')).toBeHidden();
 
     await toggle.click();
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    await expect(footer.link('Giao hàng')).toBeVisible();
+    await expect(footer.link('Delivery')).toBeVisible();
 
     await toggle.click();
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    await expect(footer.link('Giao hàng')).toBeHidden();
+    await expect(footer.link('Delivery')).toBeHidden();
   });
 
   test('TC-30 tìm kiếm mobile', { tag: '@regression' }, async ({ page, homePage }) => {
-    const expected = expectedSuggest('dép');
+    const expected = expectedSuggest('slides');
     await homePage.goto();
 
     const search = await homePage.header.openSearch();
@@ -676,7 +685,7 @@ test.describe('Khung cửa hàng mobile', () => {
     expect(Math.round(box?.width ?? 0)).toBeGreaterThanOrEqual((viewport?.width ?? 0) - 1);
     expect(Math.round(box?.height ?? 0)).toBeGreaterThanOrEqual((viewport?.height ?? 0) - 1);
 
-    await search.type('dép');
+    await search.type('slides');
     await expect(search.suggestions).toHaveCount(expected.items.length);
     for (const [i, product] of expected.items.entries()) {
       await expect(search.suggestion(i).name).toHaveText(product.name);
@@ -684,6 +693,6 @@ test.describe('Khung cửa hàng mobile', () => {
     await search.submit();
     await expect(page).toHaveURL(/\/w\?/);
     expect(currentUrl(page).pathname).toBe('/w');
-    expect(currentUrl(page).searchParams.get('q')).toBe('dép');
+    expect(currentUrl(page).searchParams.get('q')).toBe('slides');
   });
 });

@@ -1,0 +1,45 @@
+[
+  {
+    "id": "TC-04a",
+    "case": "thiếu trường email",
+    "body": {},
+    "status": 400,
+    "message": "Please enter your email."
+  },
+  {
+    "id": "TC-04b",
+    "case": "email rỗng",
+    "body": {
+      "email": ""
+    },
+    "status": 400,
+    "message": "Please enter your email."
+  },
+  {
+    "id": "TC-04c",
+    "case": "email chỉ khoảng trắng",
+    "body": {
+      "email": "   "
+    },
+    "status": 400,
+    "message": "Please enter your email."
+  },
+  {
+    "id": "TC-04d",
+    "case": "không có @",
+    "body": {
+      "email": "khong-hop-le"
+    },
+    "status": 400,
+    "message": "Please enter a valid email address."
+  },
+  {
+    "id": "TC-04e",
+    "case": "dài 256 ký tự",
+    "body": {
+      "email": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@x.vn"
+    },
+    "status": 400,
+    "message": "Please enter a valid email address."
+  }
+]

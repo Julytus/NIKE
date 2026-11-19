@@ -1,13 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, CircleHelp, Heart, ShoppingBag, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { JordanJumpman } from "@/components/brand/jordan-jumpman";
 import { CatalogLink } from "@/components/shop/catalog-link";
 import { ShopButton } from "@/components/shop/ui/shop-button";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { NAV_ITEMS } from "@/lib/shop/catalog-search";
-import { useShopDialog, type ShopDialog } from "@/lib/stores/shop-dialog";
+import { signInSearch } from "@/lib/sign-in-redirect";
 import { useShopSession } from "@/lib/stores/shop-session";
 import { logoutMutationOptions } from "@/lib/tanstack/options/account";
 import { useNavGroups } from "./nav-groups";
@@ -23,9 +23,6 @@ const SMALL_LINK =
  */
 export function MobileMenu({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const [panel, setPanel] = useState<number | null>(null);
-  // Hộp thoại tài khoản chỉ mở sau khi menu đóng hẳn, tránh hai lớp modal tranh focus
-  const pendingDialog = useRef<ShopDialog | null>(null);
-  const openDialog = useShopDialog((s) => s.open);
 
   const close = () => onOpenChange(false);
 
@@ -41,20 +38,12 @@ export function MobileMenu({ open, onOpenChange }: { open: boolean; onOpenChange
         side="right"
         showCloseButton={false}
         aria-describedby={undefined}
-        onCloseAutoFocus={(e) => {
-          const next = pendingDialog.current;
-          if (next) {
-            e.preventDefault();
-            pendingDialog.current = null;
-            openDialog(next);
-          }
-        }}
         className="shop w-full gap-0 overflow-y-auto border-none bg-(--sh-bg) px-9 pt-4 pb-10 text-(--sh-fg) sm:max-w-none"
       >
         <SheetTitle className="sr-only">Menu</SheetTitle>
         <div className="-mr-3 mb-6 flex justify-end">
           <SheetClose
-            aria-label="Đóng menu"
+            aria-label="Close menu"
             className="flex size-10 items-center justify-center rounded-full outline-none hover:bg-(--sh-surface-hover) focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50"
           >
             <X aria-hidden className="size-6" />
@@ -62,14 +51,7 @@ export function MobileMenu({ open, onOpenChange }: { open: boolean; onOpenChange
         </div>
 
         {panel === null ? (
-          <MainList
-            onOpenPanel={setPanel}
-            onNavigate={close}
-            onDialog={(d) => {
-              pendingDialog.current = d;
-              close();
-            }}
-          />
+          <MainList onOpenPanel={setPanel} onNavigate={close} />
         ) : (
           <SubPanel index={panel} onBack={() => setPanel(null)} onNavigate={close} />
         )}
@@ -78,16 +60,9 @@ export function MobileMenu({ open, onOpenChange }: { open: boolean; onOpenChange
   );
 }
 
-function MainList({
-  onOpenPanel,
-  onNavigate,
-  onDialog
-}: {
-  onOpenPanel: (i: number) => void;
-  onNavigate: () => void;
-  onDialog: (d: ShopDialog) => void;
-}) {
+function MainList({ onOpenPanel, onNavigate }: { onOpenPanel: (i: number) => void; onNavigate: () => void }) {
   const user = useShopSession((s) => s.user);
+  const location = useLocation();
   const logoutMutation = useMutation(logoutMutationOptions);
 
   return (
@@ -104,8 +79,8 @@ function MainList({
       </ul>
 
       <Link
-        to="/w/$danhMuc"
-        params={{ danhMuc: "jordan" }}
+        to="/w/$category"
+        params={{ category: "jordan" }}
         onClick={onNavigate}
         className={`${SMALL_LINK} mt-8`}
       >
@@ -116,7 +91,7 @@ function MainList({
       <div className="mt-10 flex flex-col gap-6">
         {user ? (
           <>
-            <p className="text-2xl font-medium">{`Xin chào, ${user.name}`}</p>
+            <p className="text-2xl font-medium">{`Hi, ${user.name}`}</p>
             <ShopButton
               variant="outline"
               className="self-start"
@@ -125,20 +100,24 @@ function MainList({
                 onNavigate();
               }}
             >
-              Đăng xuất
+              Sign Out
             </ShopButton>
           </>
         ) : (
           <>
             <p className="text-2xl font-medium text-(--sh-muted)">
-              Trở thành thành viên Nike để mua sắm nhanh hơn và theo dõi đơn hàng.
+              Become a Nike Member to shop faster and track your orders.
             </p>
             <div className="flex gap-3">
-              <ShopButton variant="primary" size="sm" onClick={() => onDialog({ type: "register" })}>
-                Tham gia
+              <ShopButton asChild variant="primary" size="sm">
+                <Link to="/signin" search={signInSearch(location)} onClick={onNavigate}>
+                  Join Us
+                </Link>
               </ShopButton>
-              <ShopButton variant="outline" size="sm" onClick={() => onDialog({ type: "login" })}>
-                Đăng nhập
+              <ShopButton asChild variant="outline" size="sm">
+                <Link to="/signin" search={signInSearch(location)} onClick={onNavigate}>
+                  Sign In
+                </Link>
               </ShopButton>
             </div>
           </>
@@ -147,18 +126,18 @@ function MainList({
 
       <ul className="mt-10 flex flex-col gap-2">
         <li>
-          <Link to="/yeu-thich" onClick={onNavigate} className={SMALL_LINK}>
-            <Heart aria-hidden className="size-6" /> Yêu thích
+          <Link to="/favorites" onClick={onNavigate} className={SMALL_LINK}>
+            <Heart aria-hidden className="size-6" /> Favourites
           </Link>
         </li>
         <li>
-          <Link to="/gio-hang" onClick={onNavigate} className={SMALL_LINK}>
-            <ShoppingBag aria-hidden className="size-6" /> Giỏ hàng
+          <Link to="/cart" onClick={onNavigate} className={SMALL_LINK}>
+            <ShoppingBag aria-hidden className="size-6" /> Bag
           </Link>
         </li>
         <li>
-          <Link to="/thong-tin/$trang" params={{ trang: "tro-giup" }} onClick={onNavigate} className={SMALL_LINK}>
-            <CircleHelp aria-hidden className="size-6" /> Trợ giúp
+          <Link to="/info/$page" params={{ page: "help" }} onClick={onNavigate} className={SMALL_LINK}>
+            <CircleHelp aria-hidden className="size-6" /> Help
           </Link>
         </li>
       </ul>
@@ -172,19 +151,19 @@ function SubPanel({ index, onBack, onNavigate }: { index: number; onBack: () => 
 
   return (
     <div className="flex flex-col">
-      {/* Chữ hiển thị "Tất cả" như nike.com; tên đọc "Quay lại" cho rõ hành động (plan §12) */}
+      {/* Chữ hiển thị "All" như nike.com; tên đọc "Back" cho rõ hành động (plan §12) */}
       <button
         type="button"
-        aria-label="Quay lại"
+        aria-label="Back"
         onClick={onBack}
         className="-ml-1 flex items-center gap-2 self-start rounded-sm py-2 text-base font-medium outline-none focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50"
       >
         <ChevronLeft aria-hidden className="size-6" />
-        Tất cả
+        All
       </button>
       <h2 className="mt-4 text-2xl font-medium">{item.label}</h2>
       <Link to="/w" search={item.search} onClick={onNavigate} className={`${SMALL_LINK} mt-4 underline underline-offset-4`}>
-        Xem tất cả
+        Shop All
       </Link>
       {groups.map((group) => (
         <div key={group.title} className="mt-8">

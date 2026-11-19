@@ -15,23 +15,24 @@ export class HeaderComponent {
   constructor(page) {
     this.page = page;
     this.root = page.getByRole('banner');
-    this.skipLink = page.getByRole('link', { name: 'Bỏ qua menu', exact: true });
+    this.skipLink = page.getByRole('link', { name: 'Skip to main content', exact: true });
 
     // Dải trên (desktop)
     this.jordanLink = this.root.getByRole('link', { name: 'Jordan', exact: true });
-    this.findStoreLink = this.root.getByRole('link', { name: 'Tìm cửa hàng', exact: true });
-    this.helpLink = this.root.getByRole('link', { name: 'Trợ giúp', exact: true });
+    this.findStoreLink = this.root.getByRole('link', { name: 'Find a Store', exact: true });
+    this.helpLink = this.root.getByRole('link', { name: 'Help', exact: true });
     this.registerButton = this.root.getByTestId('header-register');
-    // Desktop: nút chữ ở dải trên; mobile: nút icon cùng tên (nút còn lại bị ẩn theo màn hình)
-    this.loginButton = this.root.getByRole('button', { name: 'Đăng nhập', exact: true });
-    this.sessionSkeleton = this.root.getByRole('status', { name: 'Đang tải tài khoản' });
+    // Desktop: link chữ ở dải trên; mobile: link icon cùng tên (link còn lại bị ẩn theo màn hình) —
+    // lát dang-nhap-nike §6.5: mọi lối vào là link tới `/signin?redirect=…`, không còn hộp thoại
+    this.loginButton = this.root.getByRole('link', { name: 'Sign In', exact: true });
+    this.sessionSkeleton = this.root.getByRole('status', { name: 'Loading account' });
 
     // Thanh chính
     this.logo = this.root.getByTestId('header-logo');
-    this.nav = this.root.getByRole('navigation', { name: 'Danh mục chính' });
-    this.searchButton = this.root.getByRole('button', { name: 'Tìm kiếm', exact: true });
-    this.favoritesLink = this.root.getByRole('link', { name: 'Yêu thích', exact: true });
-    this.cartLink = this.root.getByRole('link', { name: 'Giỏ hàng', exact: true });
+    this.nav = this.root.getByRole('navigation', { name: 'Main menu' });
+    this.searchButton = this.root.getByRole('button', { name: 'Search', exact: true });
+    this.favoritesLink = this.root.getByRole('link', { name: 'Favourites', exact: true });
+    this.cartLink = this.root.getByRole('link', { name: 'Bag', exact: true });
     this.menuButton = this.root.getByRole('button', { name: 'Menu', exact: true });
     this.megaMenu = page.getByTestId('mega-menu');
 
@@ -40,12 +41,12 @@ export class HeaderComponent {
 
     // Dải thông báo (ngoài header)
     this.announcement = page.getByTestId('announcement-bar');
-    this.joinNowButton = this.announcement.getByRole('button', {
-      name: 'Tham gia ngay',
+    this.joinNowButton = this.announcement.getByRole('link', {
+      name: 'Join Us',
       exact: true,
     });
     this.announcementDetails = this.announcement.getByRole('link', {
-      name: 'Xem chi tiết',
+      name: 'Learn More',
       exact: true,
     });
 
@@ -79,9 +80,9 @@ export class HeaderComponent {
     await expect(this.megaMenu).toBeVisible();
   }
 
-  /** Nút tài khoản khi đã đăng nhập (`Xin chào, <tên>`). @param {string} name */
+  /** Nút tài khoản khi đã đăng nhập (`Hi, <name>`). @param {string} name */
   accountButton(name) {
-    return this.root.getByRole('button', { name: `Xin chào, ${name}`, exact: true });
+    return this.root.getByRole('button', { name: `Hi, ${name}`, exact: true });
   }
 
   /** Mục trong menu tài khoản đang mở. @param {string} name */
@@ -101,12 +102,13 @@ export class HeaderComponent {
     return this.mobileMenu;
   }
 
-  /** Mở hộp thoại đăng nhập (desktop: dải trên; mobile: icon tài khoản). */
+  /** Tới trang `/signin` (desktop: "Sign In" ở dải trên; mobile: icon tài khoản). */
   async openLogin() {
     await this.loginButton.click();
+    await expect(this.page).toHaveURL(/\/signin(\?|$)/);
   }
 
-  /** Mở hộp thoại đăng ký (desktop: "Tham gia" ở dải trên; mobile: menu trượt → "Tham gia"). */
+  /** Tới trang `/signin` qua "Join Us" (desktop: dải trên; mobile: menu trượt → "Join Us"). */
   async openRegister() {
     if (this.isDesktop()) {
       await this.registerButton.click();
@@ -114,13 +116,14 @@ export class HeaderComponent {
       const menu = await this.openMobileMenu();
       await menu.joinButton.click();
     }
+    await expect(this.page).toHaveURL(/\/signin(\?|$)/);
   }
 
-  /** Chưa đăng nhập: có nút "Đăng nhập" (và "Tham gia" ở desktop), không có nút "Xin chào". */
+  /** Chưa đăng nhập: có nút "Sign In" (và "Join Us" ở desktop), không có nút "Hi, …". */
   async expectLoggedOut() {
     await expect(this.loginButton).toBeVisible();
     if (this.isDesktop()) await expect(this.registerButton).toBeVisible();
-    await expect(this.root.getByRole('button', { name: /^Xin chào, / })).toHaveCount(0);
+    await expect(this.root.getByRole('button', { name: /^Hi, / })).toHaveCount(0);
   }
 
   /** Cuộn vùng `#app-scroll` tới `y` (px). @param {number} y */
