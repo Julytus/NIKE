@@ -25,7 +25,7 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final String DEFAULT_VALIDATION_ERROR = "Dữ liệu không hợp lệ";
+    private static final String DEFAULT_VALIDATION_ERROR = "Invalid data";
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ApiErrorResponse> handleAppException(AppException ex, HttpServletRequest request) {
@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException ex,
             HttpServletRequest request
     ) {
-        return buildResponse(request, ErrorCode.BAD_REQUEST, "Dữ liệu gửi lên không đúng định dạng", null);
+        return buildResponse(request, ErrorCode.BAD_REQUEST, "Malformed request body", null);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         return buildResponse(request, ErrorCode.BAD_REQUEST,
-                "Thiếu tham số bắt buộc: " + ex.getParameterName(), null);
+                "Missing required parameter: " + ex.getParameterName(), null);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -98,7 +98,7 @@ public class GlobalExceptionHandler {
             MethodArgumentTypeMismatchException ex,
             HttpServletRequest request
     ) {
-        return buildResponse(request, ErrorCode.BAD_REQUEST, "Tham số không hợp lệ: " + ex.getName(), null);
+        return buildResponse(request, ErrorCode.BAD_REQUEST, "Invalid parameter: " + ex.getName(), null);
     }
 
     @ExceptionHandler(DataAccessException.class)
@@ -120,7 +120,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({NoResourceFoundException.class, NoHandlerFoundException.class})
     public ResponseEntity<ApiErrorResponse> handleMissingApi(Exception ex, HttpServletRequest request) {
         return ResponseEntity.status(404).body(ApiErrorResponse.of(resolvePath(request), ErrorCode.DATA_NOT_FOUND,
-                "Không tìm thấy API", null));
+                "API not found", null));
     }
 
     // Gọi sai method (vd GET một endpoint POST) là lỗi của client: 405, không phải 500.

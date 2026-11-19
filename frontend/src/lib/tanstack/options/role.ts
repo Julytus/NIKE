@@ -29,8 +29,8 @@ export const createUpsertRoleMutationOptions = (
   meta: {
     // Đổi cờ toàn quyền của chức vụ mình đang giữ thì menu / nút cũng phải đổi theo
     invalidatesQuery: [ROLES_QUERY_KEY, ["me"], ["permission-resource"]],
-    successMessage: isEdit ? "Cập nhật chức vụ thành công" : "Tạo chức vụ thành công",
-    errorMessage: "Không lưu được chức vụ"
+    successMessage: isEdit ? "Role updated" : "Role created",
+    errorMessage: "Couldn't save role"
   }
 });
 
@@ -39,7 +39,7 @@ export const deleteRoleMutationOptions: MutationOptions<number, AxiosError<Error
   mutationFn: deleteRole,
   meta: {
     invalidatesQuery: [ROLES_QUERY_KEY],
-    successMessage: "Xóa chức vụ thành công",
-    errorMessage: "Không xóa được chức vụ"
+    successMessage: "Role deleted",
+    errorMessage: "Couldn't delete role"
   }
 };

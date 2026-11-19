@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { meQueryOptions } from "@/lib/tanstack/options/auth";
 
 export const Route = createFileRoute("/admin/")({
+  head: () => ({ meta: [{ title: "Dashboard | Nike Admin" }] }),
   component: AdminHomePage
 });
 
@@ -15,17 +16,17 @@ function AdminHomePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Xin chào, {me?.name ?? "bạn"}</h1>
-        <p className="text-muted-foreground">Chọn chức năng ở thanh bên để bắt đầu.</p>
+        <h1 className="text-2xl font-bold tracking-tight">{me?.name ? `Hi, ${me.name}` : "Hi there"}</h1>
+        <p className="text-muted-foreground">Pick a feature from the sidebar to get started.</p>
       </div>
       <Card className="max-w-md">
         <CardHeader>
-          <CardTitle>Tài khoản</CardTitle>
-          <CardDescription>Thông tin đăng nhập hiện tại</CardDescription>
+          <CardTitle>Account</CardTitle>
+          <CardDescription>Current sign-in details</CardDescription>
         </CardHeader>
         <CardContent className="space-y-1 text-sm">
           <p>Email: {me?.email ?? "—"}</p>
-          <p>Chức vụ: {me?.roleName ?? "—"}</p>
+          <p>Role: {me?.roleName ?? "—"}</p>
         </CardContent>
       </Card>
     </div>

@@ -81,7 +81,7 @@ export function PermissionMatrix({
   onToggleMany
 }: PermissionMatrixProps) {
   if (resources.length === 0) {
-    return <p className="text-muted-foreground text-sm">Không có tài nguyên nào.</p>;
+    return <p className="text-muted-foreground text-sm">No resources.</p>;
   }
 
   const ACTIONS = getActionColumns(resources);
@@ -147,7 +147,7 @@ export function PermissionMatrix({
         <div className="text-muted-foreground text-xs">{resource.code}</div>
       </TableCell>
       <TableCell className="text-center">
-        {renderGroupCheckbox(`Tất cả ${resource.code}`, [resource])}
+        {renderGroupCheckbox(`All ${resource.code}`, [resource])}
       </TableCell>
       {ACTIONS.map((action) => {
         // Quyền đã cấp vẫn có thể gỡ dù action sau đó không còn được hỗ trợ.
@@ -197,7 +197,7 @@ export function PermissionMatrix({
                   className={`size-4 shrink-0 transition-transform ${isCollapsed ? "-rotate-90" : ""}`}
                 />
                 <span className="truncate">
-                  {label} ({resourcesInGroup.length} tài nguyên)
+                  {label} ({resourcesInGroup.length} {resourcesInGroup.length === 1 ? "resource" : "resources"})
                 </span>
               </button>
               <Badge variant="secondary">
@@ -206,7 +206,7 @@ export function PermissionMatrix({
             </div>
           </TableCell>
           <TableCell className="bg-muted/50 text-center">
-            {renderGroupCheckbox(`Tất cả module ${label}`, resourcesInGroup)}
+            {renderGroupCheckbox(`All module ${label}`, resourcesInGroup)}
           </TableCell>
           <TableCell colSpan={ACTIONS.length} className="bg-muted/50" />
         </TableRow>
@@ -220,8 +220,8 @@ export function PermissionMatrix({
       <Table className="min-w-176">
         <TableHeader className="bg-background sticky top-0 z-10">
           <TableRow>
-            <TableHead className="w-[40%]">Tài nguyên</TableHead>
-            <TableHead className="text-center">Tất cả</TableHead>
+            <TableHead className="w-[40%]">Resource</TableHead>
+            <TableHead className="text-center">All</TableHead>
             {ACTIONS.map((action) => {
               const Icon = ACTION_ICONS[action] ?? KeyRound;
               return (
@@ -250,7 +250,7 @@ export function PermissionMatrix({
             );
           })}
           {unassignedResources.length > 0 &&
-            renderGroup("none", "module-group-none", "Chưa phân module", unassignedResources)}
+            renderGroup("none", "module-group-none", "Unassigned", unassignedResources)}
         </TableBody>
       </Table>
     </div>

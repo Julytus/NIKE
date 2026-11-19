@@ -25,7 +25,7 @@ export function getServerErrorCode(err: unknown): string | undefined {
   return undefined;
 }
 
-export function ErrorResponseWarper(err: unknown, fallback = "Đã có lỗi xảy ra"): string {
+export function ErrorResponseWarper(err: unknown, fallback = "Something went wrong"): string {
   return getServerErrorMessage(err) ?? (err instanceof Error ? err.message : fallback);
 }
 

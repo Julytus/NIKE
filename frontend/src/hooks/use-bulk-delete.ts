@@ -33,7 +33,7 @@ export function useBulkDelete({
   const run = React.useCallback(
     async (ids: number[]) => {
       if (ids.length === 0 || pendingRef.current) return;
-      if (!confirm(`Bạn có chắc muốn xóa ${ids.length} ${label} đã chọn?`)) return;
+      if (!confirm(`Are you sure you want to delete ${ids.length} selected ${label}?`)) return;
 
       pendingRef.current = true;
       setIsPending(true);
@@ -58,9 +58,9 @@ export function useBulkDelete({
         onSettled?.();
       }
 
-      if (failed === 0) toast.success("Xóa thành công");
-      else if (failed === ids.length) toast.error("Xóa thất bại");
-      else toast.warning(`Đã xóa ${ids.length - failed}/${ids.length}, ${failed} bản ghi thất bại`);
+      if (failed === 0) toast.success("Deleted successfully");
+      else if (failed === ids.length) toast.error("Delete failed");
+      else toast.warning(`Deleted ${ids.length - failed}/${ids.length}, ${failed} failed`);
     },
     [deleteOne, onSettled, label, concurrency]
   );

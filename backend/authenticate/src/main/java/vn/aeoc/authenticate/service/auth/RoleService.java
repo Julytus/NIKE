@@ -62,14 +62,14 @@ public class RoleService extends BaseService<RoleRepository, Role, Integer> {
     public Integer delete(Integer id) {
         Role current = require(id);
         if (repository.countUsers(current.getId()) > 0) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Chức vụ đang được gán cho tài khoản, không thể xoá");
+            throw new AppException(ErrorCode.BAD_REQUEST, "This role is assigned to accounts and can't be deleted");
         }
         return repository.delete(current.getId());
     }
 
     private void checkDuplicateName(String name, Integer excludeId) {
         if (name != null && repository.existsByName(name, excludeId)) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Tên chức vụ đã tồn tại");
+            throw new AppException(ErrorCode.BAD_REQUEST, "Role name already exists");
         }
     }
 

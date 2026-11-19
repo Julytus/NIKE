@@ -3,8 +3,8 @@ export class FooterComponent {
   /** @param {import('@playwright/test').Page} page */
   constructor(page) {
     this.root = page.getByRole('contentinfo');
-    this.country = this.root.getByText('Việt Nam', { exact: true });
-    this.copyright = this.root.getByText('© 2026 Nike, Inc. Bảo lưu mọi quyền.', { exact: true });
+    this.country = this.root.getByText('Vietnam', { exact: true });
+    this.copyright = this.root.getByText('© 2026 Nike, Inc. All rights reserved.', { exact: true });
   }
 
   /** Tiêu đề nhóm (desktop: h2). @param {string} name */

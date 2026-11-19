@@ -33,7 +33,8 @@ const searchSchema = z.object({
   roleId: z.coerce.number().int().positive().optional().catch(undefined)
 });
 
-export const Route = createFileRoute("/admin/phan-quyen")({
+export const Route = createFileRoute("/admin/permissions")({
+  head: () => ({ meta: [{ title: "Permissions | Nike Admin" }] }),
   validateSearch: searchSchema,
   component: PermissionRoute
 });
@@ -133,26 +134,26 @@ function PermissionPage() {
     <div className="container mx-auto flex flex-col gap-6 p-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Phân quyền</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Permissions</h1>
           <p className="text-muted-foreground text-sm">
-            Chọn chức vụ rồi tick hành động được phép trên từng tài nguyên. Thay đổi lưu ngay.
+            Pick a role, then tick the actions allowed on each resource. Changes save instantly.
           </p>
         </div>
         <div className="grid w-full max-w-xs gap-2">
-          <Label htmlFor="permission-role">Chức vụ</Label>
+          <Label htmlFor="permission-role">Role</Label>
           <Select
             value={roleId > 0 ? String(roleId) : undefined}
             onValueChange={(value) => void navigate({ search: { roleId: Number(value) } })}
             disabled={roles.length === 0}
           >
             <SelectTrigger id="permission-role" className="w-full">
-              <SelectValue placeholder="Chọn chức vụ" />
+              <SelectValue placeholder="Select a role" />
             </SelectTrigger>
             <SelectContent>
               {roles.map((r) => (
                 <SelectItem key={r.id} value={String(r.id)}>
                   {r.name}
-                  {r.isOperator === 1 ? " (toàn quyền)" : ""}
+                  {r.isOperator === 1 ? " (full access)" : ""}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -163,29 +164,29 @@ function PermissionPage() {
       {isOperator && (
         <Alert>
           <ShieldCheck />
-          <AlertTitle>Chức vụ toàn quyền</AlertTitle>
+          <AlertTitle>Full-access role</AlertTitle>
           <AlertDescription>
-            “{role?.name}” bỏ qua bảng phân quyền: mọi tài nguyên đều được phép. Tắt cờ toàn quyền ở
-            trang Chức vụ nếu muốn phân quyền chi tiết.
+            “{role?.name}” bypasses the permission table: every resource is allowed. Turn off full access on the
+            Roles page to set detailed permissions.
           </AlertDescription>
         </Alert>
       )}
 
       {!canUpdate && !isOperator && (
         <Alert>
-          <AlertTitle>Chỉ xem</AlertTitle>
-          <AlertDescription>Bạn chưa có quyền cập nhật phân quyền.</AlertDescription>
+          <AlertTitle>Read only</AlertTitle>
+          <AlertDescription>You don&apos;t have permission to update permissions.</AlertDescription>
         </Alert>
       )}
 
       {permissionsQuery.isError ? (
         <AdminListError
-          title="Không tải được phân quyền"
+          title="Couldn't load permissions"
           onRetry={() => void permissionsQuery.refetch()}
         />
       ) : roleId === 0 && !rolesQuery.isLoading ? (
         <p className="text-muted-foreground text-sm">
-          Chưa có chức vụ nào để phân quyền (hoặc bạn chưa có quyền xem trang Chức vụ).
+          No roles to assign permissions to (or you can&apos;t view the Roles page).
         </p>
       ) : roleId === 0 || permissionsQuery.isPending ? (
         <div className="space-y-2">

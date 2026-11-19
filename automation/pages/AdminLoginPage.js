@@ -7,14 +7,14 @@ export class AdminLoginPage extends BasePage {
   /** @param {import('@playwright/test').Page} page */
   constructor(page) {
     super(page);
-    this.identifierInput = page.getByLabel('Email hoặc số điện thoại*', { exact: true });
-    this.passwordInput = page.getByLabel('Mật khẩu*', { exact: true });
-    this.rememberMe = page.getByLabel('Ghi nhớ đăng nhập', { exact: true });
-    this.submitButton = page.getByRole('button', { name: 'Đăng nhập', exact: true });
+    this.identifierInput = page.getByLabel('Email or phone number*', { exact: true });
+    this.passwordInput = page.getByLabel('Password*', { exact: true });
+    this.rememberMe = page.getByLabel('Remember me', { exact: true });
+    this.submitButton = page.getByRole('button', { name: 'Sign In', exact: true });
   }
 
   /**
-   * Điền form và bấm "Đăng nhập" (không chờ kết quả).
+   * Điền form và bấm "Sign In" (không chờ kết quả).
    * @param {{ email: string, password: string }} account
    */
   async login({ email, password }) {

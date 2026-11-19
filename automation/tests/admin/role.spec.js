@@ -28,13 +28,13 @@ test.describe('Quản trị Chức vụ (toàn quyền)', () => {
 
     await rolePage.open();
     const dialog = await rolePage.openCreate();
-    await expect(dialog.title()).toHaveText('Tạo mới chức vụ');
+    await expect(dialog.title()).toHaveText('Create Role');
     await dialog.nameInput.fill(name);
     await docShot(rolePage.page, testInfo, '04-tao-chuc-vu');
     await dialog.createButton.click();
 
     await expect(dialog.root).toBeHidden();
-    await expect(rolePage.toast('Tạo chức vụ thành công')).toBeVisible();
+    await expect(rolePage.toast('Role created')).toBeVisible();
     await rolePage.search(name);
     await expect(rolePage.dataRows).toHaveCount(1);
     await expect(rolePage.row(name)).toBeVisible();
@@ -50,14 +50,14 @@ test.describe('Quản trị Chức vụ (toàn quyền)', () => {
     await rolePage.open();
     await rolePage.search(name);
     const dialog = await rolePage.edit(name);
-    await expect(dialog.title()).toHaveText('Chỉnh sửa chức vụ');
+    await expect(dialog.title()).toHaveText('Edit Role');
     await expect(dialog.nameInput).toHaveValue(name);
     await dialog.nameInput.fill(renamed);
     await docShot(rolePage.page, testInfo, '06-sua-chuc-vu');
     await dialog.updateButton.click();
 
     await expect(dialog.root).toBeHidden();
-    await expect(rolePage.toast('Cập nhật chức vụ thành công')).toBeVisible();
+    await expect(rolePage.toast('Role updated')).toBeVisible();
     await expect(rolePage.row(renamed)).toBeVisible();
     await expect(rolePage.row(name)).toHaveCount(0);
   });
@@ -74,9 +74,9 @@ test.describe('Quản trị Chức vụ (toàn quyền)', () => {
     await docShot(rolePage.page, testInfo, '07-xac-nhan-xoa');
     await confirm.confirm();
 
-    await expect(rolePage.toast('Xóa chức vụ thành công')).toBeVisible();
+    await expect(rolePage.toast('Role deleted')).toBeVisible();
     await expect(rolePage.row(name)).toHaveCount(0);
-    await expect(rolePage.page.getByText('Không có dữ liệu.')).toBeVisible();
+    await expect(rolePage.page.getByText('No results.')).toBeVisible();
   });
 
   test(
@@ -122,18 +122,18 @@ test.describe('Quản trị Chức vụ (không quyền)', () => {
   test.use({ storageState: storageStateOf('noaccess') });
 
   test(
-    'TC-18 tài khoản không quyền không thấy Chức vụ',
+    'TC-18 tài khoản không quyền không thấy Roles',
     { tag: '@regression' },
     async ({ page, adminLayout, rolePage }, testInfo) => {
       await adminLayout.goto();
       await expect(adminLayout.greeting).toBeVisible();
       await adminLayout.openSidebar();
-      await expect(adminLayout.menuItem('Trang chủ')).toBeVisible();
-      await expect(adminLayout.menuItem('Chức vụ')).toHaveCount(0);
+      await expect(adminLayout.menuItem('Home')).toBeVisible();
+      await expect(adminLayout.menuItem('Roles')).toHaveCount(0);
 
       await rolePage.goto();
       await expect(adminLayout.accessDenied).toBeVisible();
-      await expect(page.getByText('Bạn không có quyền xem trang này.')).toBeVisible();
+      await expect(page.getByText("You don't have permission to view this page.")).toBeVisible();
       await expect(rolePage.addButton).toHaveCount(0);
       await docShot(page, testInfo, '09-khong-quyen');
     }

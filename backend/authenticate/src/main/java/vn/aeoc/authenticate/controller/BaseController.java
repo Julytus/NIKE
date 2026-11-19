@@ -36,7 +36,7 @@ public abstract class BaseController {
     private static User checkUserPermission(String URI, String action, User user) {
         if (user.getId() == null) {
             throw new AppException(ErrorCode.FORBIDDEN,
-                    String.format("Bạn không có quyền thực hiện thao tác này! Path: %s, Action: %s", URI, action));
+                    String.format("You don't have permission to perform this action. Path: %s, Action: %s", URI, action));
         }
         return user;
     }

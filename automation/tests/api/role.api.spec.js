@@ -10,11 +10,11 @@ test.describe('API Chức vụ', () => {
       await noaccess.client.expectError(
         await noaccess.role.list(),
         403,
-        'Bạn không có quyền thực hiện thao tác này! Path: /role/, Action: VIEW'
+        "You don't have permission to perform this action. Path: /role/, Action: VIEW"
       );
 
       const admin = await apiAs('admin');
-      await admin.client.expectError(await admin.role.get(999999), 404, 'Dữ liệu không tồn tại');
+      await admin.client.expectError(await admin.role.get(999999), 404, 'Not found');
     }
   );
 
@@ -44,11 +44,7 @@ test.describe('API Chức vụ', () => {
       } finally {
         await admin.client.expectOk(await admin.role.delete(created.id));
       }
-      await admin.client.expectError(
-        await admin.role.get(created.id),
-        404,
-        'Dữ liệu không tồn tại'
-      );
+      await admin.client.expectError(await admin.role.get(created.id), 404, 'Not found');
     }
   );
 });

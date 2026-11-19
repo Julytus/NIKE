@@ -7,7 +7,7 @@ import { SectionError } from "./section-error";
 const GRID = "grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5";
 
 /**
- * "Mua theo danh mục" (plan giao-dien-nike §6.6 mục 4): ô ảnh vuông + pill tên + số sản phẩm.
+ * "Shop by Category" (plan giao-dien-nike §6.6 mục 4): ô ảnh vuông + pill tên + số sản phẩm.
  * Ẩn danh mục chưa có sản phẩm đang bán. Đang tải 5 skeleton, lỗi + "Thử lại".
  */
 export function CategorySection() {
@@ -25,7 +25,7 @@ export function CategorySection() {
       </ul>
     );
   } else if (isError) {
-    body = <SectionError message="Không tải được danh mục." onRetry={() => void refetch()} />;
+    body = <SectionError message="Couldn't load categories." onRetry={() => void refetch()} />;
   } else {
     body = (
       <ul className={GRID}>
@@ -34,8 +34,8 @@ export function CategorySection() {
           .map((c) => (
             <li key={c.id}>
               <Link
-                to="/w/$danhMuc"
-                params={{ danhMuc: c.slug }}
+                to="/w/$category"
+                params={{ category: c.slug }}
                 data-testid="category-tile"
                 className="group flex flex-col gap-3 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50 focus-visible:ring-offset-2"
               >
@@ -52,7 +52,7 @@ export function CategorySection() {
                     {c.name}
                   </span>
                 </div>
-                <span className="text-sm text-(--sh-muted)">{`${c.productCount} sản phẩm`}</span>
+                <span className="text-sm text-(--sh-muted)">{`${c.productCount} ${c.productCount === 1 ? "product" : "products"}`}</span>
               </Link>
             </li>
           ))}
@@ -68,7 +68,7 @@ export function CategorySection() {
       className="flex flex-col"
     >
       <h2 id="home-categories-title" className="mb-4 text-2xl font-medium">
-        Mua theo danh mục
+        Shop by Category
       </h2>
       {body}
     </section>

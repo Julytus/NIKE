@@ -7,7 +7,7 @@ const envSchema = z.object({
   // URL tuyệt đối (dev: http://localhost:9500/api) hoặc đường dẫn tương đối "/api" khi chạy sau nginx
   VITE_API_URL: z
     .string()
-    .refine((v) => v.startsWith("/") || URL.canParse(v), "VITE_API_URL không hợp lệ")
+    .refine((v) => v.startsWith("/") || URL.canParse(v), "Invalid VITE_API_URL")
     .default("http://localhost:9500/api")
 });
 

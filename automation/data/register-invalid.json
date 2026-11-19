@@ -3,32 +3,32 @@
     "id": "TC-06",
     "case": "email đã được đăng ký",
     "body": {
-      "name": "Khách Trùng Email",
-      "email": "admin@downbeat.local",
+      "name": "Duplicate Email",
+      "email": "admin@nike.local",
       "plainPassword": "Abc@12345"
     },
     "status": 400,
-    "message": "Email đã được đăng ký"
+    "message": "This email is already registered."
   },
   {
     "id": "TC-07",
     "case": "mật khẩu 7 ký tự",
-    "body": { "name": "Khách Mật Khẩu Ngắn", "email": "{unique}", "plainPassword": "Abc@123" },
+    "body": { "name": "Short Password", "email": "{unique}", "plainPassword": "Abc@123" },
     "status": 400,
-    "message": "Mật khẩu phải có từ 8 đến 72 ký tự"
+    "message": "Password must be 8 to 72 characters."
   },
   {
     "id": "TC-08",
     "case": "email sai định dạng",
-    "body": { "name": "Khách Email Sai", "email": "khong-hop-le", "plainPassword": "Abc@12345" },
+    "body": { "name": "Bad Email", "email": "khong-hop-le", "plainPassword": "Abc@12345" },
     "status": 400,
-    "message": "Email không hợp lệ"
+    "message": "Please enter a valid email address."
   },
   {
     "id": "TC-09",
     "case": "thiếu họ tên",
     "body": { "name": "", "email": "{unique}", "plainPassword": "Abc@12345" },
     "status": 400,
-    "message": "Vui lòng nhập họ tên"
+    "message": "Please enter your full name."
   }
 ]

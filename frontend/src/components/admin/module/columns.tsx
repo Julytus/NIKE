@@ -40,7 +40,7 @@ export const createModuleColumns = ({
                   (table.getIsSomePageRowsSelected() && "indeterminate")
                 }
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Chọn tất cả"
+                aria-label="Select all"
               />
             </div>
           ),
@@ -49,7 +49,7 @@ export const createModuleColumns = ({
               <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label={`Chọn ${row.original.name}`}
+                aria-label={`Select ${row.original.name}`}
               />
             </div>
           ),
@@ -60,7 +60,7 @@ export const createModuleColumns = ({
     : []),
   {
     accessorKey: "name",
-    header: "Tên module",
+    header: "Module name",
     cell: ({ row }) => (
       <span className="text-foreground font-bold tracking-tight">{row.original.name}</span>
     ),
@@ -69,26 +69,26 @@ export const createModuleColumns = ({
   { accessorKey: "code", header: "Code" },
   {
     accessorKey: "description",
-    header: "Mô tả",
+    header: "Description",
     cell: ({ row }) => (
       <span className="text-muted-foreground">{row.original.description || "—"}</span>
     )
   },
   {
     accessorKey: "active",
-    header: "Kích hoạt",
+    header: "Active",
     cell: ({ row }) => (
       <Switch
         checked={row.original.active === 1}
         disabled={!canUpdate}
         onCheckedChange={(checked) => onToggleActive(row.original, checked)}
-        aria-label={`Bật hoặc tắt module ${row.original.name}`}
+        aria-label={`Toggle module ${row.original.name}`}
       />
     )
   },
   {
     id: "rowActions",
-    header: () => <span className="sr-only">Thao tác</span>,
+    header: () => <span className="sr-only">Actions</span>,
     enableHiding: false,
     cell: ({ row }) =>
       canUpdate || canDelete ? (
@@ -99,7 +99,7 @@ export const createModuleColumns = ({
                 variant="ghost"
                 className="text-muted-foreground data-[state=open]:bg-muted flex size-8"
                 size="icon"
-                aria-label={`Thao tác ${row.original.name}`}
+                aria-label={`Actions ${row.original.name}`}
               >
                 <MoreVertical className="size-4" />
               </Button>
@@ -107,9 +107,9 @@ export const createModuleColumns = ({
             <DropdownMenuContent align="end" className="w-40">
               {canUpdate && (
                 <>
-                  <DropdownMenuItem onClick={() => onEdit(row.original)}>Sửa</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onEdit(row.original)}>Edit</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onAssign(row.original)}>
-                    Gán tài nguyên
+                    Assign Resources
                   </DropdownMenuItem>
                 </>
               )}
@@ -120,7 +120,7 @@ export const createModuleColumns = ({
                     className="text-destructive"
                     onClick={() => onShowDeleteConfirm(row.original.id, row.original.name)}
                   >
-                    Xóa
+                    Delete
                   </DropdownMenuItem>
                 </>
               )}

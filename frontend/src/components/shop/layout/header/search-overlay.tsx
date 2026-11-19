@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { createSuggestQueryOptions } from "@/lib/tanstack/options/product";
 
-export const POPULAR_SEARCHES = ["air force 1", "jordan", "giày bóng rổ", "pegasus", "dép", "air max"];
+export const POPULAR_SEARCHES = ["air force 1", "jordan", "basketball shoes", "pegasus", "slides", "air max"];
 
 const DEBOUNCE_MS = 300;
 
@@ -42,7 +42,7 @@ export function SearchOverlay({
           }}
           className="shop data-[state=open]:animate-in data-[state=open]:slide-in-from-top-4 fixed inset-0 z-50 flex flex-col overflow-y-auto bg-(--sh-bg) text-(--sh-fg) outline-none motion-reduce:animate-none lg:bottom-auto lg:max-h-[100dvh] lg:min-h-[220px]"
         >
-          <DialogPrimitive.Title className="sr-only">Tìm kiếm</DialogPrimitive.Title>
+          <DialogPrimitive.Title className="sr-only">Search</DialogPrimitive.Title>
           <SearchBody onDone={() => onOpenChange(false)} />
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
@@ -65,7 +65,7 @@ function SearchBody({ onDone }: { onDone: () => void }) {
 
   const popular = (
     <div className="flex flex-col gap-3">
-      <p className="text-base font-medium text-(--sh-muted)">Tìm kiếm phổ biến</p>
+      <p className="text-base font-medium text-(--sh-muted)">Popular Search Terms</p>
       <ul className="flex flex-wrap gap-3">
         {POPULAR_SEARCHES.map((q) => (
           <li key={q}>
@@ -97,18 +97,18 @@ function SearchBody({ onDone }: { onDone: () => void }) {
         </ul>
       );
     } else if (query.isError) {
-      content = <p className="text-base">Không tải được gợi ý. Nhấn Enter để xem tất cả kết quả.</p>;
+      content = <p className="text-base">Couldn't load suggestions. Press Enter to see all results.</p>;
     } else if (query.data && query.data.items.length === 0) {
       content = (
         <div className="flex flex-col gap-8">
-          <p className="text-base">{`Không tìm thấy sản phẩm nào cho "${debounced}".`}</p>
+          <p className="text-base">{`We couldn't find anything for "${debounced}".`}</p>
           {popular}
         </div>
       );
     } else if (query.data) {
       content = (
         <div className="flex flex-col gap-4">
-          <p className="text-base font-medium text-(--sh-muted)">Gợi ý sản phẩm</p>
+          <p className="text-base font-medium text-(--sh-muted)">Top Suggestions</p>
           <ul className="grid grid-cols-2 gap-3 lg:grid-cols-6">
             {query.data.items.map((p) => (
               <li key={p.id}>
@@ -122,7 +122,7 @@ function SearchBody({ onDone }: { onDone: () => void }) {
             onClick={onDone}
             className="self-start rounded-sm text-base font-medium underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50"
           >
-            {`Xem tất cả ${query.data.total} kết quả`}
+            {`View All ${query.data.total} Results`}
           </Link>
         </div>
       );
@@ -151,8 +151,8 @@ function SearchBody({ onDone }: { onDone: () => void }) {
           <Search aria-hidden className="size-5 shrink-0" />
           <input
             type="search"
-            aria-label="Tìm kiếm sản phẩm"
-            placeholder="Tìm kiếm"
+            aria-label="Search products"
+            placeholder="Search"
             maxLength={100}
             value={value}
             onChange={(e) => setValue(e.target.value)}
@@ -161,7 +161,7 @@ function SearchBody({ onDone }: { onDone: () => void }) {
         </div>
         <span className="flex shrink-0 justify-end lg:w-[180px]">
           <DialogPrimitive.Close className="rounded-sm text-base font-medium outline-none hover:text-(--sh-muted) focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50">
-            Huỷ
+            Cancel
           </DialogPrimitive.Close>
         </span>
       </form>

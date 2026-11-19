@@ -12,6 +12,13 @@ export const uniqueEmail = () => `auto-${stamp()}@test.local`;
 export const uniqueName = (prefix = '') => `${AUTO_PREFIX}${prefix ? `${prefix}-` : ''}${stamp()}`;
 
 /**
+ * Tên duy nhất dạng chữ đọc được, không dấu, vd `QA Role lx3k9a1b2c` (lát tieng-anh-cua-hang TC-21).
+ * Không có tiền tố `AUTO-` nên test tự dọn bằng tên.
+ * @param {string} title
+ */
+export const uniqueTitle = (title) => `${title} ${stamp()}`;
+
+/**
  * Tên duy nhất dài đúng `length` ký tự (dùng cho giá trị biên), bắt đầu bằng `AUTO-`.
  * @param {number} length
  */

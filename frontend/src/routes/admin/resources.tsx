@@ -23,7 +23,8 @@ import type { ResourceDTO } from "@/lib/types/resource";
 
 const RESOURCE_CODE = "RESOURCE";
 
-export const Route = createFileRoute("/admin/tai-nguyen")({
+export const Route = createFileRoute("/admin/resources")({
+  head: () => ({ meta: [{ title: "Resources | Nike Admin" }] }),
   component: ResourceRoute
 });
 
@@ -57,15 +58,15 @@ function ResourcePage() {
 
   const filterFields = useMemo<TableSearchFilterField[]>(
     () => [
-      { key: "keyword", label: "Tìm kiếm", placeholder: "Tìm theo tên, code, URI..." },
+      { key: "keyword", label: "Search", placeholder: "Search by name, code, URI..." },
       {
         key: "moduleId",
         label: "Module",
         type: "select",
-        placeholder: "Tất cả",
+        placeholder: "All",
         options: [
-          { value: "", label: "Tất cả" },
-          { value: "none", label: "Chưa phân module" },
+          { value: "", label: "All" },
+          { value: "none", label: "Unassigned" },
           ...modules.map((m) => ({ value: String(m.id), label: m.name }))
         ]
       }
@@ -91,7 +92,7 @@ function ResourcePage() {
   const deleteMutation = useMutation(deleteResourceMutationOptions);
   const bulkDelete = useBulkDelete({
     deleteOne: deleteResource,
-    label: "tài nguyên",
+    label: "resource",
     onSettled: () => void queryClient.invalidateQueries({ queryKey: RESOURCES_QUERY_KEY })
   });
 
@@ -120,8 +121,8 @@ function ResourcePage() {
       {isError && <AdminListError onRetry={() => void refetch()} />}
 
       <DataTableAdvanced
-        title="Tài nguyên"
-        description="Nhóm API (URI khớp controller) và các hành động được phân quyền."
+        title="Resources"
+        description="API groups (URI matches the controller) and the actions that can be granted."
         data={data?.items ?? []}
         total={data?.total ?? 0}
         columns={columns}
@@ -132,7 +133,7 @@ function ResourcePage() {
         onRefresh={() => void refetch()}
         filter={{ fields: filterFields, values: filter, onChange: setFilter }}
         onAdd={canAdd ? () => setDialog({ open: true, resource: null }) : undefined}
-        addLabel="Thêm tài nguyên"
+        addLabel="Add Resource"
         onDeleteSelected={canDelete ? (ids) => void bulkDelete.run(ids) : undefined}
       />
 
@@ -148,8 +149,8 @@ function ResourcePage() {
         open={deleting !== null}
         itemId={deleting?.id ?? null}
         itemName={deleting?.name}
-        itemType="tài nguyên"
-        extraDescription="Quyền đã cấp trên tài nguyên này cho mọi chức vụ cũng bị xoá."
+        itemType="resource"
+        extraDescription="Permissions granted on this resource to every role will also be removed."
         isLoading={deleteMutation.isPending}
         onConfirm={(id) => deleteMutation.mutate(id)}
         onOpenChange={(open) => {

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 /** Query danh sách lỗi (5xx, mất mạng): báo ngay trên bảng + nút thử lại. Query không bật toast. */
 export function AdminListError({
-  title = "Không tải được danh sách",
+  title = "Couldn't load the list",
   onRetry
 }: {
   title?: string;
@@ -16,9 +16,9 @@ export function AdminListError({
       <AlertCircle />
       <AlertTitle>{title}</AlertTitle>
       <AlertDescription className="flex flex-wrap items-center gap-3">
-        Kiểm tra kết nối tới máy chủ rồi thử lại.
+        Check the connection to the server and try again.
         <Button size="sm" variant="outline" onClick={onRetry}>
-          Thử lại
+          Try Again
         </Button>
       </AlertDescription>
     </Alert>

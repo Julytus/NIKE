@@ -40,11 +40,11 @@ export function ShopHeader() {
           <div className="flex flex-1 items-center">
             <Link
               to="/"
-              aria-label="Nike - về trang chủ"
+              aria-label="Nike Home"
               data-testid="header-logo"
               className="inline-flex h-12 items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50"
             >
-              <NikeSwoosh className="h-6 lg:h-7" />
+              <NikeSwoosh className="h-6 lg:h-[22px]" />
             </Link>
           </div>
           <MainNav openIndex={megaIndex} onOpenChange={setMegaIndex} />

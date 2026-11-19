@@ -1,25 +1,25 @@
 import { ProductCard } from './ProductCard.js';
 
-/** Khung tìm kiếm (dialog "Tìm kiếm", testid `search-overlay`) — plan giao-dien-nike §6.4. */
+/** Khung tìm kiếm (dialog "Search", testid `search-overlay`) — plan giao-dien-nike §6.4. */
 export class SearchOverlay {
   /** @param {import('@playwright/test').Page} page */
   constructor(page) {
     this.page = page;
-    this.root = page.getByRole('dialog', { name: 'Tìm kiếm' });
-    this.input = this.root.getByRole('searchbox', { name: 'Tìm kiếm sản phẩm' });
-    this.cancelButton = this.root.getByRole('button', { name: 'Huỷ', exact: true });
-    this.popularHeading = this.root.getByText('Tìm kiếm phổ biến', { exact: true });
-    this.suggestionsHeading = this.root.getByText('Gợi ý sản phẩm', { exact: true });
+    this.root = page.getByRole('dialog', { name: 'Search' });
+    this.input = this.root.getByRole('searchbox', { name: 'Search products' });
+    this.cancelButton = this.root.getByRole('button', { name: 'Cancel', exact: true });
+    this.popularHeading = this.root.getByText('Popular Search Terms', { exact: true });
+    this.suggestionsHeading = this.root.getByText('Top Suggestions', { exact: true });
     this.results = this.root.getByTestId('search-results');
     this.suggestions = this.root.getByTestId('search-suggestion');
-    this.viewAllLink = this.root.getByRole('link', { name: /^Xem tất cả \d+ kết quả$/ });
+    this.viewAllLink = this.root.getByRole('link', { name: /^View All \d+ Results?$/ });
     this.errorMessage = this.root.getByText(
-      'Không tải được gợi ý. Nhấn Enter để xem tất cả kết quả.',
+      "Couldn't load suggestions. Press Enter to see all results.",
       { exact: true }
     );
   }
 
-  /** Pill "Tìm kiếm phổ biến". @param {string} text */
+  /** Pill "Popular Search Terms". @param {string} text */
   popularPill(text) {
     return this.root.getByRole('link', { name: text, exact: true });
   }
@@ -31,7 +31,7 @@ export class SearchOverlay {
 
   /** @param {string} q từ khoá đã trim */
   noResultMessage(q) {
-    return this.root.getByText(`Không tìm thấy sản phẩm nào cho "${q}".`, { exact: true });
+    return this.root.getByText(`We couldn't find anything for "${q}".`, { exact: true });
   }
 
   /** Gõ từ khoá (thay nội dung cũ). @param {string} q */

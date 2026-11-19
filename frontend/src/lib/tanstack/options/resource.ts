@@ -47,8 +47,8 @@ export const createUpsertResourceMutationOptions = (
   mutationFn: upsertResource,
   meta: {
     invalidatesQuery: [RESOURCES_QUERY_KEY, PERMISSIONS_QUERY_KEY, OWN_PERMISSION_KEY],
-    successMessage: isEdit ? "Cập nhật tài nguyên thành công" : "Tạo tài nguyên thành công",
-    errorMessage: "Không lưu được tài nguyên"
+    successMessage: isEdit ? "Resource updated" : "Resource created",
+    errorMessage: "Couldn't save resource"
   }
 });
 
@@ -61,7 +61,7 @@ export const deleteResourceMutationOptions: MutationOptions<
   mutationFn: deleteResource,
   meta: {
     invalidatesQuery: [RESOURCES_QUERY_KEY, PERMISSIONS_QUERY_KEY, OWN_PERMISSION_KEY],
-    successMessage: "Xóa tài nguyên thành công",
-    errorMessage: "Không xóa được tài nguyên"
+    successMessage: "Resource deleted",
+    errorMessage: "Couldn't delete resource"
   }
 };

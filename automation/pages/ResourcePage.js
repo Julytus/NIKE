@@ -1,19 +1,19 @@
 import { BasePage } from './BasePage.js';
 
-/** Trang quản trị Tài nguyên `/admin/tai-nguyen` (bảng resource: tên, code, URI, module). */
+/** Trang quản trị Tài nguyên `/admin/resources` (bảng resource: tên, code, URI, module). */
 export class ResourcePage extends BasePage {
-  path = '/admin/tai-nguyen';
+  path = '/admin/resources';
 
   /** @param {import('@playwright/test').Page} page */
   constructor(page) {
     super(page);
-    this.heading = page.getByRole('heading', { name: 'Tài nguyên', exact: true });
-    this.filterToggle = page.getByRole('button', { name: 'Bộ lọc', exact: true });
-    this.searchInput = page.getByPlaceholder('Tìm theo tên, code, URI...');
+    this.heading = page.getByRole('heading', { name: 'Resources', exact: true });
+    this.filterToggle = page.getByRole('button', { name: 'Filters', exact: true });
+    this.searchInput = page.getByPlaceholder('Search by name, code, URI...');
     this.dataRows = page.locator('tbody tr');
   }
 
-  /** Mở trang và chờ tiêu đề "Tài nguyên". */
+  /** Mở trang và chờ tiêu đề "Resources". */
   async open() {
     await this.goto();
     await this.heading.waitFor();

@@ -116,20 +116,20 @@ public class UserService extends BaseService<UserRepository, User, Integer> {
     public TokenResponse register(User request) {
         // Bước 1: Họ tên
         if (request == null || request.getName() == null) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Vui lòng nhập họ tên");
+            throw new AppException(ErrorCode.BAD_REQUEST, "Please enter your full name.");
         }
         String name = request.getName().trim();
         if (name.isEmpty()) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Vui lòng nhập họ tên");
+            throw new AppException(ErrorCode.BAD_REQUEST, "Please enter your full name.");
         }
 
         // Bước 2: Email
         if (request.getEmail() == null) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Email không hợp lệ");
+            throw new AppException(ErrorCode.BAD_REQUEST, "Please enter a valid email address.");
         }
         String email = request.getEmail().trim().toLowerCase(Locale.ROOT);
         if (email.isEmpty() || !email.contains("@")) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Email không hợp lệ");
+            throw new AppException(ErrorCode.BAD_REQUEST, "Please enter a valid email address.");
         }
 
         // Bước 3: Mật khẩu
@@ -223,22 +223,22 @@ public class UserService extends BaseService<UserRepository, User, Integer> {
 
     public User updateUserPassword(Integer id, String oldPassword, String newPassword) {
         if (CommonUtils.NVL(id) <= 0) {
-            throw new AppException("Người dùng không hợp lệ", BAD_REQUEST.value());
+            throw new AppException("Invalid user", BAD_REQUEST.value());
         }
         if (StringUtils.isAnyBlank(oldPassword, newPassword)) {
-            throw new AppException("Mật khẩu cũ và mật khẩu mới không được để trống", BAD_REQUEST.value());
+            throw new AppException("Old and new passwords are required", BAD_REQUEST.value());
         }
         PasswordPolicy.validate(newPassword);
         if (oldPassword.equals(newPassword)) {
-            throw new AppException("Mật khẩu mới phải khác mật khẩu cũ", BAD_REQUEST.value());
+            throw new AppException("New password must be different from the old one", BAD_REQUEST.value());
         }
 
         String currentPassword = repository.getUserPasswordById(id);
         if (StringUtils.isBlank(currentPassword)) {
-            throw new AppException("Không tìm thấy người dùng", BAD_REQUEST.value());
+            throw new AppException("User not found", BAD_REQUEST.value());
         }
         if (!BCrypt.checkpw(oldPassword, currentPassword)) {
-            throw new AppException("Mật khẩu cũ không chính xác", BAD_REQUEST.value());
+            throw new AppException("Old password is incorrect", BAD_REQUEST.value());
         }
 
         repository.updatePass(id, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
@@ -259,7 +259,7 @@ public class UserService extends BaseService<UserRepository, User, Integer> {
             return new Gson().fromJson(response, User.class);
         } catch (Exception e) {
             log.error("Lỗi khi gọi Google UserInfo API: {}", e.getMessage(), e);
-            throw new AppException(ErrorCode.BAD_REQUEST, "Không thể xác thực với Google");
+            throw new AppException(ErrorCode.BAD_REQUEST, "Couldn't verify with Google");
         }
     }
 

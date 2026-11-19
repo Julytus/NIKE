@@ -12,14 +12,14 @@ import { toFieldErrors } from "@/lib/utils/form-errors";
 
 // Giới hạn theo cột bảng `module` (V1__auth_schema.sql). Backend không kiểm định dạng.
 const moduleSchema = z.object({
-  name: z.string().trim().min(1, "Vui lòng nhập tên module").max(300, "Tên module tối đa 300 ký tự"),
+  name: z.string().trim().min(1, "Please enter a module name").max(300, "Module name must be at most 300 characters"),
   code: z
     .string()
     .trim()
-    .min(1, "Vui lòng nhập code")
-    .max(100, "Code tối đa 100 ký tự")
-    .regex(/^[A-Z0-9_]+$/, "Code chỉ gồm chữ in hoa, số và dấu _"),
-  description: z.string().trim().max(300, "Mô tả tối đa 300 ký tự")
+    .min(1, "Please enter a code")
+    .max(100, "Code must be at most 100 characters")
+    .regex(/^[A-Z0-9_]+$/, "Code may only contain uppercase letters, digits and _"),
+  description: z.string().trim().max(300, "Description must be at most 300 characters")
 });
 
 export function ModuleFormDialog({
@@ -69,14 +69,14 @@ export function ModuleFormDialog({
     <FormDialog
       open={open}
       onOpenChange={onOpenChange}
-      title={module ? "Chỉnh sửa module" : "Tạo mới module"}
-      featured={module ? "Cập nhật thông tin module" : "Tạo module mới để nhóm tài nguyên"}
+      title={module ? "Edit Module" : "Create Module"}
+      featured={module ? "Update module details" : "Create a new module to group resources"}
       onSubmit={handleSubmit}
-      submitLabel={module ? "Cập nhật" : "Tạo mới"}
+      submitLabel={module ? "Update" : "Create"}
       isLoading={isLoading}
     >
       <div className="space-y-2">
-        <Label htmlFor="module-name">Tên module</Label>
+        <Label htmlFor="module-name">Module name</Label>
         <Input
           id="module-name"
           name="name"
@@ -92,14 +92,14 @@ export function ModuleFormDialog({
           id="module-code"
           name="code"
           value={code}
-          placeholder="Ví dụ: SYSTEM"
+          placeholder="e.g. SYSTEM"
           onChange={(event) => setCode(event.target.value.toUpperCase())}
           aria-invalid={!!errors.code}
         />
         <FieldError>{errors.code}</FieldError>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="module-description">Mô tả</Label>
+        <Label htmlFor="module-description">Description</Label>
         <Textarea
           id="module-description"
           name="description"
@@ -111,7 +111,7 @@ export function ModuleFormDialog({
         <FieldError>{errors.description}</FieldError>
       </div>
       <div className="flex items-center justify-between rounded-lg border p-3">
-        <Label htmlFor="module-active">Đang kích hoạt</Label>
+        <Label htmlFor="module-active">Active</Label>
         <Switch id="module-active" checked={active} onCheckedChange={setActive} />
       </div>
     </FormDialog>

@@ -1,76 +1,86 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 
 import { AdminListError } from "@/components/admin/admin-list-error";
 import { AdminPermissionGuard } from "@/components/admin/admin-permission-guard";
 import { DeleteConfirmDialog } from "@/components/admin/delete-confirm-dialog";
-import { createRoleColumns } from "@/components/admin/role/columns";
-import { RoleFormDialog } from "@/components/admin/role/role-dialog";
+import { AssignResourcesDialog } from "@/components/admin/module/assign-resources-dialog";
+import { createModuleColumns } from "@/components/admin/module/columns";
+import { ModuleFormDialog } from "@/components/admin/module/module-dialog";
 import { DataTableAdvanced } from "@/components/admin/table/data-table-advanced";
 import type { TableSearchFilterField } from "@/components/admin/table/table-search-filter";
 import { useBulkDelete } from "@/hooks/use-bulk-delete";
 import { useCanView } from "@/hooks/use-can-view";
-import { deleteRole } from "@/lib/axios/role";
+import { deleteModule } from "@/lib/axios/module";
 import {
-  createRoleListQueryOptions,
-  createUpsertRoleMutationOptions,
-  deleteRoleMutationOptions,
-  ROLES_QUERY_KEY
-} from "@/lib/tanstack/options/role";
-import type { RoleDTO } from "@/lib/types/role";
+  assignModuleResourcesMutationOptions,
+  createModuleListQueryOptions,
+  createUpsertModuleMutationOptions,
+  deleteModuleMutationOptions,
+  MODULES_QUERY_KEY
+} from "@/lib/tanstack/options/module";
+import type { ModuleDTO } from "@/lib/types/module";
 
-const RESOURCE_CODE = "ROLE";
+const RESOURCE_CODE = "MODULE";
 
 const FILTER_FIELDS: TableSearchFilterField[] = [
-  { key: "keyword", label: "Tìm kiếm", placeholder: "Tìm theo tên chức vụ..." }
+  { key: "keyword", label: "Search", placeholder: "Search by name, code..." }
 ];
 
-export const Route = createFileRoute("/admin/chuc-vu")({
-  component: RoleRoute
+export const Route = createFileRoute("/admin/modules")({
+  head: () => ({ meta: [{ title: "Modules | Nike Admin" }] }),
+  component: ModuleRoute
 });
 
-function RoleRoute() {
+function ModuleRoute() {
   return (
     <AdminPermissionGuard code={RESOURCE_CODE}>
-      <RolePage />
+      <ModulePage />
     </AdminPermissionGuard>
   );
 }
 
-function RolePage() {
-  const navigate = useNavigate();
+function ModulePage() {
   const queryClient = useQueryClient();
   const { can } = useCanView();
   const canAdd = can(RESOURCE_CODE, "ADD");
   const canUpdate = can(RESOURCE_CODE, "UPDATE");
   const canDelete = can(RESOURCE_CODE, "DELETE");
-  const canPermission = can("PERMISSION", "VIEW");
 
   const [paging, setPaging] = useState({ pageIndex: 0, pageSize: 10 });
   const [filter, setFilter] = useState<Record<string, string>>({ keyword: "" });
-  const [dialog, setDialog] = useState<{ open: boolean; role: RoleDTO | null }>({
+  const [dialog, setDialog] = useState<{ open: boolean; module: ModuleDTO | null }>({
     open: false,
-    role: null
+    module: null
+  });
+  const [assigning, setAssigning] = useState<{ open: boolean; module: ModuleDTO | null }>({
+    open: false,
+    module: null
   });
   const [deleting, setDeleting] = useState<{ id: number; name?: string } | null>(null);
 
   const { data, isFetching, isError, refetch } = useQuery(
-    createRoleListQueryOptions({
+    createModuleListQueryOptions({
       keyword: filter.keyword || undefined,
       paging: { page: paging.pageIndex + 1, limit: paging.pageSize }
     })
   );
 
   const upsertMutation = useMutation({
-    ...createUpsertRoleMutationOptions(dialog.role !== null),
+    ...createUpsertModuleMutationOptions(dialog.module !== null),
     onSuccess: () => setDialog((d) => ({ ...d, open: false }))
   });
-  const deleteMutation = useMutation(deleteRoleMutationOptions);
+  const toggleMutation = useMutation(createUpsertModuleMutationOptions(true));
+  const assignMutation = useMutation({
+    ...assignModuleResourcesMutationOptions,
+    onSuccess: () => setAssigning((a) => ({ ...a, open: false }))
+  });
+  const deleteMutation = useMutation(deleteModuleMutationOptions);
   const bulkDelete = useBulkDelete({
-    deleteOne: deleteRole,
-    label: "chức vụ",
-    onSettled: () => void queryClient.invalidateQueries({ queryKey: ROLES_QUERY_KEY })
+    deleteOne: deleteModule,
+    label: "module",
+    onSettled: () => void queryClient.invalidateQueries({ queryKey: MODULES_QUERY_KEY })
   });
 
   const handlePaginationChange = useCallback((pageIndex: number, pageSize: number) => {
@@ -79,17 +89,18 @@ function RolePage() {
     );
   }, []);
 
+  const { mutate: toggleActive } = toggleMutation;
   const columns = useMemo(
     () =>
-      createRoleColumns({
-        canPermission,
+      createModuleColumns({
         canUpdate,
         canDelete,
-        onPermission: (role) => void navigate({ to: "/admin/phan-quyen", search: { roleId: role.id } }),
-        onEdit: (role) => setDialog({ open: true, role }),
-        onShowDeleteConfirm: (id, name) => setDeleting({ id, name })
+        onEdit: (module) => setDialog({ open: true, module }),
+        onShowDeleteConfirm: (id, name) => setDeleting({ id, name }),
+        onToggleActive: (module, active) => toggleActive({ ...module, active: active ? 1 : 0 }),
+        onAssign: (module) => setAssigning({ open: true, module })
       }),
-    [canPermission, canUpdate, canDelete, navigate]
+    [canUpdate, canDelete, toggleActive]
   );
 
   return (
@@ -97,8 +108,8 @@ function RolePage() {
       {isError && <AdminListError onRetry={() => void refetch()} />}
 
       <DataTableAdvanced
-        title="Chức vụ"
-        description="Chức vụ của tài khoản quản trị. Quyền chi tiết cấp ở trang Phân quyền."
+        title="Modules"
+        description="Group resources into modules for the permission matrix."
         data={data?.items ?? []}
         total={data?.total ?? 0}
         columns={columns}
@@ -108,24 +119,33 @@ function RolePage() {
         isLoading={isFetching || bulkDelete.isPending}
         onRefresh={() => void refetch()}
         filter={{ fields: FILTER_FIELDS, values: filter, onChange: setFilter }}
-        onAdd={canAdd ? () => setDialog({ open: true, role: null }) : undefined}
-        addLabel="Thêm chức vụ"
+        onAdd={canAdd ? () => setDialog({ open: true, module: null }) : undefined}
+        addLabel="Add Module"
         onDeleteSelected={canDelete ? (ids) => void bulkDelete.run(ids) : undefined}
       />
 
-      <RoleFormDialog
+      <ModuleFormDialog
         open={dialog.open}
-        role={dialog.role}
+        module={dialog.module}
         isLoading={upsertMutation.isPending}
         onOpenChange={(open) => setDialog((d) => ({ ...d, open }))}
         onSubmit={(values) => upsertMutation.mutate(values)}
+      />
+
+      <AssignResourcesDialog
+        open={assigning.open}
+        module={assigning.module}
+        isPending={assignMutation.isPending}
+        onOpenChange={(open) => setAssigning((a) => ({ ...a, open }))}
+        onAssign={(moduleId, resourceIds) => assignMutation.mutate({ moduleId, resourceIds })}
       />
 
       <DeleteConfirmDialog
         open={deleting !== null}
         itemId={deleting?.id ?? null}
         itemName={deleting?.name}
-        itemType="chức vụ"
+        itemType="module"
+        extraDescription="Resources in this module move to “Unassigned” and are not deleted."
         isLoading={deleteMutation.isPending}
         onConfirm={(id) => deleteMutation.mutate(id)}
         onOpenChange={(open) => {

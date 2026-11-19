@@ -21,17 +21,17 @@ import { useCanView } from "@/hooks/use-can-view";
  *
  * Nhóm "Hệ thống": các trang phân quyền (resource MODULE / RESOURCE / ROLE / PERMISSION, migration V4). */
 const SYSTEM_ITEMS: (AdminNavItem & { code: string })[] = [
-  { code: "ROLE", title: "Chức vụ", url: "/admin/chuc-vu", icon: ShieldCheck },
-  { code: "PERMISSION", title: "Phân quyền", url: "/admin/phan-quyen", icon: KeyRound },
-  { code: "RESOURCE", title: "Tài nguyên", url: "/admin/tai-nguyen", icon: Boxes },
-  { code: "MODULE", title: "Module", url: "/admin/module", icon: LayoutGrid }
+  { code: "ROLE", title: "Roles", url: "/admin/roles", icon: ShieldCheck },
+  { code: "PERMISSION", title: "Permissions", url: "/admin/permissions", icon: KeyRound },
+  { code: "RESOURCE", title: "Resources", url: "/admin/resources", icon: Boxes },
+  { code: "MODULE", title: "Modules", url: "/admin/modules", icon: LayoutGrid }
 ];
 
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { canView } = useCanView();
 
   const navMain: AdminNavItem[] = [
-    { title: "Trang chủ", url: "/admin", icon: House }
+    { title: "Home", url: "/admin", icon: House }
   ];
   const navSystem = SYSTEM_ITEMS.filter((i) => canView(i.code));
 
@@ -47,7 +47,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
                 </div>
                 <div className="grid flex-1 text-left leading-tight">
                   <span className="text-base font-medium">Nike</span>
-                  <span className="text-muted-foreground text-xs">Quản trị</span>
+                  <span className="text-muted-foreground text-xs">Admin</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -55,8 +55,8 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <AdminMain label="Chức năng chính" items={navMain} />
-        {navSystem.length > 0 && <AdminMain label="Hệ thống" items={navSystem} />}
+        <AdminMain label="Main" items={navMain} />
+        {navSystem.length > 0 && <AdminMain label="System" items={navSystem} />}
       </SidebarContent>
     </Sidebar>
   );

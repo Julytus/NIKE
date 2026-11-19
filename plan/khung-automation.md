@@ -32,9 +32,9 @@ Bộ test đầu tiên phủ những phần **không đổi** trong suốt dự 
 
 | Tác nhân | Dùng trong test | Ghi chú |
 |---|---|---|
-| Quản trị toàn quyền | `admin@downbeat.local` / `Admin@123` | storageState `automation/.auth/admin.json` |
-| Không quyền | `noaccess@downbeat.local` / `Admin@123` | storageState `automation/.auth/noaccess.json` |
-| Khách hàng | `free@downbeat.local` / `Admin@123` (đổi sang `khach1@` khi lát `du-lieu-giay` xong) | chỉ dùng qua API trong lát này |
+| Quản trị toàn quyền | `admin@nike.local` / `Admin@123` | storageState `automation/.auth/admin.json` |
+| Không quyền | `noaccess@nike.local` / `Admin@123` | storageState `automation/.auth/noaccess.json` |
+| Khách hàng | `free@nike.local` / `Admin@123` (đổi sang `khach1@` khi lát `du-lieu-giay` xong) | chỉ dùng qua API trong lát này |
 
 ## 3. Luồng
 
@@ -53,7 +53,7 @@ Không đổi.
 
 | Endpoint | Body / tham số | Kết quả mong đợi |
 |---|---|---|
-| `POST /api/user/authenticate` | `{ "email": "admin@downbeat.local", "plainPassword": "Admin@123" }` | 200, `result.token`, `result.refreshToken`, `result.userId` |
+| `POST /api/user/authenticate` | `{ "email": "admin@nike.local", "plainPassword": "Admin@123" }` | 200, `result.token`, `result.refreshToken`, `result.userId` |
 | `POST /api/auth/refresh` | `{ "refreshToken": "<từ đăng nhập>" }` | 200, `result.token` mới |
 | `POST /api/auth/logout` | token | 200; refresh token cũ dùng lại → 401 |
 | `POST /api/account/register` | `{ "name", "email", "plainPassword" }` | 200, `result.token` |
@@ -116,7 +116,7 @@ Không có. (Quy ước `data-testid` ghi vào `frontend/AGENTS.md` để áp d�
 | TC-03 | api | Refresh và logout `@smoke` | đăng nhập admin | refresh → token mới khác cũ; logout; refresh lại bằng refreshToken cũ | refresh 200; logout 200; refresh sau logout 401 "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại" |
 | TC-04 | api | Refresh token rác | — | refresh `"abc"` | 401 cùng message trên |
 | TC-05 | api | Đăng ký thành công rồi `me` | email `uniqueEmail()` | register → `me` bằng token trả về | register 200; me `email`, `name` khớp; `roleId` trong token = id chức vụ "Khách hàng" |
-| TC-06 → TC-09 | api | Đăng ký dữ liệu sai (data-driven từ `register-invalid.json`) | — | 4 dòng: email trùng `admin@downbeat.local`; mật khẩu `Abc@123` (7 ký tự); email `khong-hop-le`; họ tên rỗng | lần lượt 400 "Email đã được đăng ký" / "Mật khẩu phải có từ 8 đến 72 ký tự" / "Email không hợp lệ" / "Vui lòng nhập họ tên" |
+| TC-06 → TC-09 | api | Đăng ký dữ liệu sai (data-driven từ `register-invalid.json`) | — | 4 dòng: email trùng `admin@nike.local`; mật khẩu `Abc@123` (7 ký tự); email `khong-hop-le`; họ tên rỗng | lần lượt 400 "Email đã được đăng ký" / "Mật khẩu phải có từ 8 đến 72 ký tự" / "Email không hợp lệ" / "Vui lòng nhập họ tên" |
 | TC-10 | api | `me` không token | — | `GET /account/me` | 401 |
 | TC-11 | api | Quyền chức vụ | — | `apiAs('noaccess').role.list()`; `apiAs('admin').role.get(999999)` | 403 "Bạn không có quyền thực hiện thao tác này! Path: /role/, Action: VIEW"; 404 "Dữ liệu không tồn tại" |
 | TC-12 | e2e | Đăng nhập trang quản trị `@smoke` | chưa đăng nhập | `/login` → nhập admin → "Đăng nhập" | vào `/admin`, thấy "Xin chào"; sidebar có "Chức vụ" |
@@ -142,7 +142,7 @@ Không có. (Quy ước `data-testid` ghi vào `frontend/AGENTS.md` để áp d�
 1. `LOGIN_TOO_MANY_ATTEMPTS` (429): test đăng nhập sai chạy song song nhiều trình duyệt có thể bị khoá tạm. Cách xử lý: test sai mật khẩu chỉ chạy ở project `chromium` + `api`, và dùng tài khoản riêng nếu cần.
 2. CI cần MinIO + MySQL trong Docker trên runner GitHub (đủ dùng với gói miễn phí). Nếu backend khởi động chậm, tăng thời gian chờ tới 180 giây.
 3. (Đã giải quyết) Mục 15 do Claude làm luôn.
-4. `free@downbeat.local` là tài khoản khách tạm; đổi sang `khach1@` khi lát `du-lieu-giay` xong.
+4. `free@nike.local` là tài khoản khách tạm; đổi sang `khach1@` khi lát `du-lieu-giay` xong.
 
 ## 12. Nhật ký thực hiện (do /cook và /doc-chuc-nang ghi — nối các phiên A/B/C)
 

@@ -14,8 +14,9 @@ import { expect, test } from '../../fixtures/index.js';
  * global-setup đã `test-support/reset` trước khi chạy.
  */
 
-const METHOD_NOT_ALLOWED = 'Phương thức HTTP không được hỗ trợ';
-const API_NOT_FOUND = 'Không tìm thấy API';
+// Message / tên dữ liệu đổi sang tiếng Anh ở lát tieng-anh-cua-hang (plan §5.4, §4).
+const METHOD_NOT_ALLOWED = 'HTTP method not supported';
+const API_NOT_FOUND = 'API not found';
 const INVALID_TOKEN = 'abc.def.ghi';
 
 /**
@@ -60,17 +61,17 @@ test.describe('API danh mục công khai', () => {
 
       expect(result.map((/** @type {any} */ c) => c.slug)).toEqual([
         'lifestyle',
-        'chay-bo',
-        'bong-ro',
+        'running',
+        'basketball',
         'jordan',
-        'bong-da',
+        'football',
       ]);
       expect(result.map((/** @type {any} */ c) => c.name)).toEqual([
         'Lifestyle',
-        'Chạy bộ',
-        'Bóng rổ',
+        'Running',
+        'Basketball',
         'Jordan',
-        'Bóng đá',
+        'Football',
       ]);
       expect(result.map((/** @type {any} */ c) => c.productCount)).toEqual([12, 6, 5, 5, 2]);
 
@@ -126,7 +127,7 @@ test.describe('API gợi ý tìm kiếm', () => {
     'TC-04 không phân biệt hoa thường / dấu, tìm cả phụ đề',
     { tag: '@regression' },
     async ({ api }) => {
-      for (const q of ['GIAY BONG RO', 'giày bóng rổ']) {
+      for (const q of ['BASKETBALL SHOES', 'basketball shoes']) {
         await test.step(q, async () => {
           const result = await api.client.expectOk(await api.product.suggest(q));
           expect(result.total).toBe(5);

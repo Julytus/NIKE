@@ -67,7 +67,7 @@ Response `result`:
 
 ### 5.4 Lỗi nghiệp vụ
 
-| Tình huống | HTTP | Message (tiếng Việt, FE hiện nguyên văn) |
+| Tình huống | HTTP | Message (tiếng Anh, FE hiện nguyên văn) |
 |---|---|---|
 
 ## 6. Giao diện (chuỗi cố định — test E2E chọn theo đúng các chuỗi này)

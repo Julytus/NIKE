@@ -7,7 +7,8 @@ import { docShot } from '../../utils/doc-shot.js';
  * hiện ở các trang quản trị đã có.
  */
 
-const PRODUCT_RESOURCE = 'Quản lý sản phẩm';
+// Tên đổi sang tiếng Anh ở lát tieng-anh-cua-hang (V20).
+const PRODUCT_RESOURCE = 'Product Management';
 
 test.describe('Quản trị: tài nguyên sản phẩm', () => {
   test.use({ storageState: storageStateOf('admin') });
@@ -32,8 +33,8 @@ test.describe('Quản trị: tài nguyên sản phẩm', () => {
     { tag: '@regression' },
     async ({ apiAs, permissionPage }, testInfo) => {
       const admin = await apiAs('admin');
-      const role = await admin.role.findByName('Khách hàng');
-      expect(role, 'chức vụ "Khách hàng" có trong seed').toBeTruthy();
+      const role = await admin.role.findByName('Customer');
+      expect(role, 'chức vụ "Customer" có trong seed').toBeTruthy();
 
       await permissionPage.openForRole(role.id);
       await expect(permissionPage.heading).toBeVisible();

@@ -9,8 +9,8 @@ export class AdminLayout extends BasePage {
     super(page);
     this.sidebar = page.locator('[data-sidebar="sidebar"]');
     this.sidebarToggle = page.getByRole('button', { name: 'Toggle Sidebar' }).first();
-    this.greeting = page.getByRole('heading', { name: /^Xin chào/ });
-    this.accessDenied = page.getByRole('heading', { name: 'Truy cập bị từ chối' });
+    this.greeting = page.getByRole('heading', { name: /^Hi[, ]/ });
+    this.accessDenied = page.getByRole('heading', { name: 'Access Denied' });
   }
 
   /** Trên điện thoại, mở menu trượt để thấy thanh bên. */
@@ -20,7 +20,7 @@ export class AdminLayout extends BasePage {
     }
   }
 
-  /** Mục trên thanh bên theo tên hiển thị, vd "Chức vụ". @param {string} name */
+  /** Mục trên thanh bên theo tên hiển thị, vd "Roles". @param {string} name */
   menuItem(name) {
     return this.sidebar.getByRole('link', { name, exact: true });
   }

@@ -24,7 +24,7 @@ export const updatePermissionsMutationOptions: MutationOptions<
   meta: {
     // Có thể đang sửa quyền của chính chức vụ mình: làm mới cả menu
     invalidatesQuery: [PERMISSIONS_QUERY_KEY, ["permission-resource"]],
-    successMessage: "Cập nhật phân quyền thành công",
-    errorMessage: "Không cập nhật được phân quyền"
+    successMessage: "Permissions updated",
+    errorMessage: "Couldn't update permissions"
   }
 };

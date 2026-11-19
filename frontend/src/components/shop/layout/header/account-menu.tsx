@@ -33,7 +33,7 @@ function useCanOpenAdmin(user: ShopUserDTO) {
 export function AccountMenu({ user, variant }: { user: ShopUserDTO; variant: "text" | "icon" }) {
   const logoutMutation = useMutation(logoutMutationOptions);
   const canOpenAdmin = useCanOpenAdmin(user);
-  const greeting = `Xin chào, ${user.name}`;
+  const greeting = `Hi, ${user.name}`;
 
   return (
     // modal=false: không ẩn (aria-hidden) phần còn lại của trang khi mở menu
@@ -65,12 +65,12 @@ export function AccountMenu({ user, variant }: { user: ShopUserDTO; variant: "te
         {canOpenAdmin && (
           <DropdownMenuItem asChild>
             <Link to="/admin" data-testid="account-menu-admin">
-              <LayoutDashboard /> Trang quản trị
+              <LayoutDashboard /> Admin
             </Link>
           </DropdownMenuItem>
         )}
         <DropdownMenuItem onSelect={() => logoutMutation.mutate()} data-testid="account-menu-logout">
-          <LogOut /> Đăng xuất
+          <LogOut /> Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

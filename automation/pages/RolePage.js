@@ -2,19 +2,19 @@ import { BasePage } from './BasePage.js';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog.js';
 import { RoleDialog } from './components/RoleDialog.js';
 
-/** Trang quản trị Chức vụ `/admin/chuc-vu`. */
+/** Trang quản trị Chức vụ `/admin/roles`. */
 export class RolePage extends BasePage {
-  path = '/admin/chuc-vu';
+  path = '/admin/roles';
 
   /** @param {import('@playwright/test').Page} page */
   constructor(page) {
     super(page);
-    this.heading = page.getByRole('heading', { name: 'Chức vụ', exact: true });
-    this.filterToggle = page.getByRole('button', { name: 'Bộ lọc', exact: true });
-    this.searchInput = page.getByPlaceholder('Tìm theo tên chức vụ...');
-    // Màn hẹp chỉ còn biểu tượng "+" (chữ "Thêm chức vụ" ẩn dưới lg) nên dự phòng bằng icon.
+    this.heading = page.getByRole('heading', { name: 'Roles', exact: true });
+    this.filterToggle = page.getByRole('button', { name: 'Filters', exact: true });
+    this.searchInput = page.getByPlaceholder('Search by role name...');
+    // Màn hẹp chỉ còn biểu tượng "+" (chữ "Add Role" ẩn dưới lg) nên dự phòng bằng icon.
     this.addButton = page
-      .getByRole('button', { name: 'Thêm chức vụ', exact: true })
+      .getByRole('button', { name: 'Add Role', exact: true })
       .or(page.locator('button:has(svg.lucide-plus)'))
       .first();
     this.dataRows = page.locator('tbody tr');
@@ -22,7 +22,7 @@ export class RolePage extends BasePage {
     this.deleteDialog = new DeleteConfirmDialog(page);
   }
 
-  /** Mở trang và chờ tiêu đề "Chức vụ". */
+  /** Mở trang và chờ tiêu đề "Roles". */
   async open() {
     await this.goto();
     await this.heading.waitFor();
@@ -34,7 +34,7 @@ export class RolePage extends BasePage {
     await this.searchInput.fill(keyword);
   }
 
-  /** Bấm "Thêm chức vụ", trả về hộp thoại. */
+  /** Bấm "Add Role", trả về hộp thoại. */
   async openCreate() {
     await this.addButton.click();
     return this.dialog;
@@ -47,20 +47,20 @@ export class RolePage extends BasePage {
 
   /** Mở menu thao tác (⋮) của dòng `name`. @param {string} name */
   async openRowActions(name) {
-    await this.page.getByRole('button', { name: `Thao tác ${name}`, exact: true }).click();
+    await this.page.getByRole('button', { name: `Actions ${name}`, exact: true }).click();
   }
 
-  /** "Chỉnh sửa" dòng `name`, trả về hộp thoại. @param {string} name */
+  /** "Edit" dòng `name`, trả về hộp thoại. @param {string} name */
   async edit(name) {
     await this.openRowActions(name);
-    await this.page.getByRole('menuitem', { name: 'Chỉnh sửa', exact: true }).click();
+    await this.page.getByRole('menuitem', { name: 'Edit', exact: true }).click();
     return this.dialog;
   }
 
-  /** "Xóa" dòng `name`, trả về hộp thoại xác nhận. @param {string} name */
+  /** "Delete" dòng `name`, trả về hộp thoại xác nhận. @param {string} name */
   async delete(name) {
     await this.openRowActions(name);
-    await this.page.getByRole('menuitem', { name: 'Xóa', exact: true }).click();
+    await this.page.getByRole('menuitem', { name: 'Delete', exact: true }).click();
     return this.deleteDialog;
   }
 }

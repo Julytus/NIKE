@@ -15,13 +15,13 @@ export function JordanFeature() {
       </div>
       <div className="flex flex-col items-start gap-3 lg:flex-1">
         <p className="text-base font-medium">Jordan</p>
-        <h2 id="home-jordan-title" className="font-display text-4xl leading-[1.1] font-semibold uppercase lg:text-6xl">
-          Bay cao cùng Jordan
+        <h2 id="home-jordan-title" className="font-display text-5xl leading-[1.05] uppercase lg:text-7xl">
+          Fly Higher with Jordan
         </h2>
-        <p className="text-base">Tinh thần bóng rổ từ sân đấu ra phố.</p>
+        <p className="text-base">Basketball spirit, from the court to the street.</p>
         <ShopButton asChild variant="primary" size="sm" className="mt-3">
-          <Link to="/w/$danhMuc" params={{ danhMuc: "jordan" }}>
-            Mua Jordan
+          <Link to="/w/$category" params={{ category: "jordan" }}>
+            Shop Jordan
           </Link>
         </ShopButton>
       </div>

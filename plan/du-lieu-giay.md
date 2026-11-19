@@ -23,14 +23,14 @@ Bộ automation test có hai API hỗ trợ: `POST /test-support/reset` đưa d�
 | Chọn tay 30 + 1 sản phẩm trên nike.com/vn → `products.json`; script tải 155 ảnh, đổi sang webp 1000 px, commit vào repo | API công khai `product/public/*`, `product-category/public/list` (`danh-sach-giay`, `chi-tiet-giay`) |
 | `ShoeSeedService`: nạp DB khi bảng trống, đẩy ảnh còn thiếu lên MinIO khi khởi động, `reset`, `summary` | API quản trị sản phẩm `/product/*` (`quan-ly-giay`) |
 | `POST /test-support/reset`, `GET /test-support/summary` (chỉ profile `local` / `test`, chỉ quản trị) | Giao diện (lát này không có màn hình mới) |
-| Seed tài khoản khách `khach1@downbeat.local`, `khach2@downbeat.local` | Reset giỏ / đơn / yêu thích (các lát sau tự mở rộng `reset`) |
-| `automation/`: `TestSupportApi`, `data/seed-products.js` (đọc `products.json`, tính số liệu mong đợi), `global-setup.js` gọi reset | Dọn tài khoản `auto+…@downbeat.local` do test đăng ký (§11 câu 3) |
+| Seed tài khoản khách `khach1@nike.local`, `khach2@nike.local` | Reset giỏ / đơn / yêu thích (các lát sau tự mở rộng `reset`) |
+| `automation/`: `TestSupportApi`, `data/seed-products.js` (đọc `products.json`, tính số liệu mong đợi), `global-setup.js` gọi reset | Dọn tài khoản `auto+…@nike.local` do test đăng ký (§11 câu 3) |
 
 ## 2. Tác nhân và phân quyền
 
 | Tác nhân | Quyền | Ghi chú |
 |---|---|---|
-| Quản trị (`admin@downbeat.local`, role operator) | Gọi `test-support/reset`, `test-support/summary` | Controller gọi `checkPermission(principal, "/test-support/", …)`; không có dòng `resource` cho URI này nên **chỉ role operator (hoặc API key)** qua được |
+| Quản trị (`admin@nike.local`, role operator) | Gọi `test-support/reset`, `test-support/summary` | Controller gọi `checkPermission(principal, "/test-support/", …)`; không có dòng `resource` cho URI này nên **chỉ role operator (hoặc API key)** qua được |
 | `noaccess@`, khách (`free@`, `khach1@`, `khach2@`) | Không | 403 |
 | Chưa đăng nhập | Không | 401 |
 | Resource `PRODUCT` (module `CATALOG` "Cửa hàng", uri `/product/`) | VIEW, ADD, UPDATE, DELETE | Chỉ tạo dòng để lát 3.1 dùng; hiện trên `/admin/tai-nguyen`, `/admin/phan-quyen` |
@@ -108,7 +108,7 @@ Cùng file V19 (mẫu `INSERT … WHERE NOT EXISTS` như V4):
 - module `CATALOG`, tên "Cửa hàng", mô tả "Sản phẩm, đơn hàng của cửa hàng giày".
 - resource `PRODUCT`, tên "Quản lý sản phẩm", mô tả "Sản phẩm, ảnh, size và tồn kho", uri `/product/`, actions `["VIEW", "ADD", "UPDATE", "DELETE"]`, thuộc `CATALOG`.
 
-Seed local `db/seed/V19_1__seed_khach_test.sql`: `khach1@downbeat.local` "Khách Một", `khach2@downbeat.local` "Khách Hai", role "Khách hàng", mật khẩu `Admin@123` (cùng hash với `free@` ở V5_1), `INSERT … WHERE NOT EXISTS`.
+Seed local `db/seed/V19_1__seed_khach_test.sql`: `khach1@nike.local` "Khách Một", `khach2@nike.local` "Khách Hai", role "Khách hàng", mật khẩu `Admin@123` (cùng hash với `free@` ở V5_1), `INSERT … WHERE NOT EXISTS`.
 
 ### 4.1 `products.json` (nguồn sự thật của dữ liệu mẫu)
 
@@ -196,11 +196,11 @@ Response `result` (số ở các trường `sizes`, `outOfStockSizes`, `totalSto
     "id": 1,
     "slug": "nike-air-force-1-07",
     "imageUrls": [
-      "http://localhost:9020/downbeat-public/products/nike-air-force-1-07/1.webp",
-      "http://localhost:9020/downbeat-public/products/nike-air-force-1-07/2.webp",
-      "http://localhost:9020/downbeat-public/products/nike-air-force-1-07/3.webp",
-      "http://localhost:9020/downbeat-public/products/nike-air-force-1-07/4.webp",
-      "http://localhost:9020/downbeat-public/products/nike-air-force-1-07/5.webp"
+      "http://localhost:9020/nike-public/products/nike-air-force-1-07/1.webp",
+      "http://localhost:9020/nike-public/products/nike-air-force-1-07/2.webp",
+      "http://localhost:9020/nike-public/products/nike-air-force-1-07/3.webp",
+      "http://localhost:9020/nike-public/products/nike-air-force-1-07/4.webp",
+      "http://localhost:9020/nike-public/products/nike-air-force-1-07/5.webp"
     ],
     "sizes": [
       { "id": 101, "sizeLabel": "EU 38.5", "sizeValue": 38.5, "stock": 20 },
@@ -288,7 +288,7 @@ API ở `automation/tests/api/du-lieu-giay.api.spec.js`, giao diện ở `automa
 | TC-07 | api | Không token / token sai | — | `GET /api/test-support/summary`, `POST /api/test-support/reset` không header `Authorization`, rồi với `Authorization: Bearer abc.def.ghi` | không token: cả hai 401 "Chưa đăng nhập"; token sai: cả hai 401 "Token không hợp lệ hoặc sai chữ ký" |
 | TC-08 | api | Không phải operator | đăng nhập `noaccess@`, rồi `khach1@` | `GET summary`, `POST reset` bằng từng tài khoản | 403; summary: "Bạn không có quyền thực hiện thao tác này! Path: /test-support/, Action: VIEW"; reset: "… Action: UPDATE" |
 | TC-09 | api | Resource `PRODUCT` và module `CATALOG` | đăng nhập admin | `GET /api/resource/list` (hết trang), `GET /api/module/list` | có resource `code = PRODUCT`, `name = "Quản lý sản phẩm"`, `uri = "/product/"`, actions đủ `VIEW, ADD, UPDATE, DELETE`, thuộc module `CATALOG`; module `CATALOG` tên "Cửa hàng"; vẫn không có resource `LUT`, `RECOMMEND`, `DASHBOARD`, module `RECOMMENDER`, `SALES` |
-| TC-10 | api | Tài khoản khách test | — | `POST /api/user/authenticate` lần lượt `khach1@downbeat.local`, `khach2@downbeat.local` / `Admin@123` → `GET /api/account/me` | đăng nhập 200 có `result.token`; `me.roleName = "Khách hàng"`, `me.name` = "Khách Một" / "Khách Hai", `isOperator = 0` |
+| TC-10 | api | Tài khoản khách test | — | `POST /api/user/authenticate` lần lượt `khach1@nike.local`, `khach2@nike.local` / `Admin@123` → `GET /api/account/me` | đăng nhập 200 có `result.token`; `me.roleName = "Khách hàng"`, `me.name` = "Khách Một" / "Khách Hai", `isOperator = 0` |
 | TC-11 | api | Không có endpoint thừa ngoài hợp đồng | đăng nhập admin | `POST /api/test-support/summary`, `GET /api/test-support/reset` (sai method) | không trả 200 (405 hoặc 404); dữ liệu không đổi (summary sau đó khớp `expectedSummary()`) |
 | TC-12 | api | global-setup đã reset trước khi chạy | chạy bộ test bình thường (không đặt `E2E_SKIP_RESET`) | trong spec: `GET summary` ở test đầu tiên | khớp `expectedSummary()` (kể cả khi trước đó DB có thay đổi tay) |
 | TC-13 | e2e | Tài nguyên mới hiện ở trang quản trị | đăng nhập admin (storageState) | mở `/admin/tai-nguyen`, tìm "Quản lý sản phẩm" | có đúng một dòng "Quản lý sản phẩm" với mã `PRODUCT`, URI `/product/` |
@@ -317,7 +317,7 @@ Không có ca "id không tồn tại → 404" vì lát này không có endpoint 
 
 1. **Dữ liệu nạp bằng code thay vì migration** (`thiet-ke-giay.md` §7 bước 3 ghi "V19 nạp danh mục + 30 sản phẩm"). Đề xuất nạp từ `products.json` vì `reset` cần đúng nguồn dữ liệu đó, sửa dữ liệu không phải viết migration mới, và automation đọc được cùng file để tính kết quả mong đợi. Đồng ý không?
 2. **Thêm sản phẩm ẩn thứ 31** (155 ảnh thay vì 150) để lát `danh-sach-giay` / `chi-tiet-giay` test được "sản phẩm HIDDEN không hiện / mở link → không tìm thấy" mà không phải đợi lát quản trị 3.1. Phương án khác: chỉ 30 sản phẩm, ca đó dời sang 3.1.
-3. **Reset có xoá tài khoản `auto+…@downbeat.local` do test đăng ký không?** Đề xuất: **không** ở lát này (xoá user trong lúc worker khác đang chạy dễ làm test chập chờn); DB local chỉ phình vài dòng mỗi lần chạy.
+3. **Reset có xoá tài khoản `auto+…@nike.local` do test đăng ký không?** Đề xuất: **không** ở lát này (xoá user trong lúc worker khác đang chạy dễ làm test chập chờn); DB local chỉ phình vài dòng mỗi lần chạy.
 4. **Truy cập nike.com**: trang dựng bằng JS, có thể chặn công cụ tải tự động. Nếu không đọc được tên / giá / ảnh ở phiên A, Claude dừng và nhờ bạn: (a) gửi danh sách link sản phẩm, hoặc (b) cho dùng ảnh tải tay vào `tools/seed/giay/raw/<slug>/`. Dung lượng dự kiến ~8–10 MB ảnh trong repo và trong jar.
 5. **Ảnh và mô tả của Nike** chỉ dùng học tập, chạy local (quyết định D2 / lưu ý ở `thiet-ke-giay.md`); `tools/seed/giay/README.md` và tài liệu chức năng ghi lại điều này.
 6. **Unit test backend không vào git**: `.gitignore` dòng `backend/**/src/test/` vẫn bỏ qua mọi JUnit (đã gặp ở `go-lut`). Lát này có 7 TC unit; đề xuất bỏ dòng đó để test vào repo và chạy được trên CI. Bạn quyết định trước khi cook.

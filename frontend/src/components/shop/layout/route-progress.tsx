@@ -22,7 +22,7 @@ export function RouteProgress() {
   return (
     <div
       role="progressbar"
-      aria-label="Đang tải trang"
+      aria-label="Loading page"
       aria-hidden={!visible}
       className={cn(
         "pointer-events-none fixed inset-x-0 top-0 z-[60] h-[3px] overflow-hidden transition-opacity duration-200",
