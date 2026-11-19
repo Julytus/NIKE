@@ -34,7 +34,7 @@ src/
 │  ├─ form/                field TanStack Form (useAppForm) + block login/forgot-password
 │  ├─ brand/               logo swoosh, Jumpman (dùng chung quản trị + cửa hàng)
 │  └─ shop/                cửa hàng Nike (khách hàng) — xem mục "Khu cửa hàng" bên dưới
-├─ hooks/                  use-bulk-delete, use-can-view, use-mobile
+├─ hooks/                  use-bulk-delete, use-can-view, use-mobile, use-media-query (`useIsDesktop`), use-load-more (tải thêm khi cuộn)
 └─ lib/
    ├─ types/<domain>.ts    DTO viết tay; api.gen.ts = type sinh từ OpenAPI bằng `pnpm api:types` (để đối chiếu)
    ├─ axios/<domain>.ts    1 hàm async / 1 endpoint, trả `res.data.result`
@@ -56,11 +56,12 @@ Khung dựng ở lát `giao-dien-nike` (plan §6, §8). Các lát sau chỉ đ�
 - **Không có dark mode**: `ShopShell` gỡ class `dark` khỏi `<html>` khi ở cửa hàng (trang quản trị vẫn đổi sáng / tối).
 - **Desktop = `lg` (≥ 1024px)**. Phần tử chỉ có ở một loại màn hình mà trùng tên / testid với bản kia thì render theo `useIsDesktop()` (`hooks/use-media-query.ts`), không render cả hai rồi ẩn bằng CSS (Playwright `getByTestId` / `getByText` vẫn đếm phần tử bị ẩn).
 - **Dùng lại**: `components/shop/product/product-card.tsx` (`ProductCard`, testid `product-card`, con `product-name` / `product-badge` / `product-price`, giá gốc trong `<s>`), `product-rail.tsx` (`ProductRail`, dải cuộn ngang + nút ‹ ›), `formatVnd` (`lib/utils/money.ts`, ra `5.279.000 ₫`).
-- **URL trang danh sách**: `lib/shop/catalog-search.ts` — `catalogSearchSchema` (zod `.catch(undefined)`), `NAV_ITEMS`, `PRICE_RANGES`, `withScope`; link vào `/w` / `/w/$danhMuc` dựng qua `CatalogLink`. `giamGia` là số `1` (chuỗi bị router bọc ngoặc kép).
+- **URL trang danh sách**: `lib/shop/catalog-search.ts` — `catalogSearchSchema` (zod `.catch(undefined)`; `gender`, `kids`, `price`, `badge`, `size` nhận nhiều giá trị ngăn dấu phẩy, `size` là số EU `^\d{2}(\.5)?$`), `NAV_ITEMS`, `PRICE_RANGES`, `withScope`, cùng hàm thuần của bộ lọc (`FILTER_GROUPS`, `SORT_OPTIONS`, `readFilters` / `writeFilters`, `toggleFilter`, `clearFilters`, `catalogTitle`, `toListParams`, plan danh-sach-giay §6.1); link vào `/w` / `/w/$category` dựng qua `CatalogLink`. `sale` và một `size` đơn ghi dạng số (`sale=1`, `size=42`) vì chuỗi trông như số bị router bọc ngoặc kép.
 - **Header**: `components/shop/layout/header/` — dải trên, mega menu tự làm (`main-nav.tsx`, mục là link nên không dùng `NavigationMenu` của Radix), khung tìm kiếm (`search-overlay.tsx`, debounce 300ms), menu trượt (`mobile-menu.tsx`), ẩn khi cuộn (`use-hide-on-scroll.ts`, nghe `scroll` của `#app-scroll` — vùng cuộn của app, không phải `window`).
 - **Đăng nhập / tạo tài khoản**: trang riêng `/signin` (`routes/signin.tsx`, ngoài `_shop`, plan dang-nhap-nike), 3 bước email → mật khẩu / tạo tài khoản ở `components/shop/account/sign-in/`. Lối vào là `<Link to="/signin" search={signInSearch(location)}>`; đích sau đăng nhập lọc bằng `safeRedirect` (`lib/sign-in-redirect.ts`). Lát cần bắt đăng nhập (vd `/checkout`) chuyển tới `/signin?redirect=<đường dẫn>`.
-- **Trang tạm**: route chưa làm của lát sau (`/w`, `/w/$danhMuc`, `/t/$slug`, `/yeu-thich`, `/gio-hang`) dùng `ComingSoonSection`; lát nào làm thì ghi đè file route của mình. Trang thông tin tĩnh `/thong-tin/$trang` lấy nội dung ở `lib/shop/info-pages.ts`.
-- Dữ liệu cửa hàng là API thật (`lib/axios/product.ts`, `lib/tanstack/options/product.ts`, query đọc `retry: 1`); query lỗi thì khối đó hiện "Không tải được …" + "Thử lại", không toast.
+- **Trang danh sách** `/w`, `/w/$category`: `components/shop/catalog/` (`CatalogPage` ghép thanh tiêu đề dính, sidebar lọc + số đếm, lưới tải thêm khi cuộn, ngăn kéo "Filter" ở mobile — plan danh-sach-giay §6). Phần tử dính dưới header đặt `top-(--sh-header-offset)` (60px khi header hiện, 0 khi header ẩn, khai báo ở `shop-theme.css`).
+- **Trang tạm**: route chưa làm của lát sau (`/t/$slug`, `/favorites`, `/cart`) dùng `ComingSoonSection`; lát nào làm thì ghi đè file route của mình. Trang thông tin tĩnh `/info/$page` lấy nội dung ở `lib/shop/info-pages.ts`.
+- Dữ liệu cửa hàng là API thật (`lib/axios/product.ts`, `lib/tanstack/options/product.ts`, query đọc `retry: 1`); query lỗi thì khối đó hiện "Couldn't load …" + "Try Again", không toast.
 
 ## Luồng làm một chức năng mới
 

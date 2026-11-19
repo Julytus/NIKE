@@ -1,6 +1,14 @@
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, keepPreviousData, queryOptions } from "@tanstack/react-query";
 
-import { getNewArrivals, getProductCategories, suggestProducts } from "@/lib/axios/product";
+import {
+  getNewArrivals,
+  getProductCategories,
+  getProductFacets,
+  listProducts,
+  suggestProducts
+} from "@/lib/axios/product";
+import { CATALOG_PAGE_SIZE } from "@/lib/shop/catalog-search";
+import type { ProductFilterParams, ProductListParams } from "@/lib/types/product";
 
 export const PRODUCTS_QUERY_KEY = ["products"] as const;
 
@@ -30,4 +38,36 @@ export const createSuggestQueryOptions = (q: string) =>
     enabled: q.length > 0,
     staleTime: 30_000,
     retry: 1
+  });
+
+/**
+ * Lưới trang danh sách, tải thêm khi cuộn (plan danh-sach-giay §8 bước 3). `params` không có `page` / `limit`.
+ * `staleTime` 60 giây để Back từ trang chi tiết dùng lại các trang đã tải (§3 A7);
+ * `keepPreviousData`: đổi bộ lọc thì lưới cũ vẫn hiện (mờ) tới khi có kết quả mới.
+ */
+export const createProductListInfiniteOptions = (
+  params: Omit<ProductListParams, "page" | "limit">
+) =>
+  infiniteQueryOptions({
+    queryKey: [...PRODUCTS_QUERY_KEY, "list", params],
+    queryFn: ({ pageParam }) =>
+      listProducts({ ...params, page: pageParam, limit: CATALOG_PAGE_SIZE }),
+    initialPageParam: 1,
+    getNextPageParam: (last, pages) => {
+      const loaded = pages.reduce((n, p) => n + p.items.length, 0);
+      return loaded < last.total && last.items.length > 0 ? last.page + 1 : undefined;
+    },
+    staleTime: 60_000,
+    retry: 1,
+    placeholderData: keepPreviousData
+  });
+
+/** Số đếm của bộ lọc (plan danh-sach-giay §5.2) — không phụ thuộc sắp xếp nên `params` không có `sort`. */
+export const createProductFacetsQueryOptions = (params: ProductFilterParams) =>
+  queryOptions({
+    queryKey: [...PRODUCTS_QUERY_KEY, "facets", params],
+    queryFn: () => getProductFacets(params),
+    staleTime: 60_000,
+    retry: 1,
+    placeholderData: keepPreviousData
   });

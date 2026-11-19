@@ -13,12 +13,27 @@
   --sh-warning: #9e3500;
   --sh-danger: #d30005;
   --sh-success: #007d48;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* nike.com dùng Helvetica Now Text (bản quyền) → Inter gần nhất về độ rộng / độ đậm khi weight 500 */
+  font-family: "Inter Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color-scheme: light;
 }
 
+/*
+ * Phần header còn thấy khi dính đầu `#app-scroll` (thanh chính 60px; dải trên đã cuộn mất) —
+ * phần tử dính bên dưới header (thanh tiêu đề trang danh sách) đặt `top` theo biến này.
+ * Header trượt ẩn (`data-hidden="true"`, use-hide-on-scroll.ts) → 0 để dính sát mép trên.
+ */
+.shop {
+  --sh-header-offset: 60px;
+}
+.shop:has(> header[data-hidden="true"]) {
+  --sh-header-offset: 0px;
+}
+
+/* nike.com dùng Nike Futura ND Condensed ExtraBold (bản quyền) → Anton gần nhất (đậm, hẹp) */
 .shop .font-display {
-  font-family: "Oswald", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Anton", "Arial Narrow", Impact, sans-serif;
+  font-weight: 400;
 }
 
 /* Dải cuộn ngang (ProductRail): thanh cuộn mảnh */

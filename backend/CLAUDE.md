@@ -1,8 +1,8 @@
 @AGENTS.md
 
-# Ghi chú cho Claude (reviewer backend)
+# Ghi chú cho Claude (tự review backend)
 
-Code backend do worker Codex viết; quy tắc ở trên là của Codex và cũng là checklist review của Claude. Claude không sửa `backend/src`. Lỗi tìm được thì giao bản sửa qua Orca (`plan/tasks/<slug>-be-fixN.md`).
+Claude viết toàn bộ code backend (theo `CLAUDE.md` gốc); quy tắc ở trên là quy tắc code và cũng là checklist Claude dùng khi tự review. Lỗi tìm được thì sửa ngay rồi ghi vào §12 của plan.
 
 Checklist review diff `git diff -- backend` (mỗi lỗi ghi `file:line` + quy tắc bị vi phạm):
 

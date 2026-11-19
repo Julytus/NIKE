@@ -35,6 +35,11 @@ public class ProductCategoryRepository extends AbsMysqlRepository<ProductCategor
         return getCountWithCriteria(DSL.trueCondition());
     }
 
+    /** Danh mục theo slug; không có → {@code null}. */
+    public ProductCategory getBySlug(String slug) {
+        return getOne(PRODUCT_CATEGORY.SLUG.eq(slug));
+    }
+
     /**
      * Mọi danh mục (theo sort_order, id) + {@code product_count} (số sản phẩm PUBLISHED)
      * + {@code image_url} (ảnh số 1 của sản phẩm PUBLISHED mới nhất; không có → null).
