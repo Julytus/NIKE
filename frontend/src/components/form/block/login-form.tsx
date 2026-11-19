@@ -14,13 +14,13 @@ import { useAuthStore } from "@/lib/stores/auth";
 const loginSchema = z.object({
   identifier: z
     .string()
-    .min(1, "Vui lòng nhập email hoặc số điện thoại")
+    .min(1, "Please enter your email or phone number")
     .refine(
       (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || /^[0-9]{8,15}$/.test(v),
-      "Email hoặc số điện thoại không hợp lệ"
+      "Invalid email or phone number"
     ),
   // Đăng nhập chỉ cần có mật khẩu: tài khoản cũ có thể đặt mật khẩu trước khi có quy tắc 8 ký tự
-  password: z.string().min(1, "Vui lòng nhập mật khẩu"),
+  password: z.string().min(1, "Please enter your password"),
   rememberMe: z.boolean().optional()
 });
 
@@ -65,8 +65,8 @@ export function LoginForm() {
   return (
     <div className="nike-login space-y-6">
       <div className="space-y-2">
-        <h4 className="text-[28px] leading-tight font-medium tracking-normal">Đăng nhập</h4>
-        <p className="text-muted-foreground text-base">Trang quản trị cửa hàng Nike.</p>
+        <h4 className="text-[28px] leading-tight font-medium tracking-normal">Sign In</h4>
+        <p className="text-muted-foreground text-base">Nike store admin.</p>
       </div>
 
       <form
@@ -80,23 +80,23 @@ export function LoginForm() {
           <form.AppField name="identifier">
             {(field) => (
               <field.Input
-                label="Email hoặc số điện thoại*"
-                placeholder="vd: example@gmail.com hoặc 0987654321"
+                label="Email or phone number*"
+                placeholder="e.g. example@gmail.com or 0987654321"
                 description=""
               />
             )}
           </form.AppField>
 
           <form.AppField name="password">
-            {(field) => <field.Password label="Mật khẩu*" description="" />}
+            {(field) => <field.Password label="Password*" description="" />}
           </form.AppField>
 
           <form.AppField name="rememberMe">
-            {(field) => <field.Checkbox label="Ghi nhớ đăng nhập" />}
+            {(field) => <field.Checkbox label="Remember me" />}
           </form.AppField>
 
           <p className="text-muted-foreground text-xs leading-relaxed">
-            Hệ thống không hỗ trợ tự đăng ký. Quản trị viên sẽ phân quyền và cấp tài khoản cho bạn.
+            Self sign-up is not available. An administrator will create your account and grant permissions.
           </p>
 
           <div className="flex justify-end">
@@ -106,7 +106,7 @@ export function LoginForm() {
               className="h-12 px-8 text-base font-medium"
               disabled={form.state.isSubmitting}
             >
-              {form.state.isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
+              {form.state.isSubmitting ? "Signing in..." : "Sign In"}
             </Button>
           </div>
         </FieldGroup>

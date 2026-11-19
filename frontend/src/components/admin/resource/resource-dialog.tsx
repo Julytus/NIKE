@@ -20,22 +20,22 @@ const resourceSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, "Vui lòng nhập tên tài nguyên")
-    .max(300, "Tên tài nguyên tối đa 300 ký tự"),
-  description: z.string().trim().max(300, "Mô tả tối đa 300 ký tự"),
+    .min(1, "Please enter a resource name")
+    .max(300, "Resource name must be at most 300 characters"),
+  description: z.string().trim().max(300, "Description must be at most 300 characters"),
   code: z
     .string()
     .trim()
-    .min(1, "Vui lòng nhập code")
-    .max(100, "Code tối đa 100 ký tự")
-    .regex(/^[A-Z0-9_]+$/, "Code chỉ gồm chữ in hoa, số và dấu _"),
+    .min(1, "Please enter a code")
+    .max(100, "Code must be at most 100 characters")
+    .regex(/^[A-Z0-9_]+$/, "Code may only contain uppercase letters, digits and _"),
   uri: z
     .string()
     .trim()
-    .min(1, "Vui lòng nhập URI")
-    .max(300, "URI tối đa 300 ký tự")
-    .regex(/^\/[a-z0-9-]+\/$/, "URI có dạng /ten-tai-nguyen/ (chữ thường, số, dấu -)"),
-  actions: z.array(z.enum(RESOURCE_ACTIONS)).min(1, "Chọn ít nhất một hành động")
+    .min(1, "Please enter a URI")
+    .max(300, "URI must be at most 300 characters")
+    .regex(/^\/[a-z0-9-]+\/$/, "URI must look like /resource-name/ (lowercase letters, digits, -)"),
+  actions: z.array(z.enum(RESOURCE_ACTIONS)).min(1, "Select at least one action")
 });
 
 export function ResourceFormDialog({
@@ -99,18 +99,18 @@ export function ResourceFormDialog({
     <FormDialog
       open={open}
       onOpenChange={onOpenChange}
-      title={resource ? "Chỉnh sửa tài nguyên" : "Tạo mới tài nguyên"}
+      title={resource ? "Edit Resource" : "Create Resource"}
       featured={
         resource
-          ? "Cập nhật thông tin tài nguyên hệ thống"
-          : "Tạo tài nguyên mới để gán quyền cho các chức vụ"
+          ? "Update system resource details"
+          : "Create a new resource to grant to roles"
       }
       onSubmit={handleSubmit}
-      submitLabel={resource ? "Cập nhật" : "Tạo mới"}
+      submitLabel={resource ? "Update" : "Create"}
       isLoading={isLoading}
     >
       <div className="space-y-2">
-        <Label htmlFor="resource-name">Tên tài nguyên</Label>
+        <Label htmlFor="resource-name">Resource name</Label>
         <Input
           id="resource-name"
           name="name"
@@ -122,7 +122,7 @@ export function ResourceFormDialog({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="resource-description">Mô tả</Label>
+        <Label htmlFor="resource-description">Description</Label>
         <Textarea
           id="resource-description"
           name="description"
@@ -141,7 +141,7 @@ export function ResourceFormDialog({
             id="resource-code"
             name="code"
             value={code}
-            placeholder="Ví dụ: LUT_CATEGORY"
+            placeholder="e.g. PRODUCT"
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             disabled={isSystemResource}
             aria-invalid={!!errors.code}
@@ -154,7 +154,7 @@ export function ResourceFormDialog({
             id="resource-uri"
             name="uri"
             value={uri}
-            placeholder="Ví dụ: /product/"
+            placeholder="e.g. /product/"
             onChange={(e) => setUri(e.target.value)}
             disabled={isSystemResource}
             aria-invalid={!!errors.uri}
@@ -164,19 +164,19 @@ export function ResourceFormDialog({
       </div>
       {isSystemResource && (
         <p className="text-muted-foreground text-xs">
-          Đây là tài nguyên hệ thống — không thể sửa Code/URI vì phân quyền khớp theo URI này.
+          This is a system resource — Code/URI can&apos;t be changed because permissions match on this URI.
         </p>
       )}
 
       <div className="space-y-2">
-        <Label>Hành động hỗ trợ</Label>
+        <Label>Supported Actions</Label>
         <div className="flex flex-wrap gap-4">
           {RESOURCE_ACTIONS.map((action) => (
             <label key={action} className="flex items-center gap-2 text-sm">
               <Checkbox
                 checked={actions.includes(action)}
                 onCheckedChange={(checked) => toggleAction(action, checked === true)}
-                aria-label={`Hành động ${action}`}
+                aria-label={`Action ${action}`}
               />
               {action}
             </label>

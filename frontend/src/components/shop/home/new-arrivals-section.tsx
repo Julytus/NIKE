@@ -24,7 +24,7 @@ export function NewArrivalsSection() {
       </ul>
     );
   } else if (isError) {
-    body = <SectionError message="Không tải được sản phẩm mới." onRetry={() => void refetch()} />;
+    body = <SectionError message="Couldn't load new arrivals." onRetry={() => void refetch()} />;
   }
 
   return (
@@ -36,15 +36,15 @@ export function NewArrivalsSection() {
     >
       {data ? (
         <ProductRail
-          title="Mới về"
+          title="Just In"
           headingId="home-new-arrivals-title"
           aside={
             <Link
               to="/w"
-              search={{ nhan: "moi-ve" }}
+              search={{ badge: "just-in" }}
               className="rounded-sm text-base font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50"
             >
-              Xem tất cả
+              Shop All
             </Link>
           }
         >
@@ -57,7 +57,7 @@ export function NewArrivalsSection() {
       ) : (
         <>
           <h2 id="home-new-arrivals-title" className="mb-4 text-2xl font-medium">
-            Mới về
+            Just In
           </h2>
           {body}
         </>

@@ -136,8 +136,8 @@ public class FileStorageService {
     public void requireMaxSize(MultipartFile file, DataSize max) {
         if (file != null && file.getSize() > max.toBytes()) {
             String msg = max.toMegabytes() == 10
-                    ? "File vượt quá dung lượng cho phép (10MB)"
-                    : "File vượt quá dung lượng cho phép";
+                    ? "File exceeds the allowed size (10MB)"
+                    : "File exceeds the allowed size";
             throw new AppException(ErrorCode.FILE_TOO_LARGE, msg);
         }
     }
@@ -161,7 +161,7 @@ public class FileStorageService {
         } catch (AppException e) {
             throw e;
         } catch (IOException e) {
-            throw new AppException(ErrorCode.UPLOAD_FILE_FAILED, "Không đọc được file");
+            throw new AppException(ErrorCode.UPLOAD_FILE_FAILED, "Couldn't read the file");
         }
     }
 
@@ -185,7 +185,7 @@ public class FileStorageService {
             default -> true; // txt/csv: được ép content-type text/plain nên không thực thi được
         };
         if (!valid) {
-            throw new AppException(ErrorCode.FILE_TYPE_NOT_ALLOWED, "Nội dung file không khớp định dạng ." + ext);
+            throw new AppException(ErrorCode.FILE_TYPE_NOT_ALLOWED, "File content doesn't match the ." + ext + " format");
         }
     }
 

@@ -30,9 +30,9 @@ Mọi bảng, API, trang, seed, cấu hình của cửa hàng LUT bị xoá hẳ
 | Tác nhân | Sau lát này | Ghi chú |
 |---|---|---|
 | Khách vãng lai | Xem trang tạm `/`, mở hộp thoại "Đăng nhập" / "Đăng ký" | |
-| Khách hàng (`free@downbeat.local`) | Đăng nhập, menu tài khoản chỉ còn tên / email và "Đăng xuất" | Role "Khách hàng" giữ nguyên |
-| Quản trị (`admin@downbeat.local`) | `/admin`: trang chào + nhóm Hệ thống (Chức vụ, Phân quyền, Tài nguyên, Module) | Không còn mục LUT, Đặc trưng màu, Gợi ý, bảng số liệu |
-| Không quyền (`noaccess@downbeat.local`) | `/admin` chỉ thấy trang chào, menu trống | |
+| Khách hàng (`free@nike.local`) | Đăng nhập, menu tài khoản chỉ còn tên / email và "Đăng xuất" | Role "Khách hàng" giữ nguyên |
+| Quản trị (`admin@nike.local`) | `/admin`: trang chào + nhóm Hệ thống (Chức vụ, Phân quyền, Tài nguyên, Module) | Không còn mục LUT, Đặc trưng màu, Gợi ý, bảng số liệu |
+| Không quyền (`noaccess@nike.local`) | `/admin` chỉ thấy trang chào, menu trống | |
 
 ## 3. Luồng nghiệp vụ
 
@@ -87,7 +87,7 @@ Response `result`:
   "roleId": 3,
   "roleName": "Khách hàng",
   "name": "Khách Miễn Phí",
-  "email": "free@downbeat.local",
+  "email": "free@nike.local",
   "hasPassword": 1,
   "active": 1,
   "firstTime": 0
@@ -174,25 +174,25 @@ E2E / API viết bằng JavaScript ở `automation/tests/system/go-lut.spec.js` 
 | ID | Loại | Mô tả | Tiền điều kiện | Bước | Kết quả mong đợi |
 |---|---|---|---|---|---|
 | TC-01 | api | API kho LUT công khai đã bị xoá | backend sau V18 | `GET /api/lut/public/list`, `GET /api/lut-category/public/list`, `GET /api/lut/public/suggest?q=a` không token | cả 3 trả HTTP 404 |
-| TC-02 | api | API quản trị LUT đã bị xoá | đăng nhập `admin@downbeat.local` | `GET /api/lut/list`, `POST /api/lut/update` body `{}`, `GET /api/lut/feature/list` | cả 3 trả 404 (không phải 403 / 500) |
-| TC-03 | api | API gói / đơn gói đã bị xoá | đăng nhập `free@downbeat.local` | `GET /api/plan/public/list`, `GET /api/subscription/my`, `GET /api/order/my-list`, `POST /api/order/create` body `{}` | cả 4 trả 404 |
+| TC-02 | api | API quản trị LUT đã bị xoá | đăng nhập `admin@nike.local` | `GET /api/lut/list`, `POST /api/lut/update` body `{}`, `GET /api/lut/feature/list` | cả 3 trả 404 (không phải 403 / 500) |
+| TC-03 | api | API gói / đơn gói đã bị xoá | đăng nhập `free@nike.local` | `GET /api/plan/public/list`, `GET /api/subscription/my`, `GET /api/order/my-list`, `POST /api/order/create` body `{}` | cả 4 trả 404 |
 | TC-04 | api | API tải và bộ sưu tập đã bị xoá | đăng nhập `free@` | `POST /api/lut/download` body `{"lutId":1}`, `GET /api/collection/my-list`, `POST /api/collection/item/add` body `{}` | cả 3 trả 404 |
 | TC-05 | api | API gợi ý, sở thích, dashboard đã bị xoá | đăng nhập `admin@` | `GET /api/recommend/public/for-you`, `GET /api/recommend/config`, `GET /api/recommend/eval/list`, `GET /api/account/preference`, `GET /api/dashboard/summary` | cả 5 trả 404 |
-| TC-06 | api | `account/me` không còn trường gói | đăng nhập `free@` | `GET /api/account/me` | 200; `result.email = "free@downbeat.local"`, `result.roleName = "Khách hàng"`; `result` **không có** khoá `plan`, `planExpiresAt`, `planAutoRenew` |
+| TC-06 | api | `account/me` không còn trường gói | đăng nhập `free@` | `GET /api/account/me` | 200; `result.email = "free@nike.local"`, `result.roleName = "Khách hàng"`; `result` **không có** khoá `plan`, `planExpiresAt`, `planAutoRenew` |
 | TC-07 | api | `account/me` không token | — | `GET /api/account/me` | 401 |
-| TC-08 | api | Đăng ký vẫn chạy | email ngẫu nhiên `auto+<timestamp>@downbeat.local` | `POST /api/account/register` `{name:"Auto Test", email, plainPassword:"Admin@123"}` → `GET /api/account/me` bằng token trả về | register 200 có `result.token`, `result.refreshToken`; me trả `roleName = "Khách hàng"` |
+| TC-08 | api | Đăng ký vẫn chạy | email ngẫu nhiên `auto+<timestamp>@nike.local` | `POST /api/account/register` `{name:"Auto Test", email, plainPassword:"Admin@123"}` → `GET /api/account/me` bằng token trả về | register 200 có `result.token`, `result.refreshToken`; me trả `roleName = "Khách hàng"` |
 | TC-09 | api | Đăng nhập / refresh / phân quyền vẫn chạy | — | `POST /api/user/authenticate` admin → `POST /api/auth/refresh` → `GET /api/role/list` | 3 lần đều 200; role list có "Khách hàng" |
 | TC-10 | api | Resource LUT / RECOMMEND / DASHBOARD đã biến mất | đăng nhập `admin@` | `GET /api/resource/list` (lấy hết trang) | không có resource code `LUT`, `RECOMMEND`, `DASHBOARD`; vẫn có `MODULE`, `RESOURCE`, `ROLE`, `PERMISSION` |
 | TC-11 | api | Module LUT đã biến mất | đăng nhập `admin@` | `GET /api/module/list` | không có code `CATALOG`, `RECOMMENDER`, `SALES`; có `SYSTEM` |
 | TC-12 | e2e | Trang tạm `/` cho khách | chưa đăng nhập | mở `/` | title "Nike. Just Do It."; thấy heading "Cửa hàng đang được nâng cấp", đoạn "Trang bán giày sẽ sớm ra mắt.", nút "Đăng nhập", "Đăng ký"; không có chữ "LUT" trên trang |
 | TC-13 | e2e | Đăng ký trên trang tạm không còn bước chọn phong cách | chưa đăng nhập | `/` → "Đăng ký" → điền Họ tên "Auto Test", email ngẫu nhiên, mật khẩu "Admin@123" → bấm nút đăng ký | hộp thoại đóng; header hiện tên "Auto Test"; không xuất hiện "Bạn thích phong cách màu nào?" |
-| TC-14 | e2e | Menu tài khoản khách chỉ còn mục cơ bản | đăng nhập `free@` qua hộp thoại | mở menu tài khoản | thấy "Khách Miễn Phí", "free@downbeat.local", "Đăng xuất"; không thấy "Gói của tôi", "Bộ sưu tập", "Sở thích màu", "Xoá lịch sử gợi ý", "Trang quản trị" |
+| TC-14 | e2e | Menu tài khoản khách chỉ còn mục cơ bản | đăng nhập `free@` qua hộp thoại | mở menu tài khoản | thấy "Khách Miễn Phí", "free@nike.local", "Đăng xuất"; không thấy "Gói của tôi", "Bộ sưu tập", "Sở thích màu", "Xoá lịch sử gợi ý", "Trang quản trị" |
 | TC-15 | e2e | Đăng xuất | tiếp TC-14 | bấm "Đăng xuất" | header lại hiện nút "Đăng nhập", "Đăng ký" |
 | TC-16 | e2e | Route cửa hàng cũ là 404 | — | lần lượt mở `/luts`, `/pricing`, `/bo-suu-tap`, `/goi-cua-toi` | mỗi trang hiện trang không tìm thấy của cửa hàng (không lỗi trắng trang, không lỗi console `Uncaught`) |
 | TC-17 | e2e | Admin: menu chỉ còn Hệ thống, trang chủ không có bảng số liệu | đăng nhập `admin@` qua `/login` | mở `/admin` | thấy "Xin chào, …"; sidebar có "Chức vụ", "Phân quyền", "Tài nguyên", "Module"; **không** có "LUT", "Đặc trưng màu", "Gợi ý"; không có thẻ "Doanh thu" |
 | TC-18 | e2e | Route admin cũ là 404 | đăng nhập `admin@` | mở `/admin/luts`, `/admin/goi-y`, `/admin/dac-trung-mau` | hiện trang không tìm thấy |
 | TC-19 | e2e | Trang phân quyền vẫn chạy sau khi xoá resource | đăng nhập `admin@` | `/admin/phan-quyen` | bảng ma trận tải được, không có hàng "LUT" / "Gợi ý" / "Bảng số liệu" |
-| TC-20 | e2e | `noaccess` vào admin | đăng nhập `noaccess@downbeat.local` | `/admin` | thấy "Xin chào, …", sidebar không có mục chức năng nào ngoài "Trang chủ" |
+| TC-20 | e2e | `noaccess` vào admin | đăng nhập `noaccess@nike.local` | `/admin` | thấy "Xin chào, …", sidebar không có mục chức năng nào ngoài "Trang chủ" |
 | TC-U1 | unit | `PayosSignature` vẫn ký đúng sau khi chuyển package | — | ký dữ liệu mẫu `{amount:2499000, cancelUrl:"http://localhost:4500/huy", description:"DH2611180001", orderCode:1001, returnUrl:"http://localhost:4500/ok"}` với checksum key `test-key` | chữ ký = HMAC-SHA256 hex của chuỗi `amount=2499000&cancelUrl=...&description=...&orderCode=1001&returnUrl=...` (sắp xếp theo khoá); sai 1 ký tự → `verify` trả false |
 | TC-U2 | unit | Context Spring khởi động sau khi xoá package | — | test `@SpringBootTest` tối thiểu ở module `app` (profile test, không cần MinIO) hoặc test cấu hình tương đương | context load thành công, không còn bean nào tham chiếu bảng đã xoá |
 
@@ -208,8 +208,8 @@ Kiểm tay khi review (ghi kết quả vào §12): DB local có sẵn dữ liệ
 ## 11. Rủi ro / câu hỏi mở
 
 1. **Giữ V3 → V17 hay gộp migration?** Plan chọn giữ (an toàn với DB đang chạy). Phương án khác: xoá V3 → V17, đặt `spring.flyway.ignore-migration-patterns: "*:missing"`, DB local phải xoá dựng lại. Không chọn vì rủi ro hơn mà lợi ích chỉ là gọn file.
-2. Seed `V5_1` giữ tài khoản `free@downbeat.local` (role Khách hàng). Lát `du-lieu-giay` thêm `khach1@` / `khach2@`.
-3. Object LUT cũ trong MinIO (`luts/…`, bucket `downbeat-lut`) để nguyên; máy mới sẽ không có vì seed đã xoá.
+2. Seed `V5_1` giữ tài khoản `free@nike.local` (role Khách hàng). Lát `du-lieu-giay` thêm `khach1@` / `khach2@`.
+3. Object LUT cũ trong MinIO (`luts/…`, bucket `nike-lut`) để nguyên; máy mới sẽ không có vì seed đã xoá.
 4. Lát này cook **sau** `khung-automation` (cần thư mục `automation/` để đặt spec). Hai lát cook lần lượt.
 
 ## 12. Nhật ký thực hiện (do /cook và /doc-chuc-nang ghi — nối các phiên A/B/C)
@@ -224,6 +224,6 @@ Kiểm tay khi review (ghi kết quả vào §12): DB local có sẵn dữ liệ
 | 2026-11-18 | Lưu ý cho phiên B / C: phiên B làm §8 (frontend), sửa thêm nút "Về Trang Chủ" của `Page404` ở `__root.tsx` (đang trỏ `/luts`). Phiên C: worktree đang ở `feature/khung-automation` — nên merge PR #1 rồi `git switch main && git pull` trước `/doc-chuc-nang go-lut`, để skill tạo `feature/go-lut` từ `main` (không trộn vào PR #1). |
 | 2026-11-18 | Phát hiện: `.gitignore` dòng 32 `backend/**/src/test/` bỏ qua mọi unit test backend → `PayosSignatureTest`, `ApplicationContextTest` có trên máy nhưng sẽ **không được commit**. Chưa sửa `.gitignore` (chờ người dùng quyết định). |
 | 2026-11-18 ~19:40 | /cook phiên B (ngay sau phiên A, không `/clear`). Frontend theo §8: xoá 12 route §6.3 (cả `_plain.tsx`, và `_shop.tsx` vì không còn route con — `/` dùng thẳng `ShopLayout` có `children`), component `shop/{luts,collection,pricing,subscription,payment,home}`, `shop/layout/sidebar`, `admin/{lut,lut-feature,recommend,dashboard}`, 6 panel tài khoản LUT, lib / hook / type LUT (§8.3) và thêm `lib/stores/shop-ui.ts`, `lib/utils/{plan,colors}.ts`, `shop/ui/{shop-not-found,filter-chip,search-field,brand-icons}.tsx`, `shop-logo.tsx`, `header/{header-search,mobile-nav}.tsx` (không còn chỗ dùng). `shop-dialog` chỉ còn `login` / `register` (mô tả đăng nhập theo §6.1, đăng ký xong đóng hộp thoại); `ShopHeader` (swoosh + `HeaderActions`), menu tài khoản: tên / email, "Trang quản trị" (operator hoặc có VIEW, lỗi lấy quyền thì ẩn), "Đăng xuất"; `ShopFooter` §6.1; `coming-soon-page.tsx`; sidebar admin chỉ còn Trang chủ + Hệ thống; `/admin` luôn là trang chào. `lib/types/account.ts` theo §5.2 mới, `pnpm api:types` sinh lại. `shop-theme.css` bỏ class trang chủ LUT. Grep §8 bước 10 sạch (chỉ còn chữ `go-lut` trong chú thích; ví dụ URI `/lut-category/` ở hộp thoại tài nguyên đổi thành `/product/`). |
-| 2026-11-18 | E2E có giao diện lần 1: 6 pass / 5 đỏ — đều lỗi frontend, không sửa spec: (1) TC-12 title vẫn "DownBeat" vì root không render `HeadContent` → thêm `<HeadContent />`, `index.html` title "Nike. Just Do It."; (2) TC-13/14/15 không thấy header: layout gốc bọc mọi trang trong `<main>` nên `header` / `footer` mất landmark `banner` / `contentinfo` (và có `main` lồng `main`) → gốc đổi thành `div#app-scroll` (`scrollToTopSelectors` theo); (3) TC-18 route admin cũ hiện "Not Found" mặc định của router → `NotFoundPage` dùng chung (`components/not-found-page.tsx`, nút "Về Trang Chủ" về `/` thay vì `/luts`), route `/admin` có `notFoundComponent` dạng `embedded`. Lần 2 (headless) 9/9; lần 3 có giao diện `E2E_SLOWMO=400 --headed` chromium **9/9**, 6 ảnh ở `docs/chuc-nang/img/go-lut/`. |
-| 2026-11-18 | Kết quả cuối: `pnpm build` xanh, `pnpm lint` 0 lỗi (1 cảnh báo cũ ở `data-table-advanced.tsx`; trước lát là 11). Toàn bộ `pnpm exec playwright test` (6 project): **86 pass + 3 skip / 89** (skip = TC-13 cũ của `khung-automation` chỉ chạy chromium); lát này 11 API + 9 UI × 4 trình duyệt đều xanh. JUnit 4/4 (phiên A). Số vòng sửa: backend 0, frontend 1. Còn để nguyên (ngoài §8, cho lát `giao-dien-nike`): ảnh / video LUT không còn dùng trong `frontend/public/` (`home.mp4`, `hero-wave-*.webp`, `downbeat.png`, `brand/`), favicon DownBeat. **phiên B xong** |
+| 2026-11-18 | E2E có giao diện lần 1: 6 pass / 5 đỏ — đều lỗi frontend, không sửa spec: (1) TC-12 title vẫn "nike" vì root không render `HeadContent` → thêm `<HeadContent />`, `index.html` title "Nike. Just Do It."; (2) TC-13/14/15 không thấy header: layout gốc bọc mọi trang trong `<main>` nên `header` / `footer` mất landmark `banner` / `contentinfo` (và có `main` lồng `main`) → gốc đổi thành `div#app-scroll` (`scrollToTopSelectors` theo); (3) TC-18 route admin cũ hiện "Not Found" mặc định của router → `NotFoundPage` dùng chung (`components/not-found-page.tsx`, nút "Về Trang Chủ" về `/` thay vì `/luts`), route `/admin` có `notFoundComponent` dạng `embedded`. Lần 2 (headless) 9/9; lần 3 có giao diện `E2E_SLOWMO=400 --headed` chromium **9/9**, 6 ảnh ở `docs/chuc-nang/img/go-lut/`. |
+| 2026-11-18 | Kết quả cuối: `pnpm build` xanh, `pnpm lint` 0 lỗi (1 cảnh báo cũ ở `data-table-advanced.tsx`; trước lát là 11). Toàn bộ `pnpm exec playwright test` (6 project): **86 pass + 3 skip / 89** (skip = TC-13 cũ của `khung-automation` chỉ chạy chromium); lát này 11 API + 9 UI × 4 trình duyệt đều xanh. JUnit 4/4 (phiên A). Số vòng sửa: backend 0, frontend 1. Còn để nguyên (ngoài §8, cho lát `giao-dien-nike`): ảnh / video LUT không còn dùng trong `frontend/public/` (`home.mp4`, `hero-wave-*.webp`, `nike.png`, `brand/`), favicon nike. **phiên B xong** |
 | 2026-11-18 | /doc-chuc-nang: viết `docs/chuc-nang/go-lut.md` (6 ảnh). Tài liệu LUT cũ chuyển vào `docs/archive/lut/` (`tai-lieu-thiet-ke.md` / `.docx`, `thiet-ke-tong-quat.md`, `ke-hoach-tong.md` từ `docs/plan/README.md`, `huong-dan-su-dung.docx`); README gốc viết lại, bỏ mô tả LUT. Không có `docs/chuc-nang/*` của LUT để chuyển (chưa từng có trên branch này). Branch `feature/go-lut` tách từ `feature/khung-automation` (PR #1 chưa merge); PR mở với base là branch đó, GitHub tự đổi base sang `main` khi PR #1 được merge. `.gitignore` vẫn bỏ qua unit test backend nên 2 file test không vào commit. status → done |

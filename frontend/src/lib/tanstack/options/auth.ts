@@ -19,7 +19,7 @@ export const createLoginMutationOptions = (): MutationOptions<
       return await login(data);
     },
     meta: {
-      successMessage: "Đăng nhập thành công",
+      successMessage: "Signed in successfully",
       invalidatesQuery: [["me"]]
     }
   };

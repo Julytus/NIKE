@@ -1,0 +1,10 @@
+{
+  "$comment": "Lát tieng-anh-cua-hang (plan §7.1 bước 4, TC-19): trang quản trị quét chữ có dấu tiếng Việt (bỏ qua ô dữ liệu <tbody td>). `heading` = tiêu đề chờ hiện trước khi quét.",
+  "routes": [
+    { "path": "/admin", "heading": "Hi, Administrator", "title": "Dashboard | Nike Admin" },
+    { "path": "/admin/roles", "heading": "Roles", "title": "Roles | Nike Admin" },
+    { "path": "/admin/permissions", "heading": "Permissions", "title": "Permissions | Nike Admin" },
+    { "path": "/admin/resources", "heading": "Resources", "title": "Resources | Nike Admin" },
+    { "path": "/admin/modules", "heading": "Modules", "title": "Modules | Nike Admin" }
+  ]
+}

@@ -77,10 +77,35 @@ class ShoeSeedDataTest {
         assertTrue(e.getMessage().contains("trùng slug a"), e.getMessage());
     }
 
+    /** TC-U2 (plan tieng-anh-cua-hang §9): slug / tên danh mục và phụ đề sản phẩm tiếng Anh. */
+    @Test
+    void tcU2_tiengAnh_danhMucVaPhuDe() {
+        java.util.regex.Pattern vietnamese = java.util.regex.Pattern.compile(
+                "[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]",
+                java.util.regex.Pattern.CASE_INSENSITIVE | java.util.regex.Pattern.UNICODE_CASE);
+        assertEquals(List.of("lifestyle", "running", "basketball", "jordan", "football"),
+                data.categories().stream()
+                        .sorted(Comparator.comparing(ProductCategory::getSortOrder))
+                        .map(ProductCategory::getSlug).toList());
+        for (ProductCategory c : data.categories()) {
+            assertTrue(c.getSlug().matches("^[a-z0-9-]+$"), c.getSlug());
+            assertFalse(vietnamese.matcher(c.getName()).find(), "tên danh mục " + c.getName());
+        }
+        for (Product p : data.products()) {
+            assertFalse(vietnamese.matcher(p.getSubtitle()).find(), "phụ đề sản phẩm " + p.getId() + ": " + p.getSubtitle());
+            assertTrue(categorySlugById.containsKey(p.getCategoryId()), "danh mục của sản phẩm " + p.getId());
+        }
+        Map<Integer, String> subtitleById = data.products().stream()
+                .collect(Collectors.toMap(Product::getId, Product::getSubtitle));
+        assertEquals("Men's Shoes", subtitleById.get(2));
+        assertEquals("Men's Road Racing Shoes", subtitleById.get(14));
+        assertEquals("Girls' Basketball Shoes", subtitleById.get(23));
+    }
+
     @Test
     void tcU2_phanBoDanhMucGioiTinhNhanGiamGia() {
         assertEquals(30, published.size());
-        assertEquals(Map.of("lifestyle", 12L, "chay-bo", 6L, "bong-ro", 5L, "jordan", 5L, "bong-da", 2L),
+        assertEquals(Map.of("lifestyle", 12L, "running", 6L, "basketball", 5L, "jordan", 5L, "football", 2L),
                 published.stream().collect(Collectors.groupingBy(p -> categorySlugById.get(p.getCategoryId()),
                         Collectors.counting())));
         assertEquals(Map.of("MEN", 12L, "WOMEN", 10L, "UNISEX", 4L, "BOYS", 2L, "GIRLS", 2L),

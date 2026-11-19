@@ -13,8 +13,8 @@ const BASE = process.env.README_BASE_URL ?? "http://localhost:4500";
 const OUT = path.join(ROOT, "docs/img/readme");
 mkdirSync(OUT, { recursive: true });
 
-const PRO_USER = { id: "u-pro", name: "Khách Pro", email: "pro@downbeat.local", plan: "pro", planExpiresAt: "2027-11-05" };
-const FREE_USER = { id: "u-free", name: "Khách Miễn Phí", email: "free@downbeat.local", plan: "free", planExpiresAt: null };
+const PRO_USER = { id: "u-pro", name: "Khách Pro", email: "pro@nike.local", plan: "pro", planExpiresAt: "2027-11-05" };
+const FREE_USER = { id: "u-free", name: "Khách Miễn Phí", email: "free@nike.local", plan: "free", planExpiresAt: null };
 const DESKTOP = { width: 1440, height: 900 };
 const MOBILE = { width: 390, height: 844 };
 
@@ -25,8 +25,8 @@ async function open(urlPath, { theme = "light", user = null, viewport = DESKTOP,
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: viewport === MOBILE ? 2 : 1, locale: "vi-VN" });
   await ctx.addInitScript(
     ([theme, session]) => {
-      localStorage.setItem("downbeat-ui-theme", theme);
-      if (session) localStorage.setItem("downbeat-shop-session", session);
+      localStorage.setItem("nike-ui-theme", theme);
+      if (session) localStorage.setItem("nike-shop-session", session);
     },
     [theme, user ? JSON.stringify({ state: { user }, version: 0 }) : null]
   );
@@ -171,7 +171,7 @@ const backendUp = await fetch("http://localhost:9500/api/v3/api-docs").then((r) 
 if (backendUp) {
   page = await open("/login", { ready: "#identifier" });
   await shot(page, "15-admin-dang-nhap");
-  await page.locator("#identifier").fill("admin@downbeat.local");
+  await page.locator("#identifier").fill("admin@nike.local");
   await page.locator("#password").fill("Admin@123");
   await page.getByRole("button", { name: "Đăng nhập" }).click();
   await page.getByRole("heading", { name: /Xin chào/ }).waitFor();

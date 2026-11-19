@@ -19,8 +19,8 @@ export function InfoPage({ slug }: { slug: InfoSlug }) {
           {links.map((s) => (
             <li key={s}>
               <Link
-                to="/thong-tin/$trang"
-                params={{ trang: s }}
+                to="/info/$page"
+                params={{ page: s }}
                 className="rounded-sm text-base font-medium underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50"
               >
                 {INFO_PAGES[s].title}

@@ -4,7 +4,8 @@ import { expect, test } from '../../fixtures/index.js';
 import { decodeJwt } from '../../utils/jwt.js';
 import { uniqueEmail } from '../../utils/unique.js';
 
-const SESSION_EXPIRED = 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại';
+// Message / tên dữ liệu đổi sang tiếng Anh ở lát tieng-anh-cua-hang (plan §5.4, §4).
+const SESSION_EXPIRED = 'Your session has expired. Please sign in again.';
 
 test.describe('API xác thực và đăng ký', () => {
   test(
@@ -23,7 +24,7 @@ test.describe('API xác thực và đăng ký', () => {
   test('TC-02 đăng nhập sai mật khẩu', { tag: '@regression' }, async ({ api }) => {
     const res = await api.auth.login({ email: accounts.admin.email, password: WRONG_PASSWORD });
 
-    await api.client.expectError(res, 400, 'Tài khoản hoặc mật khẩu không đúng.');
+    await api.client.expectError(res, 400, 'Incorrect email or password.');
   });
 
   test(
@@ -53,7 +54,7 @@ test.describe('API xác thực và đăng ký', () => {
     { tag: '@regression' },
     async ({ api, apiAs }) => {
       const email = uniqueEmail();
-      const name = 'Khách Tự Động';
+      const name = 'Auto Customer';
 
       const registered = await api.client.expectOk(
         await api.account.register({ name, email, plainPassword: 'Abc@12345' })
@@ -64,10 +65,10 @@ test.describe('API xác thực và đăng ký', () => {
       expect(me.email).toBe(email);
       expect(me.name).toBe(name);
 
-      // account/me không trả tên chức vụ: đối chiếu roleId trong token với chức vụ "Khách hàng"
+      // account/me không trả tên chức vụ: đối chiếu roleId trong token với chức vụ "Customer"
       const admin = await apiAs('admin');
-      const customerRole = await admin.role.findByName('Khách hàng');
-      expect(customerRole, 'phải có chức vụ "Khách hàng"').toBeTruthy();
+      const customerRole = await admin.role.findByName('Customer');
+      expect(customerRole, 'phải có chức vụ "Customer"').toBeTruthy();
       expect(decodeJwt(registered.token).user.roleId).toBe(customerRole.id);
     }
   );

@@ -8,7 +8,7 @@ Cửa hàng (không có trang quản trị): ghi 4 loại sự kiện, `anonId`,
 ## Việc cần làm
 Làm đúng 11 mục ở plan §8:
 1. `lib/types/recommend.ts` (type + hằng `PREFERENCE_MAX_STYLES`, `PREFERENCE_SHOOT_OPTIONS`, `PREFERENCE_SOFTWARE_OPTIONS`).
-2. `lib/recommend/anon-id.ts`: `getAnonId()` theo §6.1 (localStorage `downbeat.anonId`, UUID, mọi đọc / ghi bọc try/catch, lỗi → mã tạm trong bộ nhớ).
+2. `lib/recommend/anon-id.ts`: `getAnonId()` theo §6.1 (localStorage `nike.anonId`, UUID, mọi đọc / ghi bọc try/catch, lỗi → mã tạm trong bộ nhớ).
 3. `lib/axios/recommend.ts` (`sendRecommendEvent`, `mergeAnon`, `clearRecommendHistory`); `lib/axios/account.ts` (`getPreference`, `savePreference`).
 4. `lib/recommend/track.ts`: `trackEvent(...)`, chỗ duy nhất nuốt lỗi (comment lý do).
 5. `lib/tanstack/options/account.ts` (`preferenceQueryOptions` `retry: false`, `savePreferenceMutationOptions` toast "Đã lưu sở thích màu"; gọi `mergeAnon` không chờ trong `loginMutationOptions` / `registerMutationOptions`), `lib/tanstack/options/recommend.ts` (`clearHistoryMutationOptions`).

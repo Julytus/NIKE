@@ -104,7 +104,7 @@ Bảng dùng collation `utf8mb4_0900_ai_ci` nên `LIKE` không phân biệt hoa 
 ## 5. Hợp đồng API (cố định — nguồn sự thật cho cả BE và FE)
 
 Mọi response bọc `{ "code": …, "message": …, "result": … }`. Prefix `/api`. Cả ba endpoint **không cần token**; gửi token sai / hết hạn vẫn trả 200 như không gửi.
-URL ảnh = `{system.file-url}/{minio.bucket}/products/<slug>/1.webp` (local: `http://localhost:9020/downbeat-public/...`), đúng giá trị đã lưu ở `product_image.url`.
+URL ảnh = `{system.file-url}/{minio.bucket}/products/<slug>/1.webp` (local: `http://localhost:9020/nike-public/...`), đúng giá trị đã lưu ở `product_image.url`.
 
 ### 5.1 `GET /api/product-category/public/list` — công khai
 
@@ -114,15 +114,15 @@ Response `result`:
 ```json
 [
   { "id": 1, "slug": "lifestyle", "name": "Lifestyle", "sortOrder": 1, "productCount": 12,
-    "imageUrl": "http://localhost:9020/downbeat-public/products/nike-dunk-low-retro/1.webp" },
+    "imageUrl": "http://localhost:9020/nike-public/products/nike-dunk-low-retro/1.webp" },
   { "id": 2, "slug": "chay-bo", "name": "Chạy bộ", "sortOrder": 2, "productCount": 6,
-    "imageUrl": "http://localhost:9020/downbeat-public/products/nike-alphafly-4/1.webp" },
+    "imageUrl": "http://localhost:9020/nike-public/products/nike-alphafly-4/1.webp" },
   { "id": 3, "slug": "bong-ro", "name": "Bóng rổ", "sortOrder": 3, "productCount": 5,
-    "imageUrl": "http://localhost:9020/downbeat-public/products/ja-4-blur-ep/1.webp" },
+    "imageUrl": "http://localhost:9020/nike-public/products/ja-4-blur-ep/1.webp" },
   { "id": 4, "slug": "jordan", "name": "Jordan", "sortOrder": 4, "productCount": 5,
-    "imageUrl": "http://localhost:9020/downbeat-public/products/air-jordan-1-low-se-magic-ball/1.webp" },
+    "imageUrl": "http://localhost:9020/nike-public/products/air-jordan-1-low-se-magic-ball/1.webp" },
   { "id": 5, "slug": "bong-da", "name": "Bóng đá", "sortOrder": 5, "productCount": 2,
-    "imageUrl": "http://localhost:9020/downbeat-public/products/nike-phantom-6-low-academy/1.webp" }
+    "imageUrl": "http://localhost:9020/nike-public/products/nike-phantom-6-low-academy/1.webp" }
 ]
 ```
 `productCount` của Lifestyle là 12 (không tính sản phẩm ẩn id 31).
@@ -146,7 +146,7 @@ Response `result` (mảng "thẻ sản phẩm" — cùng dạng ở §5.3 và l�
     "salePrice": null,
     "badge": "JUST_IN",
     "createdTime": "2026-11-08T09:00:00",
-    "imageUrl": "http://localhost:9020/downbeat-public/products/nike-dunk-low-retro/1.webp",
+    "imageUrl": "http://localhost:9020/nike-public/products/nike-dunk-low-retro/1.webp",
     "totalStock": 220
   },
   {
@@ -161,7 +161,7 @@ Response `result` (mảng "thẻ sản phẩm" — cùng dạng ở §5.3 và l�
     "salePrice": null,
     "badge": "JUST_IN",
     "createdTime": "2026-11-07T09:00:00",
-    "imageUrl": "http://localhost:9020/downbeat-public/products/nike-air-max-95-big-bubble-premium/1.webp",
+    "imageUrl": "http://localhost:9020/nike-public/products/nike-air-max-95-big-bubble-premium/1.webp",
     "totalStock": 240
   }
 ]
@@ -195,7 +195,7 @@ Ví dụ `q=jordan` → `result`:
       "salePrice": null,
       "badge": "JUST_IN",
       "createdTime": "2026-11-03T09:00:00",
-      "imageUrl": "http://localhost:9020/downbeat-public/products/air-jordan-1-low-se-magic-ball/1.webp",
+      "imageUrl": "http://localhost:9020/nike-public/products/air-jordan-1-low-se-magic-ball/1.webp",
       "totalStock": 240
     }
   ]
@@ -317,7 +317,7 @@ Ví dụ: mục "Nam" → "Bóng rổ" = `/w/bong-ro?gioiTinh=nam`; mục "Giả
 - `phuong-thuc-thanh-toan`: "Thanh toán khi nhận hàng (COD)" và "Chuyển khoản qua payOS".
 - `tro-giup`: link tới "Giao hàng", "Đổi trả", "Phương thức thanh toán", "Liên hệ".
 - `ve-nike`: "Đây là dự án học tập mô phỏng nike.com/vn, chỉ chạy local, không kinh doanh. Tên, logo, hình ảnh và mô tả sản phẩm thuộc về Nike, Inc."
-- `lien-he`: "Email: hotro@downbeat.local"
+- `lien-he`: "Email: hotro@nike.local"
 - 9 trang còn lại: "Nội dung đang được cập nhật."
 - Slug không có trong danh sách → `notFound()` → trang 404 chung.
 
@@ -409,7 +409,7 @@ Thứ tự theo `frontend/AGENTS.md` (type → axios → options → component �
 15. `components/shop/home/`: `home-hero.tsx`, `new-arrivals-section.tsx`, `jordan-feature.tsx`, `category-section.tsx`. Ảnh tĩnh: chép 2 ảnh từ `backend/business/src/main/resources/seed/giay/<slug>/<n>.webp` vào `src/assets/home/hero.webp`, `jordan.webp` (chọn ảnh lúc cook, ghi §12). Hero `fetchPriority="high"`, ảnh khác `loading="lazy"`.
 16. `components/shop/info/info-page.tsx`, `components/shop/coming-soon-section.tsx` (trang tạm §6.7); xoá `components/shop/coming-soon-page.tsx`.
 17. Route: `routes/_shop.tsx` (layout `ShopLayout` + `<Outlet />`), `routes/_shop/index.tsx` (trang chủ, `head` giữ title), `routes/_shop/thong-tin.$trang.tsx` (slug lạ → `throw notFound()`), trang tạm `routes/_shop/w.index.tsx`, `w.$danhMuc.tsx` (có `validateSearch`), `t.$slug.tsx`, `yeu-thich.tsx`, `gio-hang.tsx`. Xoá `routes/index.tsx`. Mọi link nội bộ dùng `<Link>` có kiểu.
-18. `frontend/public/`: xoá file LUT (`home.mp4` 51 MB, `hero-wave-*.webp`, `downbeat.png`, `brand/`, `placeholder.svg` nếu không còn dùng); `favicon.svg` = swoosh đen trên nền trắng (viewBox vuông), bỏ `favicon.ico` + dòng `<link>` của nó; `site.webmanifest` tên "Nike".
+18. `frontend/public/`: xoá file LUT (`home.mp4` 51 MB, `hero-wave-*.webp`, `nike.png`, `brand/`, `placeholder.svg` nếu không còn dùng); `favicon.svg` = swoosh đen trên nền trắng (viewBox vuông), bỏ `favicon.ico` + dòng `<link>` của nó; `site.webmanifest` tên "Nike".
 19. `frontend/AGENTS.md`: viết lại mục "Khu cửa hàng" (layout `_shop`, token Nike, `ProductCard` / `ProductRail`, `catalog-search.ts`, trang tạm, không dark mode); bỏ nội dung LUT (`/luts`, `lib/mock`, `useLutDownload`).
 20. `pnpm build && pnpm lint`; E2E có giao diện (`--headed`, slowMo 400) TC-10 → TC-30, chụp ảnh tài liệu `E2E_DOC_SHOTS=../docs/chuc-nang/img/giao-dien-nike`; `pnpm test:smoke`.
 
@@ -444,7 +444,7 @@ API ở `automation/tests/api/giao-dien-nike.api.spec.js`, giao diện ở `auto
 | TC-20 | e2e | Không có kết quả / sản phẩm ẩn / giá giảm | khách | gõ lần lượt "xyzabc", "air max plus", "mule" | "xyzabc": `Không tìm thấy sản phẩm nào cho "xyzabc".` + vẫn có "Tìm kiếm phổ biến"; "air max plus": `Không tìm thấy sản phẩm nào cho "air max plus".`; "mule": 1 thẻ nhãn "Giảm giá", giá "3.759.000 ₫", `<s>` "4.699.000 ₫" |
 | TC-21 | e2e | Gợi ý lỗi (network mocking) | khách | route `suggest` trả 500; gõ "jordan"; Enter | "Không tải được gợi ý. Nhấn Enter để xem tất cả kết quả."; Enter → path `/w`, `q = "jordan"` |
 | TC-22 | e2e | Footer + 15 trang thông tin (data-driven) | khách, desktop | đọc footer; với từng link trong `nav-links.json` mở `/thong-tin/<slug>`; mở `/thong-tin/khong-co` | footer có 3 tiêu đề "Tài nguyên", "Trợ giúp", "Công ty", "Việt Nam", "© 2026 Nike, Inc. Bảo lưu mọi quyền."; 15 href đúng; mỗi trang h1 = chữ của link, không 404; "Giao hàng" chứa "30.000 ₫" và "5.000.000 ₫"; "Về Nike" chứa "dự án học tập"; slug lạ → "Trang bạn đang tìm kiếm không tồn tại." |
-| TC-23 | e2e | Tài khoản ở dải trên | (a) khách `free@`; (b) storageState admin | (a) bấm "Đăng nhập" → đăng nhập qua hộp thoại → mở menu tài khoản; (b) mở `/`, mở menu, bấm "Trang quản trị" | (a) nút "Xin chào, Khách Miễn Phí"; "Tham gia", "Đăng nhập", "Tham gia ngay" biến mất; menu có `free@downbeat.local`, "Đăng xuất", không có "Trang quản trị"; (b) nút "Xin chào, Administrator", menu có "Trang quản trị" → URL `/admin` |
+| TC-23 | e2e | Tài khoản ở dải trên | (a) khách `free@`; (b) storageState admin | (a) bấm "Đăng nhập" → đăng nhập qua hộp thoại → mở menu tài khoản; (b) mở `/`, mở menu, bấm "Trang quản trị" | (a) nút "Xin chào, Khách Miễn Phí"; "Tham gia", "Đăng nhập", "Tham gia ngay" biến mất; menu có `free@nike.local`, "Đăng xuất", không có "Trang quản trị"; (b) nút "Xin chào, Administrator", menu có "Trang quản trị" → URL `/admin` |
 | TC-24 | e2e | "Tham gia" / "Tham gia ngay" mở đăng ký | khách, desktop | bấm "Tham gia" ở dải trên; đóng; bấm "Tham gia ngay" | cả hai lần mở hộp thoại có ô "Họ tên" và nút "Tạo tài khoản" |
 | TC-25 | e2e | Trang tạm không 404 | khách | mở `/w`, `/w/lifestyle`, `/t/nike-dunk-low-retro`, `/yeu-thich`, `/gio-hang` | mỗi trang có header (banner) + footer (contentinfo), không có "Trang bạn đang tìm kiếm không tồn tại."; không lỗi `pageerror` (chỉ kiểm điều kiện còn đúng sau khi lát sau thay nội dung) |
 | TC-26 | e2e | Khả năng truy cập cơ bản | khách, desktop | `AxeBuilder` (wcag2a, wcag2aa) trên `/` và `/thong-tin/giao-hang`; ở `/` nhấn Tab một lần rồi Enter | 0 vi phạm mức `serious` / `critical`; Tab đầu tiên hiện "Bỏ qua menu", Enter → focus nằm trong `#shop-main` |
@@ -481,8 +481,8 @@ Sửa spec cũ (không phải TC mới): `tests/system/go-lut.spec.js` TC-12 →
 5. **Dải thông báo ghi rõ ngưỡng**: "Miễn phí giao hàng cho đơn từ 5.000.000 ₫ & đổi trả trong 30 ngày" thay cho "Miễn phí giao hàng & đổi trả trong 30 ngày" ở ảnh 01, để khách không bất ngờ khi giỏ dưới ngưỡng bị tính 30.000 ₫ (D12).
 6. **Logo Jordan**: ~~dùng chữ "Jordan"~~ → đã có SVG Jumpman do người dùng cung cấp, lưu ở `plan/ui-nike/jordan-jumpman.svg` (cùng lưu ý D2: chỉ học tập, chạy local).
 7. **Cửa hàng luôn giao diện sáng** (Nike không có dark mode): bỏ token tối của khu cửa hàng; trang quản trị và trang đăng nhập quản trị vẫn đổi sáng / tối như cũ.
-8. **Font**: chữ thường dùng `"Helvetica Neue", Helvetica, Arial` (giống trang quản trị); tiêu đề hero dùng **Oswald 600** tự host qua `@fontsource/oswald` (gần Nike Futura condensed, có tiếng Việt, không cần mạng khi chạy test). Breakpoint desktop 1024px (`lg`) thay vì 960px ở ui-nike cho đồng nhất với Tailwind.
-9. **Ảnh hero / khối Jordan** chép từ ảnh sản phẩm đã có trong `seed/giay/` (ảnh nike.com, cùng lưu ý học tập D2), không lấy thêm ảnh nào từ mạng.
+8. **Font** (→ đổi 18/11/2026: Inter Variable + Anton, xem §12): chữ thường dùng `"Helvetica Neue", Helvetica, Arial` (giống trang quản trị); tiêu đề hero dùng **Oswald 600** tự host qua `@fontsource/oswald` (gần Nike Futura condensed, có tiếng Việt, không cần mạng khi chạy test). Breakpoint desktop 1024px (`lg`) thay vì 960px ở ui-nike cho đồng nhất với Tailwind.
+9. **Ảnh hero / khối Jordan** chép từ ảnh sản phẩm đã có trong `seed/giay/` (ảnh nike.com, cùng lưu ý học tập D2), không lấy thêm ảnh nào từ mạng. → **Đổi 18/11/2026 (người dùng):** ảnh hero sản phẩm trông xấu; hero + khối Jordan dùng ảnh campaign tải từ static.nike.com (chỉ học tập, chạy local), xem §12.
 10. **Sửa `go-lut.spec.js`** (TC-12 → TC-15) vì trang tạm và nút "Đăng ký" bị thay — spec cũ sai so với plan mới, không phải sửa cho xanh; ghi §12 lúc cook.
 11. `plan/_template.md` bị xoá trong working tree (thay đổi chưa commit từ lát `go-lut`) trong khi `plan/README.md` và skill `plan-feature` vẫn dùng nó → đã khôi phục từ `HEAD` (đề xuất được chốt).
 
@@ -499,9 +499,11 @@ Sửa spec cũ (không phải TC mới): `tests/system/go-lut.spec.js` TC-12 →
 | 2026-11-18 | Backend (§7.2): POJO `Product` + `imageUrl`, `totalStock`; `ProductCategory` + `productCount`, `imageUrl`. `ProductRepository`: `publishedCondition`, `keywordCondition` (public), `cardFields` (subquery ảnh `sort_order = 1` + `COALESCE(SUM(stock), 0)`), `listCards(cond, limit)` (dùng `getListByCriteriaWithJoin` + `Pageable.setLimit`), `countCards`. `ProductCategoryRepository.listWithStats()`. `ProductCatalogService` (`suggest` dùng `pageQuery`, rỗng → `new Page<>(0, 1, [])` không gọi repository). `ProductPublicController` (3 GET, không `checkPermission`). Không migration, không sửa security. |
 | 2026-11-18 | Tự review diff theo `backend/AGENTS.md`: không DTO, repository / service theo khuôn `AbsMysqlRepository` / `BaseService`, `Mapper.map(..., ApiResponse::okEntity)`, điều kiện chỉ tham chiếu `PRODUCT`, `containsIgnoreCase` tự escape `%` `_`, không cache. `mvn -pl business -am test` xanh (`ProductCatalogServiceTest` 4/4: TC-U1 ×3 null / "" / "   ", TC-U2). `backend-restart.sh` → sẵn sàng. `pnpm exec playwright test --project=api`: **giao-dien-nike 9/9 xanh**, toàn nhóm API 44/44 xanh. `pnpm lint` (automation) sạch. |
 | 2026-11-18 | **phiên A xong**. Phiên B: `/clear` rồi `/cook giao-dien-nike` → bước 5 (frontend §8), chạy E2E TC-10→30 + `go-lut.spec.js` có giao diện, rồi `pnpm test:smoke`. |
-| 2026-11-18 | **Phiên B bắt đầu** (skill `/cook` không nạp được, làm theo `SKILL.md` bằng tay). Frontend §8 xong: `@fontsource/oswald`; `lib/types/product.ts`, `lib/axios/product.ts`, `lib/tanstack/options/product.ts` (`retry: 1`); `formatVnd` → `5.279.000 ₫`, xoá `formatCompact`; `lib/shop/catalog-search.ts` + `CatalogLink`; `lib/shop/info-pages.ts`; `components/brand/` (swoosh chuyển từ `admin/`, Jumpman từ SVG người dùng); token Nike `shop-theme.css` (bỏ bản tối); `ShopShell` bỏ Google Fonts, gỡ `dark` bằng `MutationObserver` (ThemeProvider chạy effect sau con nên gỡ một lần không đủ); header / mega menu / khung tìm kiếm / menu trượt / dải thông báo / footer; `ProductCard`, `ProductPrice`, `ProductRail`; trang chủ 4 khối; trang thông tin; 5 trang tạm; route `_shop` (xoá `routes/index.tsx`, `coming-soon-page.tsx`). Ảnh tĩnh: hero = `nike-alphafly-4/4.webp`, Jordan = `air-jordan-1-low-se-magic-ball/1.webp`. `public/`: xoá `home.mp4`, `hero-wave-*`, `downbeat.png`, `brand/`, `placeholder.svg`, `favicon.ico`; `favicon.svg` swoosh đen nền trắng; manifest "Nike". Viết lại mục "Khu cửa hàng" của `frontend/AGENTS.md`. `pnpm api:types`: schema `Product` / `ProductCategory` khớp type tay. |
+| 2026-11-18 | **Phiên B bắt đầu** (skill `/cook` không nạp được, làm theo `SKILL.md` bằng tay). Frontend §8 xong: `@fontsource/oswald`; `lib/types/product.ts`, `lib/axios/product.ts`, `lib/tanstack/options/product.ts` (`retry: 1`); `formatVnd` → `5.279.000 ₫`, xoá `formatCompact`; `lib/shop/catalog-search.ts` + `CatalogLink`; `lib/shop/info-pages.ts`; `components/brand/` (swoosh chuyển từ `admin/`, Jumpman từ SVG người dùng); token Nike `shop-theme.css` (bỏ bản tối); `ShopShell` bỏ Google Fonts, gỡ `dark` bằng `MutationObserver` (ThemeProvider chạy effect sau con nên gỡ một lần không đủ); header / mega menu / khung tìm kiếm / menu trượt / dải thông báo / footer; `ProductCard`, `ProductPrice`, `ProductRail`; trang chủ 4 khối; trang thông tin; 5 trang tạm; route `_shop` (xoá `routes/index.tsx`, `coming-soon-page.tsx`). Ảnh tĩnh: hero = `nike-alphafly-4/4.webp`, Jordan = `air-jordan-1-low-se-magic-ball/1.webp`. `public/`: xoá `home.mp4`, `hero-wave-*`, `nike.png`, `brand/`, `placeholder.svg`, `favicon.ico`; `favicon.svg` swoosh đen nền trắng; manifest "Nike". Viết lại mục "Khu cửa hàng" của `frontend/AGENTS.md`. `pnpm api:types`: schema `Product` / `ProductCategory` khớp type tay. |
 | 2026-11-18 | **Điểm lệch / quyết định khi code** (không đổi chữ §6, không đổi §5): (1) Mega menu **tự làm** bằng pointer / focus / Esc thay `NavigationMenu` của Radix (trigger Radix là nút bật / tắt, mục §6.1 phải là link) → không `shadcn add navigation-menu`. Thêm: đóng mega menu khi cuộn `#app-scroll` (để `hover` vào phần trang bên dưới không bị bảng che); `useHideOnScroll` đọc cờ `paused` ngay lúc có sự kiện cuộn nên cú cuộn làm đóng mega menu không làm ẩn header. (2) Phần chỉ có ở một màn hình (nút tài khoản / "Đăng nhập" icon, "Yêu thích", "Menu") render theo `useIsDesktop()` thay vì ẩn bằng CSS, để không có hai phần tử trùng tên / testid; nút "Tìm kiếm" là **một** nút cho cả hai màn hình. Footer "Việt Nam" một phần tử (đổi vị trí bằng CSS) vì `getByText` đếm cả phần tử ẩn. (3) Khung tìm kiếm trả focus về nút "Tìm kiếm" bằng `onCloseAutoFocus` + ref (Radix không tự trả khi không dùng `DialogTrigger` — TC-17 đỏ lần đầu). (4) `components/ui/sheet.tsx` thêm prop `showCloseButton` (giống `dialog.tsx`) để nút đóng có tên "Đóng menu". (5) `NotFoundPage` thêm prop `home`; `_shop` + `thong-tin.$trang` có `notFoundComponent` nên 404 hiện trong khung cửa hàng. (6) `__root.tsx`: về đầu trang khi đổi đường dẫn bằng cách cuộn `#app-scroll` (trước đây gọi `window.scrollTo`, không có tác dụng vì vùng cuộn là `#app-scroll`). (7) Menu trượt: "Tham gia" / "Đăng nhập" mở hộp thoại trong `onCloseAutoFocus` của Sheet (sau khi menu đóng hẳn) để hai lớp modal không tranh focus. |
 | 2026-11-18 | Tự review diff theo `frontend/AGENTS.md`: không toast trong component / axios, `refetch()` chỉ ở nút "Thử lại" của query lỗi, mọi `queryKey` bắt đầu `PRODUCTS_QUERY_KEY`, link nội bộ đều `<Link>` có kiểu, `data-testid` đủ theo §6 + quy ước §12 phiên A. `pnpm build` xanh, `pnpm lint` 0 error (1 warning cũ ở `data-table-advanced.tsx`); `automation` lint sạch. |
 | 2026-11-18 | **Nghiệm thu E2E.** Headless lần 1 (chromium): 28/29, đỏ TC-17 (focus không về nút "Tìm kiếm") → sửa code, xanh. `mobile-chrome`: 22 passed / 11 skipped (nhóm desktop). **Có giao diện** (`--headed`, slowMo 400, chromium, `giao-dien-nike.spec.js` + `go-lut.spec.js`): **29 passed / 4 skipped (nhóm mobile)**. `pnpm test:smoke` mọi project: **43 passed / 4 skipped**. Sau khi nới `line-height` tiêu đề hero / Jordan (dấu tiếng Việt trên chữ in hoa Oswald): chạy lại chromium + mobile-chrome 49 passed / 15 skipped. Ảnh tài liệu `docs/chuc-nang/img/giao-dien-nike/`: `01-trang-chu`, `02-mega-menu`, `03-tim-kiem`, `04-trang-thong-tin` (đã xoá ảnh của `go-lut.spec.js` lỡ ghi vào cùng thư mục). Chưa có ảnh mobile (`05-trang-chu-mobile`): `docShot` chỉ chụp ở project `chromium` nên TC-27 (chỉ chạy `mobile-chrome`) không chụp — phiên C chụp tay ở 390px hoặc sửa `docShot`. Chưa so tay với ảnh ui-nike ở 1440px / 390px (§10). |
 | 2026-11-18 | **phiên B xong**. Phiên C: `/clear` rồi `/doc-chuc-nang giao-dien-nike`. |
 | 2026-11-18 | **Phiên C** (`/doc-chuc-nang`): viết `docs/chuc-nang/giao-dien-nike.md` (6 ảnh; chụp thêm `05-trang-chu-mobile`, `06-menu-truot-mobile` bằng script Pixel 7 vì `docShot` chỉ chụp ở `chromium`), thêm dòng vào `docs/chuc-nang/README.md`. Số liệu: JUnit 16/16 (lát này 4), Playwright API 44/44 (lát này 9), chromium headed 29 pass / 4 skip, mobile-chrome 22 pass / 11 skip, smoke 43 pass / 4 skip; vòng sửa BE 0, FE 1 (TC-17). §10: mở tay chỉ xem tổng quan bố cục / màu qua ảnh tài liệu 1440 px + mobile, chưa so từng số đo với ảnh ui-nike. → `status: done`. |
+| 2026-11-18 | Sau PR #4, người dùng chê ảnh hero (Alphafly 4 cam) và chọn lấy ảnh từ mạng (§11 câu 9): `src/assets/home/hero.webp` = ảnh campaign người chạy lúc hoàng hôn từ static.nike.com (2560×1244, 100 KB); `home-hero.tsx` thêm `object-[21%_50%]` cho mobile để người chạy nằm trong khung dọc. Ảnh tài liệu `01-trang-chu`, `05-trang-chu-mobile` chụp lại sau khi chuyển giao diện sang tiếng Anh. |
+| 2026-11-18 | Người dùng chê ảnh hoàng hôn vẫn mờ (hạt film) và font khác nike.com → chạy web, so với nike.com/vn trực tiếp (1440px). **Ảnh:** hero = ảnh campaign Jordan nhóm người (static.nike.com, 2560×1244 webp, nét), khối Jordan = giày Jordan trên quả bóng rổ (1332×1400). **Font:** nike.com dùng Helvetica Now Text/Display + Nike Futura ND (bản quyền, không đưa file font vào repo) → chữ thường **Inter Variable** (`@fontsource-variable/inter`, cả `.nike-admin`), tiêu đề lớn **Anton** (`@fontsource/anton`), bỏ Oswald. **Hero** đổi bố cục như nike.com: ảnh tràn hết chiều ngang, chữ trắng + 2 nút trắng đè lên dưới ảnh, lớp tối dần; trang chủ: hero ngoài khối có lề. Dải thông báo chữ 16px, link 12px. Chuỗi / href giữ nguyên. `pnpm build` + lint xanh; chromium + mobile-chrome (`giao-dien-nike` + `go-lut`) 49 pass / 15 skip; chụp lại 6 ảnh tài liệu. |

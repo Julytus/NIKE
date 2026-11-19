@@ -27,7 +27,7 @@ export function DeleteConfirmDialog({
   open,
   itemId,
   itemName,
-  itemType = "mục",
+  itemType = "item",
   extraDescription,
   onConfirm,
   onOpenChange,
@@ -44,23 +44,23 @@ export function DeleteConfirmDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Xóa {itemType}</AlertDialogTitle>
+          <AlertDialogTitle>Delete {itemType}</AlertDialogTitle>
           <AlertDialogDescription>
-            Bạn có chắc muốn xóa <span className="font-semibold text-foreground">{itemName || `${itemType} này`}</span>?
-            Hành động này không thể hoàn tác.
+            Are you sure you want to delete <span className="font-semibold text-foreground">{itemName || `this ${itemType}`}</span>?
+            This action can&apos;t be undone.
             {extraDescription && <span className="block mt-1">{extraDescription}</span>}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>
-            Hủy
+            Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isLoading}
             className="bg-destructive hover:bg-destructive/90"
           >
-            {isLoading ? "Đang xóa..." : "Xóa"}
+            {isLoading ? "Deleting..." : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

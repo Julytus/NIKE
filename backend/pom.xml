@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>DownBeat Backend</name>
-    <description>DownBeat backend - modular monolith (1 deployable, nhiều module nghiệp vụ)</description>
+    <name>nike Backend</name>
+    <description>nike backend - modular monolith (1 deployable, nhiều module nghiệp vụ)</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

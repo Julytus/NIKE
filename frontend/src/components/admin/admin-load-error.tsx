@@ -16,20 +16,20 @@ export function AdminLoadError({ onRetry, retrying }: { onRetry: () => void; ret
             <ServerCrash className="size-8" />
           </div>
           <div className="space-y-2">
-            <h1 className="text-foreground text-2xl font-bold tracking-tight">Không kết nối được máy chủ</h1>
+            <h1 className="text-foreground text-2xl font-bold tracking-tight">Can&apos;t reach the server</h1>
             <p className="text-muted-foreground">
-              Không tải được thông tin tài khoản. Kiểm tra backend đã chạy chưa rồi thử lại.
+              Couldn&apos;t load account info. Make sure the backend is running and try again.
             </p>
           </div>
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
             <Button onClick={onRetry} disabled={retrying} className="rounded-full px-6">
               <RefreshCw className={retrying ? "animate-spin" : undefined} />
-              Thử lại
+              Try Again
             </Button>
             <Button asChild variant="outline" className="rounded-full px-6">
               <Link to="/logout">
                 <LogOut />
-                Đăng xuất
+                Sign Out
               </Link>
             </Button>
           </div>

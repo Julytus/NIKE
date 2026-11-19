@@ -12,7 +12,7 @@ function InfoLinks({ slugs }: { slugs: InfoSlug[] }) {
     <ul className="flex flex-col gap-3">
       {slugs.map((slug) => (
         <li key={slug}>
-          <Link to="/thong-tin/$trang" params={{ trang: slug }} className={LINK}>
+          <Link to="/info/$page" params={{ page: slug }} className={LINK}>
             {INFO_PAGES[slug].title}
           </Link>
         </li>
@@ -63,17 +63,17 @@ export function ShopFooter() {
         {/* Một phần tử cho cả hai màn hình: desktop ở góc phải trên, mobile dưới accordion */}
         <p className="mt-6 flex items-center gap-2 text-sm font-medium lg:absolute lg:top-10 lg:right-0 lg:mt-0">
           <Globe aria-hidden className="size-5" />
-          <span>Việt Nam</span>
+          <span>Vietnam</span>
         </p>
 
         <div className="mt-10 flex flex-col gap-4 text-xs text-(--sh-muted) lg:flex-row lg:items-center lg:gap-8">
-          <p>© 2026 Nike, Inc. Bảo lưu mọi quyền.</p>
+          <p>© 2026 Nike, Inc. All rights reserved.</p>
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             {LEGAL_LINKS.map((slug) => (
               <li key={slug}>
                 <Link
-                  to="/thong-tin/$trang"
-                  params={{ trang: slug }}
+                  to="/info/$page"
+                  params={{ page: slug }}
                   className="rounded-sm font-medium outline-none hover:text-(--sh-fg) focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50"
                 >
                   {INFO_PAGES[slug].title}
@@ -82,7 +82,7 @@ export function ShopFooter() {
             ))}
           </ul>
         </div>
-        <p className="mt-4 text-xs text-(--sh-muted)">Dự án học tập mô phỏng nike.com, chạy local, không kinh doanh.</p>
+        <p className="mt-4 text-xs text-(--sh-muted)">Student project replicating nike.com. Runs locally, not a real store.</p>
       </div>
     </footer>
   );

@@ -1,7 +1,7 @@
 import { BasePage } from './BasePage.js';
 import { FooterComponent } from './components/FooterComponent.js';
 
-/** Trang thông tin tĩnh `/thong-tin/$trang` (plan giao-dien-nike §6.5). */
+/** Trang thông tin tĩnh `/info/$page` (plan giao-dien-nike §6.5). */
 export class InfoPage extends BasePage {
   /** @param {import('@playwright/test').Page} page */
   constructor(page) {
@@ -13,6 +13,6 @@ export class InfoPage extends BasePage {
 
   /** @param {string} slug */
   async open(slug) {
-    await this.goto(`/thong-tin/${slug}`);
+    await this.goto(`/info/${slug}`);
   }
 }

@@ -32,9 +32,9 @@ export function FormDialog({
   featured,
   children,
   onSubmit,
-  submitLabel = "Lưu",
-  loadingLabel = "Đang xử lý...",
-  cancelLabel = "Hủy",
+  submitLabel = "Save",
+  loadingLabel = "Processing...",
+  cancelLabel = "Cancel",
   maxWidth = "lg",
   isLoading = false
 }: FormDialogProps) {

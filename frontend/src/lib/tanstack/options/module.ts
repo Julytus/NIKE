@@ -30,8 +30,8 @@ export const createUpsertModuleMutationOptions = (
   mutationFn: upsertModule,
   meta: {
     invalidatesQuery: [MODULES_QUERY_KEY, PERMISSIONS_QUERY_KEY],
-    successMessage: isEdit ? "Cập nhật module thành công" : "Tạo module thành công",
-    errorMessage: "Không lưu được module"
+    successMessage: isEdit ? "Module updated" : "Module created",
+    errorMessage: "Couldn't save module"
   }
 });
 
@@ -44,8 +44,8 @@ export const deleteModuleMutationOptions: MutationOptions<
   mutationFn: deleteModule,
   meta: {
     invalidatesQuery: [MODULES_QUERY_KEY, RESOURCES_QUERY_KEY, PERMISSIONS_QUERY_KEY],
-    successMessage: "Xóa module thành công",
-    errorMessage: "Không xóa được module"
+    successMessage: "Module deleted",
+    errorMessage: "Couldn't delete module"
   }
 };
 
@@ -58,7 +58,7 @@ export const assignModuleResourcesMutationOptions: MutationOptions<
   mutationFn: ({ moduleId, resourceIds }) => assignModuleResources(moduleId, resourceIds),
   meta: {
     invalidatesQuery: [RESOURCES_QUERY_KEY, PERMISSIONS_QUERY_KEY],
-    successMessage: (count) => `Đã gán ${count as number} tài nguyên vào module`,
-    errorMessage: "Không gán được tài nguyên"
+    successMessage: (count) => `Assigned ${count as number} resources to the module`,
+    errorMessage: "Couldn't assign resources"
   }
 };

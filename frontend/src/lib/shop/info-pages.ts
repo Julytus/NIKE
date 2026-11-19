@@ -1,5 +1,5 @@
 /**
- * 15 trang thông tin tĩnh `/thong-tin/$trang` cho link ở dải trên / footer (plan giao-dien-nike §6.5).
+ * 15 trang thông tin tĩnh `/info/$page` cho link ở dải trên / footer (plan tieng-anh-cua-hang §6.5).
  * `title` = đúng chữ của link trỏ tới trang (h1).
  */
 export interface InfoPageContent {
@@ -9,45 +9,45 @@ export interface InfoPageContent {
   links?: string[];
 }
 
-const PENDING = ["Nội dung đang được cập nhật."];
+const PENDING = ["Content coming soon."];
 
 export const INFO_PAGES = {
-  "tim-cua-hang": { title: "Tìm cửa hàng", paragraphs: PENDING },
-  "thanh-vien": { title: "Trở thành thành viên", paragraphs: PENDING },
-  "gop-y": { title: "Gửi góp ý", paragraphs: PENDING },
-  "tro-giup": {
-    title: "Trợ giúp",
-    paragraphs: ["Chọn chủ đề bạn cần hỗ trợ:"],
-    links: ["giao-hang", "doi-tra", "phuong-thuc-thanh-toan", "lien-he"]
+  "find-a-store": { title: "Find a Store", paragraphs: PENDING },
+  membership: { title: "Become a Member", paragraphs: PENDING },
+  feedback: { title: "Send Us Feedback", paragraphs: PENDING },
+  help: {
+    title: "Get Help",
+    paragraphs: ["Choose a topic you need help with:"],
+    links: ["delivery", "returns", "payment-options", "contact-us"]
   },
-  "tra-cuu-don-hang": { title: "Tra cứu đơn hàng", paragraphs: PENDING },
-  "giao-hang": {
-    title: "Giao hàng",
+  "order-status": { title: "Order Status", paragraphs: PENDING },
+  delivery: {
+    title: "Delivery",
     paragraphs: [
-      "Phí giao hàng 30.000 ₫ cho mỗi đơn. Miễn phí giao hàng cho đơn có tạm tính từ 5.000.000 ₫.",
-      "Đơn hàng được giao trong 3–5 ngày làm việc."
+      "Delivery costs 30.000 ₫ per order. Orders with a subtotal of 5.000.000 ₫ or more ship free.",
+      "Orders arrive within 3–5 business days."
     ]
   },
-  "doi-tra": {
-    title: "Đổi trả",
-    paragraphs: ["Đổi trả miễn phí trong 30 ngày kể từ khi nhận hàng, sản phẩm chưa qua sử dụng."]
+  returns: {
+    title: "Returns",
+    paragraphs: ["Free returns within 30 days of delivery for unworn items."]
   },
-  "phuong-thuc-thanh-toan": {
-    title: "Phương thức thanh toán",
-    paragraphs: ["Thanh toán khi nhận hàng (COD)", "Chuyển khoản qua payOS"]
+  "payment-options": {
+    title: "Payment Options",
+    paragraphs: ["Cash on Delivery (COD)", "Bank transfer via payOS"]
   },
-  "lien-he": { title: "Liên hệ", paragraphs: ["Email: hotro@downbeat.local"] },
-  "ve-nike": {
-    title: "Về Nike",
+  "contact-us": { title: "Contact Us", paragraphs: ["Email: support@nike.local"] },
+  "about-nike": {
+    title: "About Nike",
     paragraphs: [
-      "Đây là dự án học tập mô phỏng nike.com/vn, chỉ chạy local, không kinh doanh. Tên, logo, hình ảnh và mô tả sản phẩm thuộc về Nike, Inc."
+      "This is a student project replicating nike.com/vn. It runs locally only and does not sell anything. Nike names, logos, images and product descriptions belong to Nike, Inc."
     ]
   },
-  "tin-tuc": { title: "Tin tức", paragraphs: PENDING },
-  "tuyen-dung": { title: "Tuyển dụng", paragraphs: PENDING },
-  "dieu-khoan-ban-hang": { title: "Điều khoản bán hàng", paragraphs: PENDING },
-  "dieu-khoan-su-dung": { title: "Điều khoản sử dụng", paragraphs: PENDING },
-  "chinh-sach-bao-mat": { title: "Chính sách bảo mật", paragraphs: PENDING }
+  news: { title: "News", paragraphs: PENDING },
+  careers: { title: "Careers", paragraphs: PENDING },
+  "terms-of-sale": { title: "Terms of Sale", paragraphs: PENDING },
+  "terms-of-use": { title: "Terms of Use", paragraphs: PENDING },
+  "privacy-policy": { title: "Privacy Policy", paragraphs: PENDING }
 } satisfies Record<string, InfoPageContent>;
 
 export type InfoSlug = keyof typeof INFO_PAGES;
@@ -56,12 +56,12 @@ export const isInfoSlug = (slug: string): slug is InfoSlug => Object.hasOwn(INFO
 
 /** Nhóm link footer (§6.5). */
 export const FOOTER_GROUPS: { title: string; links: InfoSlug[] }[] = [
-  { title: "Tài nguyên", links: ["tim-cua-hang", "thanh-vien", "gop-y"] },
+  { title: "Resources", links: ["find-a-store", "membership", "feedback"] },
   {
-    title: "Trợ giúp",
-    links: ["tro-giup", "tra-cuu-don-hang", "giao-hang", "doi-tra", "phuong-thuc-thanh-toan", "lien-he"]
+    title: "Help",
+    links: ["help", "order-status", "delivery", "returns", "payment-options", "contact-us"]
   },
-  { title: "Công ty", links: ["ve-nike", "tin-tuc", "tuyen-dung"] }
+  { title: "Company", links: ["about-nike", "news", "careers"] }
 ];
 
-export const LEGAL_LINKS: InfoSlug[] = ["dieu-khoan-ban-hang", "dieu-khoan-su-dung", "chinh-sach-bao-mat"];
+export const LEGAL_LINKS: InfoSlug[] = ["terms-of-sale", "terms-of-use", "privacy-policy"];

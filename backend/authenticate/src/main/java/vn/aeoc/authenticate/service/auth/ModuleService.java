@@ -70,7 +70,7 @@ public class ModuleService extends BaseService<ModuleRepository, Module, Integer
 
     private void checkDuplicateCode(String code, Integer excludeId) {
         if (code != null && repository.existsByCode(code, excludeId)) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Mã module đã tồn tại");
+            throw new AppException(ErrorCode.BAD_REQUEST, "Module code already exists");
         }
     }
 

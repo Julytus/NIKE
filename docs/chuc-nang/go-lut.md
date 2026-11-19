@@ -21,9 +21,9 @@ Sau lát này hệ thống chỉ còn **nền dùng chung**: đăng nhập / là
 | Tác nhân | Sau lát này |
 |---|---|
 | Khách vãng lai | Xem trang tạm `/`, mở hộp thoại "Đăng nhập" / "Đăng ký" |
-| Khách hàng (`free@downbeat.local`) | Đăng nhập; menu tài khoản chỉ còn tên, email và "Đăng xuất" |
-| Quản trị (`admin@downbeat.local`) | `/admin`: trang chào và nhóm Hệ thống (Chức vụ, Phân quyền, Tài nguyên, Module) |
-| Không quyền (`noaccess@downbeat.local`) | `/admin` chỉ thấy trang chào, sidebar không có mục chức năng |
+| Khách hàng (`free@nike.local`) | Đăng nhập; menu tài khoản chỉ còn tên, email và "Đăng xuất" |
+| Quản trị (`admin@nike.local`) | `/admin`: trang chào và nhóm Hệ thống (Chức vụ, Phân quyền, Tài nguyên, Module) |
+| Không quyền (`noaccess@nike.local`) | `/admin` chỉ thấy trang chào, sidebar không có mục chức năng |
 
 ## 3. Cơ sở dữ liệu
 
@@ -117,7 +117,7 @@ Số vòng sửa: backend 0, frontend 1 (xem mục 7).
 ## 7. Điểm lệch plan và việc còn lại
 
 - Test nghiệm thu tách hai file thay vì một (lý do ở mục 6).
-- E2E lần 1 đỏ 5 ca, đều do frontend: title vẫn là "DownBeat" (thiếu `HeadContent`); layout gốc bọc mọi trang trong `<main>` làm header / footer mất landmark (đổi thành `div#app-scroll`); route admin cũ rơi vào trang Not Found mặc định của router (thêm `NotFoundPage` dùng chung và `notFoundComponent` cho `/admin`). Không sửa spec.
-- Ảnh / video LUT không còn dùng trong `frontend/public/` (`home.mp4`, `hero-wave-*.webp`, `downbeat.png`, `brand/`) và favicon DownBeat để nguyên cho lát `giao-dien-nike`.
+- E2E lần 1 đỏ 5 ca, đều do frontend: title vẫn là "nike" (thiếu `HeadContent`); layout gốc bọc mọi trang trong `<main>` làm header / footer mất landmark (đổi thành `div#app-scroll`); route admin cũ rơi vào trang Not Found mặc định của router (thêm `NotFoundPage` dùng chung và `notFoundComponent` cho `/admin`). Không sửa spec.
+- Ảnh / video LUT không còn dùng trong `frontend/public/` (`home.mp4`, `hero-wave-*.webp`, `nike.png`, `brand/`) và favicon nike để nguyên cho lát `giao-dien-nike`.
 - Hai unit test backend (`PayosSignatureTest`, `ApplicationContextTest`) nằm trong `backend/**/src/test/`, vốn bị `.gitignore` bỏ qua nên chỉ có trên máy phát triển, không vào commit.
 - Tài liệu cửa hàng LUT cũ chuyển vào [docs/archive/lut/](../archive/lut/README.md).

@@ -39,7 +39,7 @@ public class AuthController extends BaseController {
             // Tắt mặc định: token Google hiện không được kiểm tra audience (client id) => app khác
             // có access token của người dùng cũng đăng nhập được. Chỉ bật sau khi bổ sung kiểm tra đó.
             if (!Boolean.TRUE.equals(systemProperties.getEnabledGoogleLogin())) {
-                throw new AppException(ErrorCode.BAD_REQUEST, "Đăng nhập bằng Google chưa được bật");
+                throw new AppException(ErrorCode.BAD_REQUEST, "Google sign-in is not enabled");
             }
             User userDb = validateGooleLogin(userService.authByGoogle(user.getToken()));
             checkLoginUser(userDb);
@@ -114,7 +114,7 @@ public class AuthController extends BaseController {
     @PostMapping("/auth/logout")
     public ResponseEntity<ApiResponse<String>> logout(@RequestBody RefreshTokenRequest request) {
         userService.logout(request.getRefreshToken());
-        return ResponseEntity.ok(ApiResponse.ok("Đăng xuất thành công"));
+        return ResponseEntity.ok(ApiResponse.ok("Signed out successfully"));
     }
 
 }

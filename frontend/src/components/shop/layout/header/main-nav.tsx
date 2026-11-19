@@ -59,7 +59,7 @@ export function MainNav({
         if (!wrapper.current?.contains(e.relatedTarget as Node | null)) close();
       }}
     >
-      <nav aria-label="Danh mục chính" className="h-full">
+      <nav aria-label="Main menu" className="h-full">
         <ul className="flex h-full items-center">
           {NAV_ITEMS.map((item, i) => (
             <li key={item.label} className="h-full">
@@ -72,7 +72,7 @@ export function MainNav({
                   onOpenChange(i);
                 }}
                 onClick={close}
-                className="group flex h-full items-center px-3 text-base font-medium outline-none"
+                className="group flex h-full items-center px-3 text-base font-semibold outline-none"
               >
                 <span
                   className={cn(

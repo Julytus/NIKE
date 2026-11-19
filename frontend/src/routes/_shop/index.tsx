@@ -14,11 +14,14 @@ export const Route = createFileRoute("/_shop/")({
 
 function HomePage() {
   return (
-    <div className="flex flex-col gap-12 px-6 pt-6 pb-16 lg:gap-[84px] lg:px-12">
+    <div className="flex flex-col gap-12 pb-16 lg:gap-[84px]">
+      {/* Hero tràn hết chiều ngang như nike.com; các khối sau có lề 24px / 48px */}
       <HomeHero />
-      <NewArrivalsSection />
-      <JordanFeature />
-      <CategorySection />
+      <div className="flex flex-col gap-12 px-6 lg:gap-[84px] lg:px-12">
+        <NewArrivalsSection />
+        <JordanFeature />
+        <CategorySection />
+      </div>
     </div>
   );
 }

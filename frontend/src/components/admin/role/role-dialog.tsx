@@ -11,7 +11,7 @@ import { toFieldErrors } from "@/lib/utils/form-errors";
 
 // `role.name` varchar(50) NOT NULL, UNIQUE (trùng tên do backend báo).
 const roleSchema = z.object({
-  name: z.string().trim().min(1, "Vui lòng nhập tên chức vụ").max(50, "Tên chức vụ tối đa 50 ký tự")
+  name: z.string().trim().min(1, "Please enter a role name").max(50, "Role name must be at most 50 characters")
 });
 
 export function RoleFormDialog({
@@ -59,16 +59,16 @@ export function RoleFormDialog({
     <FormDialog
       open={open}
       onOpenChange={onOpenChange}
-      title={role ? "Chỉnh sửa chức vụ" : "Tạo mới chức vụ"}
+      title={role ? "Edit Role" : "Create Role"}
       featured={
-        role ? "Cập nhật thông tin chức vụ" : "Tạo chức vụ mới để gán phân quyền cho người dùng"
+        role ? "Update role details" : "Create a new role to grant permissions to users"
       }
       onSubmit={handleSubmit}
-      submitLabel={role ? "Cập nhật" : "Tạo mới"}
+      submitLabel={role ? "Update" : "Create"}
       isLoading={isLoading}
     >
       <div className="space-y-2">
-        <Label htmlFor="role-name">Tên chức vụ</Label>
+        <Label htmlFor="role-name">Role name</Label>
         <Input
           id="role-name"
           name="name"
@@ -81,9 +81,9 @@ export function RoleFormDialog({
 
       <div className="flex items-center justify-between rounded-lg border p-3">
         <div className="space-y-0.5">
-          <Label htmlFor="role-is-default">Chức vụ mặc định</Label>
+          <Label htmlFor="role-is-default">Default role</Label>
           <p className="text-muted-foreground text-xs">
-            Gán tự động cho tài khoản mới đăng ký (chỉ một chức vụ được đặt mặc định)
+            Automatically assigned to newly registered accounts (only one role can be default)
           </p>
         </div>
         <Switch id="role-is-default" checked={isDefault} onCheckedChange={setIsDefault} />
@@ -91,9 +91,9 @@ export function RoleFormDialog({
 
       <div className="flex items-center justify-between rounded-lg border p-3">
         <div className="space-y-0.5">
-          <Label htmlFor="role-is-operator">Toàn quyền (Operator)</Label>
+          <Label htmlFor="role-is-operator">Full access (Operator)</Label>
           <p className="text-muted-foreground text-xs">
-            Bỏ qua kiểm tra phân quyền theo tài nguyên — chỉ bật cho chức vụ quản trị cấp cao nhất
+            Skips resource permission checks — enable only for the top admin role
           </p>
         </div>
         <Switch id="role-is-operator" checked={isOperator} onCheckedChange={setIsOperator} />

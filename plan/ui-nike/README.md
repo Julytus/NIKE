@@ -1,7 +1,8 @@
 # Đặc tả UI tham chiếu nike.com/vn
 
 Rút từ video người dùng quay ngày 18/11/2026 (1920×940, desktop). Ảnh trong thư mục này là khung hình gốc; worker frontend (agy) **phải mở ảnh tương ứng** khi làm từng màn hình.
-Chữ giao diện dịch sang tiếng Việt (D6 ở [../thiet-ke-giay.md](../thiet-ke-giay.md)); tên / mô tả sản phẩm giữ tiếng Anh. Tiền `5.279.000 ₫`.
+Chữ giao diện **tiếng Anh** như nike.com (D6 ở [../thiet-ke-giay.md](../thiet-ke-giay.md), đổi 18/11/2026); chỉ tiền là VNĐ `5.279.000 ₫`.
+**Lưu ý:** chữ trong ngoặc kép ở file này ("Mới về", "Bán chạy"…) là **nghĩa tiếng Việt** để mô tả; chuỗi tiếng Anh hiển thị thật được chốt ở §6 plan của từng lát (vd [../tieng-anh-cua-hang.md](../tieng-anh-cua-hang.md) §6).
 
 ## Thông số chung
 

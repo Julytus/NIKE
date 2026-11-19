@@ -11,9 +11,9 @@ export function AdminLoading() {
           </div>
           <div className="space-y-2 text-center">
             <h2 className="text-foreground text-2xl font-bold tracking-tight">
-              Đang tải bảng điều khiển
+              Loading dashboard
             </h2>
-            <p className="text-muted-foreground">Vui lòng đợi trong giây lát...</p>
+            <p className="text-muted-foreground">Please wait a moment...</p>
           </div>
         </CardContent>
       </Card>

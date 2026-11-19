@@ -14,14 +14,14 @@ Sau lát 1.1 hệ thống chỉ còn nền đăng nhập và phân quyền. Lát
 | `products.json` (31 sản phẩm chọn tay từ nike.com/vn) và 155 ảnh webp 1000 px trong repo | API công khai danh sách / chi tiết giày |
 | `ShoeSeedService`: nạp DB khi trống, đẩy ảnh còn thiếu lên MinIO, `reset`, `summary` | API quản trị sản phẩm `/product/*` (`quan-ly-giay`) |
 | `POST /test-support/reset`, `GET /test-support/summary` (profile `local` / `test`, chỉ operator) | Giao diện mới |
-| Hai tài khoản khách `khach1@`, `khach2@downbeat.local` | Reset giỏ / đơn / yêu thích, dọn tài khoản `auto+…` |
+| Hai tài khoản khách `khach1@`, `khach2@nike.local` | Reset giỏ / đơn / yêu thích, dọn tài khoản `auto+…` |
 | `automation/`: `TestSupportApi`, `data/seed-products.js`, `global-setup.js` gọi reset | |
 
 ## 2. Tác nhân và phân quyền
 
 | Tác nhân | Quyền | Ghi chú |
 |---|---|---|
-| Quản trị (`admin@downbeat.local`, operator) | Gọi `test-support/reset`, `test-support/summary` | Controller kiểm `checkPermission(…, "/test-support/", …)`; URI này không có dòng `resource` nên chỉ operator (hoặc API key) qua được |
+| Quản trị (`admin@nike.local`, operator) | Gọi `test-support/reset`, `test-support/summary` | Controller kiểm `checkPermission(…, "/test-support/", …)`; URI này không có dòng `resource` nên chỉ operator (hoặc API key) qua được |
 | `noaccess@`, khách (`free@`, `khach1@`, `khach2@`) | Không | 403 |
 | Chưa đăng nhập / token sai | Không | 401 |
 | Resource `PRODUCT` (module `CATALOG` "Cửa hàng") | VIEW, ADD, UPDATE, DELETE | Chỉ tạo dòng để lát `quan-ly-giay` dùng; hiện ở trang Tài nguyên và Phân quyền |
@@ -196,4 +196,4 @@ Số vòng sửa: backend 0, frontend 0. Phiên backend có một lần tự rev
 - Dòng `backend/**/src/test/` trong `.gitignore` được bỏ để JUnit (kể cả `ApplicationContextTest`, `PayosSignatureTest` còn nằm ngoài git từ lát 1.1) vào repo.
 - Plan §8 ghi nhầm "TC-14, TC-15" cho phần giao diện; thực tế là TC-13, TC-14.
 - Số size, size hết hàng, tổng tồn ở ví dụ trong plan chỉ là minh hoạ; số thật ghi ở mục 5.
-- Reset chưa xoá tài khoản `auto+…@downbeat.local` do test đăng ký (tránh làm test chập chờn khi nhiều worker); các lát sau mở rộng `reset` khi thêm bảng tham chiếu `product` / `product_size`, xoá bảng con trước (ghi ở `backend/AGENTS.md`).
+- Reset chưa xoá tài khoản `auto+…@nike.local` do test đăng ký (tránh làm test chập chờn khi nhiều worker); các lát sau mở rộng `reset` khi thêm bảng tham chiếu `product` / `product_size`, xoá bảng con trước (ghi ở `backend/AGENTS.md`).

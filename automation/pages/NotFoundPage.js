@@ -5,6 +5,6 @@ export class NotFoundPage extends BasePage {
   /** @param {import('@playwright/test').Page} page */
   constructor(page) {
     super(page);
-    this.message = page.getByText('Trang bạn đang tìm kiếm không tồn tại.', { exact: true });
+    this.message = page.getByText("We can't find the page you're looking for.", { exact: true });
   }
 }

@@ -13,7 +13,7 @@ Route `/` (trang chủ landing page cửa hàng), thư mục mới `src/componen
 5. `src/components/shop/home/home-data.ts`: `picsumId(id, w, h)` → `https://picsum.photos/id/<id>/<w>/<h>` + toàn bộ nội dung tĩnh §6 với **đúng id ảnh đã ghi** (không tự đổi ảnh, không dùng `picsum(seed)`).
 6. Mỗi khối một file: `hero-section.tsx`, `creators-section.tsx`, `values-band.tsx`, `authors-section.tsx`, `collage-section.tsx`, `prompt-search-section.tsx`, `features-carousel.tsx`, `license-band.tsx`, `plans-section.tsx`, `story-cta.tsx`, `home-faq.tsx`.
 7. `home-header.tsx` (menu từ `SHOP_NAV_GROUPS[0]`, ẩn/hiện bằng `IntersectionObserver` quan sát nút "Khám phá kho LUT" của hero, `ThemeToggleButton`, `HeaderActions`, `MobileNav` < lg) và `home-page.tsx` (header + 11 khối + `ShopFooter` trong `ShopShell`).
-8. `src/routes/index.tsx`: bỏ `redirect`, render `HomePage`, `document.title` = "DownBeat | Kho LUT chỉnh màu cho nhà sáng tạo".
+8. `src/routes/index.tsx`: bỏ `redirect`, render `HomePage`, `document.title` = "nike | Kho LUT chỉnh màu cho nhà sáng tạo".
 9. `src/components/shop/layout/shop-logo.tsx`: `to="/"`.
 
 ## Ràng buộc (test nghiệm thu dựa vào các điểm này)

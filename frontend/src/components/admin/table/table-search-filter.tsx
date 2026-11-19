@@ -123,7 +123,7 @@ export function TableSearchFilter({ fields, values, onChange }: TableSearchFilte
         </div>
       ))}
       <Button type="button" variant="outline" onClick={clearFilters}>
-        Xóa lọc
+        Clear Filters
       </Button>
     </div>
   );

@@ -18,9 +18,11 @@ const RootLayout = () => {
   return (
     <>
       <HeadContent />
-      <ThemeProvider defaultTheme="light" storageKey="downbeat-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="nike-ui-theme">
         <div
           id="app-scroll"
+          // Firefox cho vùng cuộn nhận Tab → Tab đầu tiên không tới link "Skip to main content"
+          tabIndex={-1}
           className="bg-background text-foreground relative flex h-screen w-full flex-col overflow-y-scroll"
         >
           <Outlet />

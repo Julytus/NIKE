@@ -5,7 +5,7 @@ import { ShopButton } from "./shop-button";
 /** Khung thông báo lỗi tải trang bên trong cửa hàng (cùng khung với ShopNotFound) */
 export function ShopError({
   title,
-  description = "Kiểm tra kết nối rồi thử lại.",
+  description = "Check your connection and try again.",
   onRetry
 }: {
   title: string;
@@ -26,7 +26,7 @@ export function ShopError({
           onRetry?.();
         }}
       >
-        Thử lại
+        Try Again
       </ShopButton>
     </div>
   );

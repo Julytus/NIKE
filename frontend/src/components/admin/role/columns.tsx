@@ -40,7 +40,7 @@ export const createRoleColumns = ({
                   (table.getIsSomePageRowsSelected() && "indeterminate")
                 }
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Chọn tất cả"
+                aria-label="Select all"
               />
             </div>
           ),
@@ -49,7 +49,7 @@ export const createRoleColumns = ({
               <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label={`Chọn ${row.original.name}`}
+                aria-label={`Select ${row.original.name}`}
               />
             </div>
           ),
@@ -60,19 +60,19 @@ export const createRoleColumns = ({
     : []),
   {
     accessorKey: "name",
-    header: "Chức vụ",
+    header: "Role",
     cell: ({ row }) => (
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-foreground font-bold tracking-tight">{row.original.name}</span>
-        {row.original.isDefault === 1 && <Badge variant="secondary">Mặc định</Badge>}
-        {row.original.isOperator === 1 && <Badge variant="default">Toàn quyền</Badge>}
+        {row.original.isDefault === 1 && <Badge variant="secondary">Default</Badge>}
+        {row.original.isOperator === 1 && <Badge variant="default">Full Access</Badge>}
       </div>
     ),
     enableHiding: false
   },
   {
     id: "rowActions",
-    header: () => <span className="sr-only">Thao tác</span>,
+    header: () => <span className="sr-only">Actions</span>,
     enableHiding: false,
     cell: ({ row }) =>
       canPermission || canUpdate || canDelete ? (
@@ -83,7 +83,7 @@ export const createRoleColumns = ({
                 variant="ghost"
                 className="text-muted-foreground data-[state=open]:bg-muted flex size-8"
                 size="icon"
-                aria-label={`Thao tác ${row.original.name}`}
+                aria-label={`Actions ${row.original.name}`}
               >
                 <MoreVertical className="size-4" />
               </Button>
@@ -91,11 +91,11 @@ export const createRoleColumns = ({
             <DropdownMenuContent align="end" className="w-36">
               {canPermission && (
                 <DropdownMenuItem onClick={() => onPermission(row.original)}>
-                  Phân quyền
+                  Permissions
                 </DropdownMenuItem>
               )}
               {canUpdate && (
-                <DropdownMenuItem onClick={() => onEdit(row.original)}>Chỉnh sửa</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit(row.original)}>Edit</DropdownMenuItem>
               )}
               {canDelete && (
                 <>
@@ -104,7 +104,7 @@ export const createRoleColumns = ({
                     className="text-destructive"
                     onClick={() => onShowDeleteConfirm(row.original.id, row.original.name)}
                   >
-                    Xóa
+                    Delete
                   </DropdownMenuItem>
                 </>
               )}

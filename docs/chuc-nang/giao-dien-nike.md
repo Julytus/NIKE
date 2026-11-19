@@ -99,10 +99,10 @@ Mỗi phần tử sản phẩm là "thẻ sản phẩm" (`id, slug, styleCode, n
 
 ## 6. Giao diện
 
-**Khung cửa hàng.** Route layout `_shop` bọc mọi trang cửa hàng: header (dải trên chỉ desktop + thanh chính dính đầu vùng cuộn), dải thông báo, `<main id="shop-main">`, footer. Token màu Nike thay token LUT (`--sh-fg #111`, `--sh-muted #707072`, `--sh-surface #f5f5f5`, nhãn đỏ `#d33918`…), chữ thường dùng Helvetica, tiêu đề hero dùng Oswald 600 tự host qua `@fontsource/oswald`. Khu cửa hàng luôn sáng: `ShopShell` gỡ class `dark` khỏi `<html>` khi vào và trả lại khi rời.
+**Khung cửa hàng.** Route layout `_shop` bọc mọi trang cửa hàng: header (dải trên chỉ desktop + thanh chính dính đầu vùng cuộn), dải thông báo, `<main id="shop-main">`, footer. Token màu Nike thay token LUT (`--sh-fg #111`, `--sh-muted #707072`, `--sh-surface #f5f5f5`, nhãn đỏ `#d33918`…), chữ thường dùng Inter (gần Helvetica Now Text của nike.com nhất trong các font miễn phí), tiêu đề lớn dùng Anton (gần Nike Futura Condensed), cả hai tự host qua Fontsource; không đưa font bản quyền của Nike vào repo. Khu cửa hàng luôn sáng: `ShopShell` gỡ class `dark` khỏi `<html>` khi vào và trả lại khi rời.
 
 ![Trang chủ desktop](img/giao-dien-nike/01-trang-chu.png)
-Trang chủ ở 1440 px: dải trên có icon Jumpman, "Tìm cửa hàng", "Trợ giúp", "Tham gia", "Đăng nhập"; thanh chính có 5 mục menu và ô "Tìm kiếm"; dải thông báo ghi rõ ngưỡng miễn phí giao hàng 5.000.000 ₫; bên dưới là hero "Bước vào mùa mới" (TC-10, TC-13).
+Trang chủ ở 1440 px, so trực tiếp với nike.com/vn: hero tràn hết chiều ngang (ảnh campaign từ nike.com), chữ trắng và nút trắng đè lên ảnh; dải trên có icon Jumpman, "Tìm cửa hàng", "Trợ giúp", "Tham gia", "Đăng nhập"; thanh chính có 5 mục menu và ô "Tìm kiếm"; dải thông báo ghi rõ ngưỡng miễn phí giao hàng 5.000.000 ₫; bên dưới là hero "Bước vào mùa mới" (TC-10, TC-13).
 
 ![Mega menu](img/giao-dien-nike/02-mega-menu.png)
 Mega menu khi rê chuột vào một mục: ba cột "Danh mục" (lấy từ API), "Nổi bật", "Theo giá", phần trang bên dưới phủ đen 20%; mọi link gắn tham số phạm vi của mục (TC-14).
@@ -119,13 +119,13 @@ Trang chủ trên điện thoại (Pixel 7): thanh chính chỉ còn swoosh và 
 ![Menu trượt mobile](img/giao-dien-nike/06-menu-truot-mobile.png)
 Menu trượt sau khi bấm "Nam": nút "Tất cả" để quay lại, tiêu đề "Nam", link "Xem tất cả" và ba nhóm link giống mega menu (TC-28).
 
-**Trang chủ** gồm 4 khối: hero (ảnh tĩnh, h1 "Bước vào mùa mới", nút "Mua ngay" → `/w?nhan=moi-ve`, "Xem tất cả giày" → `/w`); "Mới về" là `ProductRail` cuộn ngang có scroll-snap và hai nút ‹ › bị khoá ở đầu / cuối dải; khối Jordan ("Bay cao cùng Jordan", nút "Mua Jordan" → `/w/jordan`); "Mua theo danh mục" lưới 2 / 3 / 5 cột, mỗi ô ghi "<n> sản phẩm".
+**Trang chủ** gồm 4 khối: hero (ảnh tràn ngang, chữ đè lên ảnh, h1 "Bước vào mùa mới", nút "Mua ngay" → `/w?nhan=moi-ve`, "Xem tất cả giày" → `/w`); "Mới về" là `ProductRail` cuộn ngang có scroll-snap và hai nút ‹ › bị khoá ở đầu / cuối dải; khối Jordan ("Bay cao cùng Jordan", nút "Mua Jordan" → `/w/jordan`); "Mua theo danh mục" lưới 2 / 3 / 5 cột, mỗi ô ghi "<n> sản phẩm".
 
 **`ProductCard`** (dùng lại ở lát 1.4) hiện một nhãn đỏ theo thứ tự ưu tiên "Hết hàng" → "Mới về" → "Bán chạy" → "Giảm giá"; giá qua `formatVnd`, sản phẩm đang giảm hiện giá giảm và giá gốc gạch ngang trong thẻ `<s>`.
 
 **Hợp đồng URL `/w`** chốt ở [`lib/shop/catalog-search.ts`](../../frontend/src/lib/shop/catalog-search.ts) vì link mega menu cần nó: khoá `gioiTinh`, `treEm`, `gia` (`duoi-1tr`, `1-2tr`, `2-5tr`, `tu-5tr`), `giamGia`, `nhan` (`moi-ve`, `ban-chay`), `sapXep`, `q`; giá trị sai bị bỏ. Trang `/w`, `/w/$danhMuc`, `/t/$slug`, `/yeu-thich`, `/gio-hang` hiện là trang tạm "Sắp ra mắt", mỗi lát sau thay nội dung route của mình.
 
-Dọn dẹp: xoá `home.mp4` (51 MB), ảnh hero / logo DownBeat, `favicon.ico`; `favicon.svg` thành swoosh đen; manifest đổi tên "Nike"; mục "Khu cửa hàng" trong `frontend/AGENTS.md` được viết lại.
+Dọn dẹp: xoá `home.mp4` (51 MB), ảnh hero / logo nike, `favicon.ico`; `favicon.svg` thành swoosh đen; manifest đổi tên "Nike"; mục "Khu cửa hàng" trong `frontend/AGENTS.md` được viết lại.
 
 ## 7. Kiểm thử
 
@@ -184,7 +184,7 @@ Số vòng sửa: backend 0, frontend 1 (TC-17: Radix Dialog không tự trả f
 - `components/ui/sheet.tsx` thêm prop `showCloseButton` để nút đóng menu trượt có tên "Đóng menu"; `NotFoundPage` nhận prop `home` để trang 404 hiện trong khung cửa hàng.
 - `__root.tsx`: về đầu trang khi đổi đường dẫn bằng cách cuộn `#app-scroll` (trước đây gọi `window.scrollTo`, không có tác dụng vì vùng cuộn là `#app-scroll`).
 - Menu trượt mở hộp thoại "Tham gia" / "Đăng nhập" sau khi ngăn trượt đóng hẳn, để hai lớp modal không tranh focus.
-- Ảnh tĩnh: hero dùng `nike-alphafly-4/4.webp`, khối Jordan dùng `air-jordan-1-low-se-magic-ball/1.webp` (chép từ ảnh seed, không lấy thêm ảnh từ mạng).
+- Ảnh tĩnh: ban đầu chép từ ảnh seed; theo góp ý của người dùng (ảnh sản phẩm làm hero trông xấu) đổi sang ảnh campaign tải từ static.nike.com cho hero và khối Jordan (chỉ học tập, chạy local). Font Oswald đổi sang Anton + Inter sau khi so với nike.com.
 - `go-lut.spec.js` TC-12 → TC-15 được sửa theo header mới (nút "Đăng ký" thành "Tham gia", trang tạm thành trang chủ mới); đây là spec sai so với plan mới, không phải sửa để test xanh.
 - Ảnh mobile (05, 06) chụp bằng script với thiết bị Pixel 7 (412 px) vì tiện ích `docShot` chỉ chụp ở project `chromium`.
 - Còn lại: so tay chi tiết từng số đo với ảnh tham chiếu `plan/ui-nike/` (1440 px / 390 px) chưa làm; số lượng trên icon giỏ, trang `/w`, `/t/$slug` thật thuộc các lát sau.

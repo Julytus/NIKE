@@ -8,9 +8,10 @@ import { expect, test } from '../../fixtures/index.js';
  * Kết quả mong đợi tính từ `products.json` (data/seed-products.js), không ghi cứng số.
  */
 
-const FORBIDDEN = 'Bạn không có quyền thực hiện thao tác này! Path: /test-support/';
-const NOT_LOGGED_IN = 'Chưa đăng nhập';
-const INVALID_TOKEN = 'Token không hợp lệ hoặc sai chữ ký';
+// Message / tên dữ liệu đổi sang tiếng Anh ở lát tieng-anh-cua-hang (plan §5.4, §4).
+const FORBIDDEN = "You don't have permission to perform this action. Path: /test-support/";
+const NOT_LOGGED_IN = 'Please sign in';
+const INVALID_TOKEN = 'Invalid or tampered token';
 
 /**
  * Bỏ các khoá không so được với `expectedSummary()`.
@@ -50,10 +51,10 @@ test.describe('API test-support: summary', () => {
 
     expect(summary.byCategory).toEqual({
       lifestyle: 12,
-      'chay-bo': 6,
-      'bong-ro': 5,
+      running: 6,
+      basketball: 5,
       jordan: 5,
-      'bong-da': 2,
+      football: 2,
     });
     expect(summary.byGender).toEqual({ MEN: 12, WOMEN: 10, UNISEX: 4, BOYS: 2, GIRLS: 2 });
     expect(summary).toMatchObject({ onSale: 6, justIn: 8, bestseller: 5 });
@@ -204,13 +205,13 @@ test.describe('Dữ liệu đi kèm: phân quyền và tài khoản khách', () 
 
     const catalog = modules.items.find((/** @type {{ code: string }} */ m) => m.code === 'CATALOG');
     expect(catalog, 'module CATALOG').toBeTruthy();
-    expect(catalog.name).toBe('Cửa hàng');
+    expect(catalog.name).toBe('Store');
 
     const product = resources.items.find(
       (/** @type {{ code: string }} */ r) => r.code === 'PRODUCT'
     );
     expect(product, 'resource PRODUCT').toBeTruthy();
-    expect(product).toMatchObject({ name: 'Quản lý sản phẩm', uri: '/product/' });
+    expect(product).toMatchObject({ name: 'Product Management', uri: '/product/' });
     expect(product.moduleId).toBe(catalog.id);
     expect(JSON.parse(product.actions)).toEqual(
       expect.arrayContaining(['VIEW', 'ADD', 'UPDATE', 'DELETE'])
@@ -226,8 +227,8 @@ test.describe('Dữ liệu đi kèm: phân quyền và tài khoản khách', () 
 
   test('TC-10 tài khoản khách test', { tag: '@smoke' }, async ({ api }) => {
     for (const [role, name] of /** @type {const} */ ([
-      ['khach1', 'Khách Một'],
-      ['khach2', 'Khách Hai'],
+      ['khach1', 'Customer One'],
+      ['khach2', 'Customer Two'],
     ])) {
       await test.step(accounts[role].email, async () => {
         const login = await api.auth.loginOk(accounts[role]);
@@ -237,7 +238,7 @@ test.describe('Dữ liệu đi kèm: phân quyền và tài khoản khách', () 
         expect(me).toMatchObject({
           email: accounts[role].email,
           name,
-          roleName: 'Khách hàng',
+          roleName: 'Customer',
           isOperator: 0,
         });
         api.useToken(null);

@@ -8,7 +8,7 @@ import { uniqueEmail } from '../../utils/unique.js';
  */
 
 /** Message của handler `NoResourceFoundException` (giữ nguyên, plan §5.4). */
-const NOT_FOUND = 'Không tìm thấy API';
+const NOT_FOUND = 'API not found';
 
 /**
  * Gọi lần lượt các endpoint `[method, path, body?]` và khẳng định đều 404.
@@ -78,7 +78,7 @@ test.describe('API sau khi gỡ LUT', () => {
     const me = await customer.client.expectOk(await customer.account.me());
 
     expect(me.email).toBe(accounts.customer.email);
-    expect(me.roleName).toBe('Khách hàng');
+    expect(me.roleName).toBe('Customer');
     expect(me).not.toHaveProperty('plan');
     expect(me).not.toHaveProperty('planExpiresAt');
     expect(me).not.toHaveProperty('planAutoRenew');
@@ -98,7 +98,7 @@ test.describe('API sau khi gỡ LUT', () => {
 
     const me = await api.client.expectOk(await api.useToken(registered.token).account.me());
     expect(me.email).toBe(email);
-    expect(me.roleName).toBe('Khách hàng');
+    expect(me.roleName).toBe('Customer');
   });
 
   test('TC-09 đăng nhập, refresh, phân quyền vẫn chạy', { tag: '@smoke' }, async ({ api }) => {
@@ -108,7 +108,7 @@ test.describe('API sau khi gỡ LUT', () => {
     const roles = await api.client.expectOk(
       await api.useToken(refreshed.token).role.list({ limit: 200 })
     );
-    expect(roles.items.map((/** @type {{ name: string }} */ r) => r.name)).toContain('Khách hàng');
+    expect(roles.items.map((/** @type {{ name: string }} */ r) => r.name)).toContain('Customer');
   });
 
   test(

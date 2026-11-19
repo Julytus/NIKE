@@ -36,6 +36,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/test-support/stock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["stock"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/test-support/reset": {
         parameters: {
             query?: never;
@@ -46,6 +62,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["reset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/shop-order/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -180,6 +212,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/cart/public/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["check"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/refresh": {
         parameters: {
             query?: never;
@@ -228,6 +276,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/account/public/check-email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["checkEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/user/info": {
         parameters: {
             query?: never;
@@ -260,6 +324,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/shop-order/get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/role/list": {
         parameters: {
             query?: never;
@@ -283,7 +363,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["get"];
+        get: operations["get_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -315,7 +395,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["get_1"];
+        get: operations["get_2"];
         put?: never;
         post?: never;
         delete?: never;
@@ -340,6 +420,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/product/public/related": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["related"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/product/public/new-arrivals": {
         parameters: {
             query?: never;
@@ -348,6 +444,54 @@ export interface paths {
             cookie?: never;
         };
         get: operations["newArrivals"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/product/public/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/product/public/get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/product/public/facets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["facets"];
         put?: never;
         post?: never;
         delete?: never;
@@ -411,7 +555,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["list_2"];
+        get: operations["list_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -427,7 +571,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["get_2"];
+        get: operations["get_4"];
         put?: never;
         post?: never;
         delete?: never;
@@ -504,13 +648,6 @@ export interface components {
             /** Format: int32 */
             userId?: number;
         };
-        ApiResponseSeedSummary: {
-            /** Format: int32 */
-            code?: number;
-            message?: string;
-            result?: components["schemas"]["SeedSummary"];
-            errors?: Record<string, never>;
-        };
         ProductSize: {
             /** Format: int32 */
             id?: number;
@@ -520,6 +657,20 @@ export interface components {
             sizeValue?: number;
             /** Format: int32 */
             stock?: number;
+        };
+        ApiResponseProductSize: {
+            /** Format: int32 */
+            code?: number;
+            message?: string;
+            result?: components["schemas"]["ProductSize"];
+            errors?: Record<string, never>;
+        };
+        ApiResponseSeedSummary: {
+            /** Format: int32 */
+            code?: number;
+            message?: string;
+            result?: components["schemas"]["SeedSummary"];
+            errors?: Record<string, never>;
         };
         Sample: {
             /** Format: int32 */
@@ -561,6 +712,60 @@ export interface components {
             bestseller?: number;
             sample?: components["schemas"]["Sample"];
             resetAt?: string;
+        };
+        ShopOrder: {
+            /** Format: int32 */
+            id?: number;
+            code?: string;
+            /** Format: int32 */
+            userId?: number;
+            receiverName?: string;
+            phone?: string;
+            address?: string;
+            note?: string;
+            /** Format: int32 */
+            itemCount?: number;
+            /** Format: int64 */
+            subtotal?: number;
+            /** Format: int64 */
+            shippingFee?: number;
+            /** Format: int64 */
+            total?: number;
+            paymentMethod?: string;
+            status?: string;
+            /** Format: date-time */
+            createdTime?: string;
+            /** Format: date-time */
+            updatedTime?: string;
+            items?: components["schemas"]["ShopOrderItem"][];
+        };
+        ShopOrderItem: {
+            /** Format: int32 */
+            id?: number;
+            /** Format: int32 */
+            orderId?: number;
+            /** Format: int32 */
+            sizeId?: number;
+            /** Format: int32 */
+            productId?: number;
+            productSlug?: string;
+            productName?: string;
+            productSubtitle?: string;
+            sizeLabel?: string;
+            imageUrl?: string;
+            /** Format: int64 */
+            unitPrice?: number;
+            /** Format: int32 */
+            quantity?: number;
+            /** Format: int64 */
+            lineTotal?: number;
+        };
+        ApiResponseShopOrder: {
+            /** Format: int32 */
+            code?: number;
+            message?: string;
+            result?: components["schemas"]["ShopOrder"];
+            errors?: Record<string, never>;
         };
         Role: {
             /** Format: int32 */
@@ -632,6 +837,56 @@ export interface components {
             result?: components["schemas"]["Module"];
             errors?: Record<string, never>;
         };
+        CartItem: {
+            /** Format: int32 */
+            sizeId?: number;
+            /** Format: int32 */
+            quantity?: number;
+        };
+        ApiResponseCartCheck: {
+            /** Format: int32 */
+            code?: number;
+            message?: string;
+            result?: components["schemas"]["CartCheck"];
+            errors?: Record<string, never>;
+        };
+        CartCheck: {
+            items?: components["schemas"]["CartLine"][];
+            /** Format: int32 */
+            itemCount?: number;
+            /** Format: int64 */
+            subtotal?: number;
+            /** Format: int64 */
+            shippingFee?: number;
+            /** Format: int64 */
+            total?: number;
+        };
+        CartLine: {
+            /** Format: int32 */
+            sizeId?: number;
+            /** Format: int32 */
+            quantity?: number;
+            status?: string;
+            /** Format: int32 */
+            availableQuantity?: number;
+            /** Format: int32 */
+            stock?: number;
+            /** Format: int32 */
+            productId?: number;
+            slug?: string;
+            name?: string;
+            subtitle?: string;
+            imageUrl?: string;
+            sizeLabel?: string;
+            /** Format: int64 */
+            price?: number;
+            /** Format: int64 */
+            salePrice?: number;
+            /** Format: int64 */
+            unitPrice?: number;
+            /** Format: int64 */
+            lineTotal?: number;
+        };
         RefreshTokenRequest: {
             refreshToken?: string;
         };
@@ -641,6 +896,17 @@ export interface components {
             message?: string;
             result?: string;
             errors?: Record<string, never>;
+        };
+        ApiResponseCheckEmailResponse: {
+            /** Format: int32 */
+            code?: number;
+            message?: string;
+            result?: components["schemas"]["CheckEmailResponse"];
+            errors?: Record<string, never>;
+        };
+        CheckEmailResponse: {
+            email?: string;
+            exists?: boolean;
         };
         ApiResponsePageRole: {
             /** Format: int32 */
@@ -708,6 +974,17 @@ export interface components {
             imageUrl?: string;
             /** Format: int32 */
             totalStock?: number;
+            images?: components["schemas"]["ProductImage"][];
+            sizes?: components["schemas"]["ProductSize"][];
+        };
+        ProductImage: {
+            /** Format: int32 */
+            id?: number;
+            /** Format: int32 */
+            productId?: number;
+            url?: string;
+            /** Format: int32 */
+            sortOrder?: number;
         };
         ApiResponseListProduct: {
             /** Format: int32 */
@@ -715,6 +992,43 @@ export interface components {
             message?: string;
             result?: components["schemas"]["Product"][];
             errors?: Record<string, never>;
+        };
+        ApiResponseProduct: {
+            /** Format: int32 */
+            code?: number;
+            message?: string;
+            result?: components["schemas"]["Product"];
+            errors?: Record<string, never>;
+        };
+        ApiResponseProductFacets: {
+            /** Format: int32 */
+            code?: number;
+            message?: string;
+            result?: components["schemas"]["ProductFacets"];
+            errors?: Record<string, never>;
+        };
+        ProductFacets: {
+            gender?: {
+                [key: string]: number;
+            };
+            kids?: {
+                [key: string]: number;
+            };
+            price?: {
+                [key: string]: number;
+            };
+            /** Format: int32 */
+            sale?: number;
+            badge?: {
+                [key: string]: number;
+            };
+            size?: components["schemas"]["SizeCount"][];
+        };
+        SizeCount: {
+            value?: number;
+            label?: string;
+            /** Format: int32 */
+            count?: number;
         };
         ApiResponseListProductCategory: {
             /** Format: int32 */
@@ -822,6 +1136,30 @@ export interface operations {
             };
         };
     };
+    stock: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductSize"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseProductSize"];
+                };
+            };
+        };
+    };
     reset: {
         parameters: {
             query?: never;
@@ -838,6 +1176,30 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseSeedSummary"];
+                };
+            };
+        };
+    };
+    create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ShopOrder"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseShopOrder"];
                 };
             };
         };
@@ -1030,6 +1392,30 @@ export interface operations {
             };
         };
     };
+    check: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CartItem"][];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCartCheck"];
+                };
+            };
+        };
+    };
     refresh: {
         parameters: {
             query?: never;
@@ -1102,6 +1488,30 @@ export interface operations {
             };
         };
     };
+    checkEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["User"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCheckEmailResponse"];
+                };
+            };
+        };
+    };
     getMyInfo: {
         parameters: {
             query?: never;
@@ -1142,6 +1552,28 @@ export interface operations {
             };
         };
     };
+    get: {
+        parameters: {
+            query: {
+                code: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseShopOrder"];
+                };
+            };
+        };
+    };
     list: {
         parameters: {
             query?: {
@@ -1168,7 +1600,7 @@ export interface operations {
             };
         };
     };
-    get: {
+    get_1: {
         parameters: {
             query: {
                 id: number;
@@ -1218,7 +1650,7 @@ export interface operations {
             };
         };
     };
-    get_1: {
+    get_2: {
         parameters: {
             query: {
                 id: number;
@@ -1262,6 +1694,28 @@ export interface operations {
             };
         };
     };
+    related: {
+        parameters: {
+            query: {
+                slug: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseListProduct"];
+                };
+            };
+        };
+    };
     newArrivals: {
         parameters: {
             query?: never;
@@ -1278,6 +1732,90 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiResponseListProduct"];
+                };
+            };
+        };
+    };
+    list_2: {
+        parameters: {
+            query?: {
+                category?: string;
+                gender?: string;
+                kids?: string;
+                price?: string;
+                sale?: string;
+                badge?: string;
+                size?: string;
+                q?: string;
+                sort?: string;
+                page?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponsePageProduct"];
+                };
+            };
+        };
+    };
+    get_3: {
+        parameters: {
+            query: {
+                slug: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseProduct"];
+                };
+            };
+        };
+    };
+    facets: {
+        parameters: {
+            query?: {
+                category?: string;
+                gender?: string;
+                kids?: string;
+                price?: string;
+                sale?: string;
+                badge?: string;
+                size?: string;
+                q?: string;
+                sort?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseProductFacets"];
                 };
             };
         };
@@ -1344,7 +1882,7 @@ export interface operations {
             };
         };
     };
-    list_2: {
+    list_3: {
         parameters: {
             query?: {
                 keyword?: string;
@@ -1370,7 +1908,7 @@ export interface operations {
             };
         };
     };
-    get_2: {
+    get_4: {
         parameters: {
             query: {
                 id: number;

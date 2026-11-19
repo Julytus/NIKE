@@ -2,8 +2,10 @@
   "maxLength": 50,
   "empty": "",
   "spacesOnly": "   ",
-  "requiredMessage": "Vui lòng nhập tên chức vụ",
-  "tooLongMessage": "Tên chức vụ tối đa 50 ký tự",
+  "requiredMessage": "Please enter a role name",
+  "tooLongMessage": "Role name must be at most 50 characters",
+  "duplicateMessage": "Role name already exists",
+  "testRolePrefix": "QA Role",
   "boundary": [
     { "case": "1 ký tự (biên dưới)", "length": 1, "valid": true },
     { "case": "50 ký tự (biên trên)", "length": 50, "valid": true },

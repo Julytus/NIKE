@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_auth/logout")({
     });
     queryClient.setQueryData(meQueryOptions.queryKey, null as never);
 
-    toast.info("Đăng xuất thành công");
+    toast.info("Signed out successfully");
 
     throw redirect({ to: "/login" });
   },

@@ -88,8 +88,8 @@ export function DataTableAdvanced<TData extends { id: number }>({
   onRefresh,
   onAdd,
   onDeleteSelected,
-  addLabel = "Thêm mới",
-  deleteLabel = "Xóa mục đã chọn",
+  addLabel = "Add New",
+  deleteLabel = "Delete Selected",
   title,
   description,
   filter,
@@ -172,7 +172,7 @@ export function DataTableAdvanced<TData extends { id: number }>({
           {onRefresh && (
             <Button variant="outline" size="sm" onClick={onRefresh} disabled={isLoading}>
               <RefreshCcw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
-              <span className="hidden lg:inline">Làm mới</span>
+              <span className="hidden lg:inline">Refresh</span>
             </Button>
           )}
           {filter && (
@@ -193,15 +193,15 @@ export function DataTableAdvanced<TData extends { id: number }>({
               }}
             >
               <Search className="size-4" />
-              <span>Bộ lọc</span>
+              <span>Filters</span>
             </Button>
           )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <LayoutGrid className="size-4" />
-                <span className="hidden lg:inline">Tùy chỉnh cột</span>
-                <span className="lg:hidden">Cột</span>
+                <span className="hidden lg:inline">Customize Columns</span>
+                <span className="lg:hidden">Columns</span>
                 <ChevronDown className="size-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -303,7 +303,7 @@ export function DataTableAdvanced<TData extends { id: number }>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  Không có dữ liệu.
+                  No results.
                 </TableCell>
               </TableRow>
             )}
@@ -314,7 +314,7 @@ export function DataTableAdvanced<TData extends { id: number }>({
       <div className="flex flex-wrap items-center justify-between gap-4 px-4">
         <div className="flex flex-1 flex-wrap items-center gap-3">
           <span className="text-muted-foreground hidden text-sm lg:inline">
-            {selectedRowsCount} trên {table.getFilteredRowModel().rows.length} hàng được chọn.
+            {selectedRowsCount} of {table.getFilteredRowModel().rows.length} row(s) selected.
           </span>
           {hasSelection &&
             bulkActions &&
@@ -326,7 +326,7 @@ export function DataTableAdvanced<TData extends { id: number }>({
         <div className="flex w-full items-center gap-8 lg:w-fit">
           <div className="hidden items-center gap-2 lg:flex">
             <Label htmlFor="rows-per-page" className="text-sm font-medium">
-              Số hàng mỗi trang
+              Rows per page
             </Label>
             <Select
               value={`${table.getState().pagination.pageSize}`}
@@ -347,7 +347,7 @@ export function DataTableAdvanced<TData extends { id: number }>({
             </Select>
           </div>
           <div className="flex w-fit items-center justify-center text-sm font-medium">
-            Trang {table.getState().pagination.pageIndex + 1} trên {table.getPageCount()}
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
           </div>
           <div className="ml-auto flex items-center gap-2 lg:ml-0">
             <Button
@@ -396,7 +396,7 @@ export function DataTableAdvanced<TData extends { id: number }>({
       {isLoading && (
         <div className="bg-background fixed right-4 bottom-4 z-50 flex items-center rounded-md border p-2 text-xs shadow-lg">
           <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-          Đang tải dữ liệu...
+          Loading data...
         </div>
       )}
     </div>

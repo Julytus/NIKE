@@ -1,46 +1,48 @@
 {
-  "$comment": "Lát giao-dien-nike (plan §6.1, §6.2, §6.5): menu chính, cột Nổi bật / Theo giá của mega menu, link footer + trang thông tin. Test dựng href mong đợi từ file này + expectedCategories().",
+  "$comment": "Lát giao-dien-nike, chuyển ngữ ở lát tieng-anh-cua-hang (plan tieng-anh-cua-hang §6.1, §6.2, §6.5): menu chính, cột Featured / Shop by Price của mega menu, link footer + trang thông tin. Test dựng href mong đợi từ file này + expectedCategories().",
   "navItems": [
-    { "label": "Mới & Nổi bật", "href": "/w?sapXep=moi-nhat", "scope": {} },
-    { "label": "Nam", "href": "/w?gioiTinh=nam", "scope": { "gioiTinh": "nam" } },
-    { "label": "Nữ", "href": "/w?gioiTinh=nu", "scope": { "gioiTinh": "nu" } },
-    {
-      "label": "Trẻ em",
-      "href": "/w?treEm=be-trai,be-gai",
-      "scope": { "treEm": "be-trai,be-gai" }
-    },
-    { "label": "Giảm giá", "href": "/w?giamGia=1", "scope": { "giamGia": "1" } }
+    { "label": "New & Featured", "href": "/w?sort=newest", "scope": {} },
+    { "label": "Men", "href": "/w?gender=men", "scope": { "gender": "men" } },
+    { "label": "Women", "href": "/w?gender=women", "scope": { "gender": "women" } },
+    { "label": "Kids", "href": "/w?kids=boys,girls", "scope": { "kids": "boys,girls" } },
+    { "label": "Sale", "href": "/w?sale=1", "scope": { "sale": "1" } }
   ],
-  "megaColumns": ["Danh mục", "Nổi bật", "Theo giá"],
+  "megaColumns": ["Categories", "Featured", "Shop by Price"],
   "featured": [
-    { "label": "Tất cả giày", "href": "/w" },
-    { "label": "Mới về", "href": "/w?nhan=moi-ve" },
-    { "label": "Bán chạy", "href": "/w?nhan=ban-chay" },
-    { "label": "Giảm giá", "href": "/w?giamGia=1" }
+    { "label": "All Shoes", "href": "/w" },
+    { "label": "Just In", "href": "/w?badge=just-in" },
+    { "label": "Bestsellers", "href": "/w?badge=bestseller" },
+    { "label": "Sale", "href": "/w?sale=1" }
   ],
   "priceRanges": [
-    { "label": "Dưới 1.000.000 ₫", "href": "/w?gia=duoi-1tr" },
-    { "label": "1.000.000 ₫ – 2.000.000 ₫", "href": "/w?gia=1-2tr" },
-    { "label": "2.000.001 ₫ – 4.999.999 ₫", "href": "/w?gia=2-5tr" },
-    { "label": "Từ 5.000.000 ₫", "href": "/w?gia=tu-5tr" }
+    { "label": "Under 1.000.000 ₫", "href": "/w?price=under-1m" },
+    { "label": "1.000.000 ₫ – 2.000.000 ₫", "href": "/w?price=1m-2m" },
+    { "label": "2.000.001 ₫ – 4.999.999 ₫", "href": "/w?price=2m-5m" },
+    { "label": "5.000.000 ₫ & Above", "href": "/w?price=5m-plus" }
   ],
-  "popularSearches": ["air force 1", "jordan", "giày bóng rổ", "pegasus", "dép", "air max"],
-  "footerGroups": ["Tài nguyên", "Trợ giúp", "Công ty"],
+  "menuClicks": [
+    { "nav": "Men", "link": "Basketball", "href": "/w/basketball?gender=men" },
+    { "nav": "Sale", "link": "Under 1.000.000 ₫", "href": "/w?sale=1&price=under-1m" },
+    { "nav": "New & Featured", "link": null, "href": "/w?sort=newest" },
+    { "nav": "Kids", "link": null, "href": "/w?kids=boys,girls" }
+  ],
+  "popularSearches": ["air force 1", "jordan", "basketball shoes", "pegasus", "slides", "air max"],
+  "footerGroups": ["Resources", "Help", "Company"],
   "infoPages": [
-    { "label": "Tìm cửa hàng", "group": "Tài nguyên", "slug": "tim-cua-hang" },
-    { "label": "Trở thành thành viên", "group": "Tài nguyên", "slug": "thanh-vien" },
-    { "label": "Gửi góp ý", "group": "Tài nguyên", "slug": "gop-y" },
-    { "label": "Trợ giúp", "group": "Trợ giúp", "slug": "tro-giup" },
-    { "label": "Tra cứu đơn hàng", "group": "Trợ giúp", "slug": "tra-cuu-don-hang" },
-    { "label": "Giao hàng", "group": "Trợ giúp", "slug": "giao-hang" },
-    { "label": "Đổi trả", "group": "Trợ giúp", "slug": "doi-tra" },
-    { "label": "Phương thức thanh toán", "group": "Trợ giúp", "slug": "phuong-thuc-thanh-toan" },
-    { "label": "Liên hệ", "group": "Trợ giúp", "slug": "lien-he" },
-    { "label": "Về Nike", "group": "Công ty", "slug": "ve-nike" },
-    { "label": "Tin tức", "group": "Công ty", "slug": "tin-tuc" },
-    { "label": "Tuyển dụng", "group": "Công ty", "slug": "tuyen-dung" },
-    { "label": "Điều khoản bán hàng", "group": "Pháp lý", "slug": "dieu-khoan-ban-hang" },
-    { "label": "Điều khoản sử dụng", "group": "Pháp lý", "slug": "dieu-khoan-su-dung" },
-    { "label": "Chính sách bảo mật", "group": "Pháp lý", "slug": "chinh-sach-bao-mat" }
+    { "label": "Find a Store", "group": "Resources", "slug": "find-a-store" },
+    { "label": "Become a Member", "group": "Resources", "slug": "membership" },
+    { "label": "Send Us Feedback", "group": "Resources", "slug": "feedback" },
+    { "label": "Get Help", "group": "Help", "slug": "help" },
+    { "label": "Order Status", "group": "Help", "slug": "order-status" },
+    { "label": "Delivery", "group": "Help", "slug": "delivery" },
+    { "label": "Returns", "group": "Help", "slug": "returns" },
+    { "label": "Payment Options", "group": "Help", "slug": "payment-options" },
+    { "label": "Contact Us", "group": "Help", "slug": "contact-us" },
+    { "label": "About Nike", "group": "Company", "slug": "about-nike" },
+    { "label": "News", "group": "Company", "slug": "news" },
+    { "label": "Careers", "group": "Company", "slug": "careers" },
+    { "label": "Terms of Sale", "group": "Legal", "slug": "terms-of-sale" },
+    { "label": "Terms of Use", "group": "Legal", "slug": "terms-of-use" },
+    { "label": "Privacy Policy", "group": "Legal", "slug": "privacy-policy" }
   ]
 }

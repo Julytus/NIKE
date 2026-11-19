@@ -42,7 +42,7 @@ export const createResourceColumns = ({
                   (table.getIsSomePageRowsSelected() && "indeterminate")
                 }
                 onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Chọn tất cả"
+                aria-label="Select all"
               />
             </div>
           ),
@@ -51,7 +51,7 @@ export const createResourceColumns = ({
               <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label={`Chọn ${row.original.name}`}
+                aria-label={`Select ${row.original.name}`}
               />
             </div>
           ),
@@ -62,7 +62,7 @@ export const createResourceColumns = ({
     : []),
   {
     accessorKey: "name",
-    header: "Tài nguyên",
+    header: "Resource",
     cell: ({ row }) => (
       <div className="flex flex-col truncate">
         <span className="text-foreground max-w-[220px] truncate font-bold tracking-tight">
@@ -89,13 +89,13 @@ export const createResourceColumns = ({
       return name ? (
         <span className="text-sm">{name}</span>
       ) : (
-        <span className="text-muted-foreground text-sm">Chưa phân module</span>
+        <span className="text-muted-foreground text-sm">Unassigned</span>
       );
     }
   },
   {
     accessorKey: "actions",
-    header: "Hành động hỗ trợ",
+    header: "Supported Actions",
     cell: ({ row }) => (
       <div className="flex flex-wrap gap-1">
         {row.original.actions.map((action) => (
@@ -108,19 +108,19 @@ export const createResourceColumns = ({
   },
   {
     accessorKey: "active",
-    header: "Kích hoạt",
+    header: "Active",
     cell: ({ row }) => (
       <Switch
         checked={row.original.active === 1}
         disabled={!canUpdate}
         onCheckedChange={(checked) => onToggleActive(row.original, checked)}
-        aria-label={`Bật hoặc tắt tài nguyên ${row.original.name}`}
+        aria-label={`Toggle resource ${row.original.name}`}
       />
     )
   },
   {
     id: "rowActions",
-    header: () => <span className="sr-only">Thao tác</span>,
+    header: () => <span className="sr-only">Actions</span>,
     enableHiding: false,
     cell: ({ row }) => {
       // Tài nguyên hệ thống: backend không cho xoá
@@ -134,14 +134,14 @@ export const createResourceColumns = ({
                 variant="ghost"
                 className="text-muted-foreground data-[state=open]:bg-muted flex size-8"
                 size="icon"
-                aria-label={`Thao tác ${row.original.name}`}
+                aria-label={`Actions ${row.original.name}`}
               >
                 <MoreVertical className="size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
               {canUpdate && (
-                <DropdownMenuItem onClick={() => onEdit(row.original)}>Chỉnh sửa</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit(row.original)}>Edit</DropdownMenuItem>
               )}
               {deletable && (
                 <>
@@ -150,7 +150,7 @@ export const createResourceColumns = ({
                     className="text-destructive"
                     onClick={() => onShowDeleteConfirm(row.original.id, row.original.name)}
                   >
-                    Xóa
+                    Delete
                   </DropdownMenuItem>
                 </>
               )}

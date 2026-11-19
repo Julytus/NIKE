@@ -4,7 +4,7 @@ import type { ShopUserDTO } from "@/lib/types/account";
 
 // Xoá khoá cũ trong localStorage của bản mock trước đây (plan §8)
 try {
-  localStorage.removeItem("downbeat-shop-session");
+  localStorage.removeItem("nike-shop-session");
 } catch {
   // Bỏ qua nếu storage bị chặn
 }

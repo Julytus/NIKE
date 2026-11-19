@@ -70,7 +70,7 @@ public class ResourceService extends BaseService<ResourceRepository, Resource, I
     public Integer delete(Integer id) {
         Resource current = require(id);
         if (SYSTEM_CODES.contains(current.getCode())) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Không thể xoá tài nguyên hệ thống");
+            throw new AppException(ErrorCode.BAD_REQUEST, "System resources can't be deleted");
         }
         return repository.delete(current.getId());
     }
@@ -86,7 +86,7 @@ public class ResourceService extends BaseService<ResourceRepository, Resource, I
 
     private void checkDuplicateCode(String code, Integer excludeId) {
         if (code != null && repository.existsByCode(code, excludeId)) {
-            throw new AppException(ErrorCode.BAD_REQUEST, "Mã tài nguyên đã tồn tại");
+            throw new AppException(ErrorCode.BAD_REQUEST, "Resource code already exists");
         }
     }
 

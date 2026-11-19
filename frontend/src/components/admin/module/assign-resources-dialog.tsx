@@ -94,30 +94,30 @@ export function AssignResourcesDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Gán tài nguyên</DialogTitle>
+          <DialogTitle>Assign Resources</DialogTitle>
           <DialogDescription>
-            Chọn tài nguyên chưa thuộc module để gán vào {module?.name ?? "module"}.
+            Pick unassigned resources to add to {module?.name ?? "the module"}.
           </DialogDescription>
         </DialogHeader>
         <Input
           value={keyword}
           onChange={(event) => setKeyword(event.target.value)}
-          placeholder="Tìm kiếm tài nguyên..."
-          aria-label="Tìm kiếm tài nguyên"
+          placeholder="Search resources..."
+          aria-label="Search resources"
         />
         <ScrollArea className="h-64 rounded-md border">
           <div className="p-3">
             {resourcesQuery.isLoading ? (
               <p className="text-muted-foreground py-8 text-center text-sm">
-                Đang tải tài nguyên...
+                Loading resources...
               </p>
             ) : resourcesQuery.isError ? (
               <p className="text-destructive py-8 text-center text-sm">
-                Không thể tải danh sách tài nguyên.
+                Couldn&apos;t load resources.
               </p>
             ) : resources.length === 0 ? (
               <p className="text-muted-foreground py-8 text-center text-sm">
-                Không có tài nguyên chưa gán.
+                No unassigned resources.
               </p>
             ) : (
               <div className="space-y-1">
@@ -129,7 +129,7 @@ export function AssignResourcesDialog({
                     <Checkbox
                       checked={selectedIds.has(resource.id)}
                       onCheckedChange={(checked) => toggleResource(resource.id, checked)}
-                      aria-label={`Chọn ${resource.name}`}
+                      aria-label={`Select ${resource.name}`}
                     />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{resource.name}</span>
@@ -150,7 +150,7 @@ export function AssignResourcesDialog({
                 disabled={resourcesQuery.isFetchingNextPage}
                 onClick={() => void resourcesQuery.fetchNextPage()}
               >
-                {resourcesQuery.isFetchingNextPage ? "Đang tải..." : "Tải thêm"}
+                {resourcesQuery.isFetchingNextPage ? "Loading..." : "Load More"}
               </Button>
             )}
           </div>
@@ -162,14 +162,14 @@ export function AssignResourcesDialog({
             disabled={isPending}
             onClick={() => handleOpenChange(false)}
           >
-            Hủy
+            Cancel
           </Button>
           <Button
             type="button"
             disabled={selectedIds.size === 0 || isPending}
             onClick={handleAssign}
           >
-            {isPending ? "Đang gán..." : `Gán${selectedIds.size ? ` (${selectedIds.size})` : ""}`}
+            {isPending ? "Assigning..." : `Assign${selectedIds.size ? ` (${selectedIds.size})` : ""}`}
           </Button>
         </DialogFooter>
       </DialogContent>

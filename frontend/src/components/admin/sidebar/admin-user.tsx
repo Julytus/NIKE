@@ -52,7 +52,7 @@ export function AdminUser({
           {avatar}
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-bold">{user.name}</span>
-            <span className="truncate text-xs">Chức vụ: {user.roleName}</span>
+            <span className="truncate text-xs">Role: {user.roleName}</span>
           </div>
         </SidebarMenuButton>
       </DropdownMenuTrigger>
@@ -74,7 +74,7 @@ export function AdminUser({
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => navigate({ to: "/logout" })}>
           <LogOut />
-          Đăng xuất
+          Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

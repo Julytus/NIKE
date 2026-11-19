@@ -1,5 +1,5 @@
 # =====================================================================
-# LOCAL DEV: chỉ hạ tầng (mysql, minio) — dự án DownBeat cho backend chạy trên máy (:9500)
+# LOCAL DEV: chỉ hạ tầng (mysql, minio) — dự án nike cho backend chạy trên máy (:9500)
 # và frontend chạy bằng Vite (:4500). Dùng chung biến với backend/.env.
 #
 #   docker compose -f docker-compose.local.yml --env-file backend/.env up -d
@@ -8,11 +8,11 @@
 # Tách hoàn toàn với stack deploy (docker-compose.yml) và với stack cũ "doan" (doAn-*):
 # project, container, volume, cổng đều khác nên chạy song song được.
 # =====================================================================
-name: downbeat
+name: nike
 
 services:
-  downbeat-mysql:
-    container_name: downBeat-mysql
+  nike-mysql:
+    container_name: nike-mysql
     image: mysql:8.4
     restart: unless-stopped
     command:
@@ -20,12 +20,12 @@ services:
       - --collation-server=utf8mb4_0900_ai_ci
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-downBeat}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-nike}
       TZ: Asia/Ho_Chi_Minh
     ports:
       - "127.0.0.1:${MYSQL_PORT:-3326}:3306"
     volumes:
-      - downbeat-mysql-data:/var/lib/mysql
+      - nike-mysql-data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
       interval: 10s
@@ -33,8 +33,8 @@ services:
       retries: 10
       start_period: 30s
 
-  downbeat-minio:
-    container_name: downBeat-minio
+  nike-minio:
+    container_name: nike-minio
 # MinIO gỡ ảnh community khỏi Docker Hub + quay.io (10/2025). Dùng bản rebuild cộng đồng, ghim theo digest.
     image: netvark/minio:latest@sha256:77281ea99af0d02e2880e91d345bf81cae584454aedffbb7912331774f42d4bf
     restart: unless-stopped
@@ -46,20 +46,20 @@ services:
       - "127.0.0.1:${MINIO_PORT:-9020}:9000"
       - "127.0.0.1:${MINIO_CONSOLE_PORT:-9021}:9001"
     volumes:
-      - downbeat-minio-data:/data
+      - nike-minio-data:/data
 
-  downbeat-phpmyadmin:
-    container_name: downBeat-phpmyadmin
+  nike-phpmyadmin:
+    container_name: nike-phpmyadmin
     image: phpmyadmin:5
     restart: unless-stopped
     profiles: ["tools"]
     environment:
-      PMA_HOST: downbeat-mysql
+      PMA_HOST: nike-mysql
     ports:
       - "127.0.0.1:${PHPMYADMIN_PORT:-8092}:80"
     depends_on:
-      - downbeat-mysql
+      - nike-mysql
 
 volumes:
-  downbeat-mysql-data:
-  downbeat-minio-data:
+  nike-mysql-data:
+  nike-minio-data:

@@ -18,7 +18,7 @@ test.describe('Đăng nhập trang quản trị', () => {
       await expect(page).toHaveURL(/\/admin\/?$/);
       await expect(adminLayout.greeting).toBeVisible();
       await adminLayout.openSidebar();
-      await expect(adminLayout.menuItem('Chức vụ')).toBeVisible();
+      await expect(adminLayout.menuItem('Roles')).toBeVisible();
       await docShot(page, testInfo, '02-da-dang-nhap');
     }
   );
@@ -33,7 +33,7 @@ test.describe('Đăng nhập trang quản trị', () => {
       await loginPage.goto();
       await loginPage.login({ email: accounts.admin.email, password: WRONG_PASSWORD });
 
-      await expect(loginPage.toast('Tài khoản hoặc mật khẩu không đúng.')).toBeVisible();
+      await expect(loginPage.toast('Incorrect email or password.')).toBeVisible();
       await expect(page).toHaveURL(/\/login$/);
       await docShot(page, testInfo, '03-dang-nhap-sai');
     }

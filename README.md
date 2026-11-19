@@ -1,4 +1,4 @@
-# Nike Shoes (DownBeat)
+# Nike Shoes (nike)
 
 Đồ án: **xây dựng automation test cho web thương mại điện tử bán giày** bằng JavaScript với Playwright. Cửa hàng mô phỏng nike.com/vn (tên, logo, ảnh Nike chỉ dùng để học, chạy local, không kinh doanh). Monorepo gồm `backend/` (Spring Boot), `frontend/` (React) và `automation/` (Playwright + JS).
 
@@ -71,9 +71,9 @@ Các địa chỉ khác khi chạy local:
 
 | Khu vực | Email | Mật khẩu | Ghi chú |
 |---|---|---|---|
-| Quản trị `/login` | `admin@downbeat.local` | `Admin@123` | Toàn quyền |
-| Quản trị `/login` | `noaccess@downbeat.local` | `Admin@123` | Không có quyền nào |
-| Cửa hàng (nút Đăng nhập) | `free@downbeat.local` | `Admin@123` | Khách hàng |
+| Quản trị `/login` | `admin@nike.local` | `Admin@123` | Toàn quyền |
+| Quản trị `/login` | `noaccess@nike.local` | `Admin@123` | Không có quyền nào |
+| Cửa hàng (nút Đăng nhập) | `free@nike.local` | `Admin@123` | Khách hàng |
 
 
 ## Kiểm tra chất lượng
