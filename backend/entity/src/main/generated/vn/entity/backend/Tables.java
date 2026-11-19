@@ -13,6 +13,8 @@ import vn.entity.backend.tables.ProductSize;
 import vn.entity.backend.tables.RefreshToken;
 import vn.entity.backend.tables.Resource;
 import vn.entity.backend.tables.Role;
+import vn.entity.backend.tables.ShopOrder;
+import vn.entity.backend.tables.ShopOrderItem;
 import vn.entity.backend.tables.UserApp;
 
 
@@ -66,6 +68,16 @@ public class Tables {
      * The table <code>role</code>.
      */
     public static final Role ROLE = Role.ROLE;
+
+    /**
+     * The table <code>shop_order</code>.
+     */
+    public static final ShopOrder SHOP_ORDER = ShopOrder.SHOP_ORDER;
+
+    /**
+     * The table <code>shop_order_item</code>.
+     */
+    public static final ShopOrderItem SHOP_ORDER_ITEM = ShopOrderItem.SHOP_ORDER_ITEM;
 
     /**
      * The table <code>user_app</code>.

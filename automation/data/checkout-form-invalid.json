@@ -1,0 +1,12 @@
+{
+  "$comment": "Lát dat-hang (plan §6.3, §9 TC-17 ca 2–8): một ô sai (các ô khác hợp lệ) → lỗi nguyên văn dưới ô, không gọi API. `value` = chuỗi nhập; `length` = nhập n ký tự \"a\". `field`: fullName · phone · address · notes.",
+  "cases": [
+    { "name": "SĐT 5 số", "field": "phone", "value": "12345", "message": "Enter a valid 10-digit phone number starting with 0." },
+    { "name": "SĐT không bắt đầu bằng 0", "field": "phone", "value": "1901234567", "message": "Enter a valid 10-digit phone number starting with 0." },
+    { "name": "SĐT có chữ", "field": "phone", "value": "090123456a", "message": "Enter a valid 10-digit phone number starting with 0." },
+    { "name": "SĐT +84", "field": "phone", "value": "+84901234567", "message": "Enter a valid 10-digit phone number starting with 0." },
+    { "name": "tên 101 ký tự", "field": "fullName", "length": 101, "message": "Name must be at most 100 characters." },
+    { "name": "địa chỉ 256 ký tự", "field": "address", "length": 256, "message": "Address must be at most 255 characters." },
+    { "name": "ghi chú 256 ký tự", "field": "notes", "length": 256, "message": "Delivery notes must be at most 255 characters." }
+  ]
+}

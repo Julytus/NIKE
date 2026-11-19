@@ -13,6 +13,8 @@ import vn.entity.backend.tables.Product;
 import vn.entity.backend.tables.ProductSize;
 import vn.entity.backend.tables.RefreshToken;
 import vn.entity.backend.tables.Resource;
+import vn.entity.backend.tables.ShopOrder;
+import vn.entity.backend.tables.ShopOrderItem;
 import vn.entity.backend.tables.UserApp;
 
 
@@ -29,6 +31,8 @@ public class Indexes {
     public static final Index PRODUCT_IDX_PRODUCT_CATEGORY = Internal.createIndex(DSL.name("idx_product_category"), Product.PRODUCT, new OrderField[] { Product.PRODUCT.CATEGORY_ID }, false);
     public static final Index PRODUCT_SIZE_IDX_PRODUCT_SIZE_VALUE = Internal.createIndex(DSL.name("idx_product_size_value"), ProductSize.PRODUCT_SIZE, new OrderField[] { ProductSize.PRODUCT_SIZE.PRODUCT_ID, ProductSize.PRODUCT_SIZE.SIZE_VALUE }, false);
     public static final Index PRODUCT_IDX_PRODUCT_STATUS_GENDER = Internal.createIndex(DSL.name("idx_product_status_gender"), Product.PRODUCT, new OrderField[] { Product.PRODUCT.STATUS, Product.PRODUCT.GENDER }, false);
+    public static final Index SHOP_ORDER_ITEM_IDX_SHOP_ORDER_ITEM_ORDER = Internal.createIndex(DSL.name("idx_shop_order_item_order"), ShopOrderItem.SHOP_ORDER_ITEM, new OrderField[] { ShopOrderItem.SHOP_ORDER_ITEM.ORDER_ID }, false);
+    public static final Index SHOP_ORDER_IDX_SHOP_ORDER_USER = Internal.createIndex(DSL.name("idx_shop_order_user"), ShopOrder.SHOP_ORDER, new OrderField[] { ShopOrder.SHOP_ORDER.USER_ID, ShopOrder.SHOP_ORDER.CREATED_TIME }, false);
     public static final Index REFRESH_TOKEN_REFRESH_TOKEN_USER_INDEX = Internal.createIndex(DSL.name("refresh_token_user_index"), RefreshToken.REFRESH_TOKEN, new OrderField[] { RefreshToken.REFRESH_TOKEN.USER_ID }, false);
     public static final Index RESOURCE_RESOURCE_URI_INDEX = Internal.createIndex(DSL.name("resource_uri_index"), Resource.RESOURCE, new OrderField[] { Resource.RESOURCE.URI }, false);
     public static final Index USER_APP_USER_APP_ROLE_INDEX = Internal.createIndex(DSL.name("user_app_role_index"), UserApp.USER_APP, new OrderField[] { UserApp.USER_APP.ROLE_ID }, false);

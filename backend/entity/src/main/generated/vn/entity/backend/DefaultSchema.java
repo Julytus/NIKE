@@ -20,6 +20,8 @@ import vn.entity.backend.tables.ProductSize;
 import vn.entity.backend.tables.RefreshToken;
 import vn.entity.backend.tables.Resource;
 import vn.entity.backend.tables.Role;
+import vn.entity.backend.tables.ShopOrder;
+import vn.entity.backend.tables.ShopOrderItem;
 import vn.entity.backend.tables.UserApp;
 
 
@@ -82,6 +84,16 @@ public class DefaultSchema extends SchemaImpl {
     public final Role ROLE = Role.ROLE;
 
     /**
+     * The table <code>shop_order</code>.
+     */
+    public final ShopOrder SHOP_ORDER = ShopOrder.SHOP_ORDER;
+
+    /**
+     * The table <code>shop_order_item</code>.
+     */
+    public final ShopOrderItem SHOP_ORDER_ITEM = ShopOrderItem.SHOP_ORDER_ITEM;
+
+    /**
      * The table <code>user_app</code>.
      */
     public final UserApp USER_APP = UserApp.USER_APP;
@@ -111,6 +123,8 @@ public class DefaultSchema extends SchemaImpl {
             RefreshToken.REFRESH_TOKEN,
             Resource.RESOURCE,
             Role.ROLE,
+            ShopOrder.SHOP_ORDER,
+            ShopOrderItem.SHOP_ORDER_ITEM,
             UserApp.USER_APP
         );
     }

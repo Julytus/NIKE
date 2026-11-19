@@ -14,7 +14,7 @@ approved: 2026-11-18
 Dự án có hai sản phẩm:
 
 1. **Hệ thống được kiểm thử (SUT):** web bán giày mô phỏng [nike.com/vn/w/lifestyle-shoes](https://www.nike.com/vn/w/lifestyle-shoes-13jrmzy7ok)
-   (danh sách có bộ lọc, chi tiết có gallery + chọn size, giỏ hàng, đặt hàng, quản trị). Dựng lại từ base DownBeat: giữ đăng nhập / phân quyền / MinIO / payOS, **gỡ hẳn toàn bộ phần LUT**.
+   (danh sách có bộ lọc, chi tiết có gallery + chọn size, giỏ hàng, đặt hàng, quản trị). Dựng lại từ base nike: giữ đăng nhập / phân quyền / MinIO / payOS, **gỡ hẳn toàn bộ phần LUT**.
 2. **Bộ automation test (trọng tâm chấm điểm):** project Playwright viết bằng **JavaScript**, theo Page Object Model, có test UI + API,
    data-driven, chạy đa trình duyệt, báo cáo HTML / Allure, chạy CI trên GitHub Actions, kèm tài liệu kiểm thử (test plan, test case, ma trận truy vết, báo cáo lỗi).
 
@@ -31,7 +31,7 @@ Tài liệu này **không** dùng để `/cook` trực tiếp. Mỗi lát ở §
 | D3 | **30 sản phẩm, mỗi sản phẩm 5 ảnh**, lấy từ nike.com/vn |
 | D4 | **Không có màu (colorway)**: mỗi sản phẩm một giá, một bộ 5 ảnh, chỉ chọn **size** (có tồn kho theo size) |
 | D5 | Bộ test viết bằng **JavaScript** (`.js`, ESM), không TypeScript |
-| D6 | Chữ giao diện (menu, nút, nhãn, thông báo) **tiếng Việt**; **tên và mô tả sản phẩm giữ tiếng Anh** như trang gốc |
+| D6 | ~~Chữ giao diện tiếng Việt~~ → **đổi 18/11/2026 (người dùng): chữ giao diện tiếng Anh** như nike.com, cho **cả cửa hàng lẫn trang quản trị**; URL, khoá query, slug danh mục, tên danh mục cũng tiếng Anh (vd `/w/basketball?gender=men`). **Chỉ tiền tệ giữ VNĐ** (D7). Báo cáo / tài liệu / plan vẫn viết tiếng Việt. **Đã làm ở lát `tieng-anh-cua-hang` (1.3a)**: chữ giao diện, route, khoá query, dữ liệu mẫu và mọi message API đều tiếng Anh |
 | D7 | Tiền **VNĐ**, hiển thị kiểu Việt Nam `5.279.000 ₫` (hàm dùng chung `formatVnd`) |
 | D8 | **Giỏ hàng lưu ở localStorage**, không cần đăng nhập để thêm vào giỏ. **Thanh toán bắt buộc đăng nhập** (không có "Thanh toán khách"): giỏ chỉ có một nút "Thanh toán", chưa đăng nhập thì chuyển sang trang đăng nhập rồi quay lại; đặt hàng gửi danh sách (size, số lượng) lên server |
 | D12 | Phí giao hàng **30.000 ₫**, miễn phí khi tạm tính ≥ 5.000.000 ₫ |
@@ -98,7 +98,7 @@ business.shoporder  đặt hàng, thanh toán (dùng lại client payOS), huỷ,
 business.dashboard  doanh thu, số đơn, sản phẩm bán chạy, tồn kho thấp
 ```
 
-Ảnh sản phẩm: bucket public `downbeat-public/products/<slug>/<1..5>.webp`, URL lưu thẳng vào bảng.
+Ảnh sản phẩm: bucket public `nike-public/products/<slug>/<1..5>.webp`, URL lưu thẳng vào bảng.
 
 Hỗ trợ test (chỉ bật ở profile `local` / `test`):
 - `POST /test-support/reset` đưa DB về dữ liệu mẫu ban đầu (tồn kho, giỏ, đơn, yêu thích của tài khoản test) để mỗi lần chạy test độc lập.
@@ -180,7 +180,7 @@ Quy tắc:
 3. V19 nạp danh mục + 30 sản phẩm + ảnh + size. Tồn kho cố định (không ngẫu nhiên) để test lặp lại được: phần lớn size 20 đôi,
    mỗi sản phẩm 1–2 size `stock = 0`, và 2 sản phẩm có một size `stock = 1` (dùng cho ca test tranh mua đôi cuối).
 4. `SeedAssetLoader` đẩy ảnh còn thiếu lên MinIO khi khởi động.
-5. Tài khoản test: `admin@downbeat.local` (quản trị), `noaccess@downbeat.local` (không quyền), thêm `khach1@downbeat.local` / `khach2@downbeat.local` (khách, mật khẩu `Admin@123`).
+5. Tài khoản test: `admin@nike.local` (quản trị), `noaccess@nike.local` (không quyền), thêm `khach1@nike.local` / `khach2@nike.local` (khách, mật khẩu `Admin@123`).
 
 ## 8. Bộ automation test (trọng tâm đồ án)
 
@@ -251,17 +251,19 @@ Mỗi lát đi theo luồng `/plan-feature` → `/cook` → `/doc-chuc-nang`. E2
 | 1.1 | `go-lut` | V18 gỡ bảng; xoá code BE / FE / seed LUT (§6); `/` tạm trống; `/admin` chỉ còn phân quyền | 0.1 (cần `automation/`; không cook song song vì chung worktree) |
 | 1.2 | `du-lieu-giay` | V19 schema §4, 30 sản phẩm × 5 ảnh, seed MinIO, resource `PRODUCT`, `test-support/reset` (BE) | 1.1 |
 | 1.3 | `giao-dien-nike` | Header Nike (ẩn / hiện khi cuộn, mega menu, khung tìm kiếm), footer, dải thông báo, font, token màu, trang chủ `/` (hero + "Mới về" + danh mục), trang thông tin, trang tạm; API `product-category/public/list`, `product/public/new-arrivals`, `product/public/suggest`; hợp đồng URL `/w` (theo [ui-nike/README.md](ui-nike/README.md)) | 1.2 |
-| 1.3b | `dang-nhap-nike` | Trang `/dang-nhap` kiểu nhập email trước (mật khẩu hoặc đăng ký), `POST /account/public/check-email`, quay lại trang trước sau khi đăng nhập, thay hộp thoại đăng nhập / đăng ký | 1.3 |
-| 1.4 | `danh-sach-giay` | `product/public/list` + facets (dùng điều kiện tìm kiếm của `suggest`); trang `/w`, `/w/$danhMuc` theo hợp đồng URL của 1.3 | 1.2, 1.3 |
+| 1.3a | `tieng-anh-cua-hang` | Chuyển ngữ tiếng Anh cả cửa hàng lẫn quản trị: chữ giao diện, route (`/info/$page`, `/cart`, `/favorites`, `/w/$category`, `/admin/roles`, `/admin/permissions`, `/admin/resources`, `/admin/modules`), khoá query `/w` (`gender`, `kids`, `price`, `sale`, `badge`, `sort`), V20 đổi dữ liệu mẫu, mọi message API tiếng Anh | 1.3 |
+| 1.3b | `dang-nhap-nike` | Trang `/signin` (cửa hàng; `/login` vẫn là đăng nhập quản trị) kiểu nhập email trước (mật khẩu hoặc đăng ký), `POST /account/public/check-email`, quay lại trang trước sau khi đăng nhập, thay hộp thoại đăng nhập / đăng ký | 1.3 |
+| 1.4 | `danh-sach-giay` | `product/public/list` + facets (dùng điều kiện tìm kiếm của `suggest`); trang `/w`, `/w/$category` theo hợp đồng URL của 1.3a | 1.2, 1.3 |
 | 1.5 | `chi-tiet-giay` | `product/public/get`, `related`; trang `/t/$slug`, xem ảnh lớn, bảng size | 1.4 |
 | **2. Mua hàng** |
-| 2.1 | `yeu-thich` | `favorite` + 3 API, ♡ ở thẻ / chi tiết, trang `/yeu-thich` | 1.5 |
-| 2.2 | `gio-hang` | Giỏ localStorage, `cart/public/check`, popup "Đã thêm vào giỏ", số trên icon túi, trang `/gio-hang` (đổi size, số lượng, xoá, tạm tính, phí ship), không cần đăng nhập | 1.5 |
-| 2.3 | `dat-hang` | `shop_order` + trừ / hoàn kho, COD + payOS (`mock-pay`), job huỷ quá hạn; "Thanh toán" yêu cầu đăng nhập (giỏ giữ nguyên sau khi đăng nhập), trang `/thanh-toan`, kết quả, đặt xong xoá giỏ | 2.2 |
-| 2.4 | `don-cua-toi` | `my-list`, `get`, `cancel`; trang `/don-hang`, `/don-hang/$code` | 2.3 |
+| 2.1 | `yeu-thich` | `favorite` + 3 API, ♡ ở thẻ / chi tiết, trang `/favorites` | 1.5 |
+| 2.2 | `gio-hang` | Giỏ localStorage, `cart/public/check`, popup "Đã thêm vào giỏ", số trên icon túi, trang `/cart` (đổi size, số lượng, xoá, tạm tính, phí ship), không cần đăng nhập | 1.5 |
+| 2.3 | `dat-hang` | `shop_order` + trừ kho, COD (payOS tách sang 2.3a); "Thanh toán" yêu cầu đăng nhập (giỏ giữ nguyên sau khi đăng nhập), trang `/checkout`, kết quả, đặt xong xoá giỏ | 2.2 |
+| 2.3a | `thanh-toan-payos` | Tách từ 2.3 (plan `dat-hang` §11 câu 1, 19/11/2026): phương thức payOS (link hết hạn 15 phút), trang thanh toán giả lập ở profile local thay `mock-pay`, webhook kiểm chữ ký + chống xử lý lặp, job huỷ đơn quá hạn + hoàn kho, trạng thái chờ / huỷ / hết hạn ở `/checkout/result/$code` | 2.3 |
+| 2.4 | `don-cua-toi` | `my-list`, `get`, `cancel`; trang `/orders`, `/orders/$code` | 2.3 |
 | **3. Quản trị** |
-| 3.1 | `quan-ly-giay` | CRUD sản phẩm / ảnh / size + tồn kho, xuất bản / ẩn ở `/admin/san-pham` | 1.5 |
-| 3.2 | `quan-ly-don-hang` | resource `SHOP_ORDER`, lọc theo trạng thái, đổi trạng thái (hoàn kho khi huỷ) ở `/admin/don-hang` | 2.3 |
+| 3.1 | `quan-ly-giay` | CRUD sản phẩm / ảnh / size + tồn kho, xuất bản / ẩn ở `/admin/products` | 1.5 |
+| 3.2 | `quan-ly-don-hang` | resource `SHOP_ORDER`, lọc theo trạng thái, đổi trạng thái (hoàn kho khi huỷ) ở `/admin/orders` | 2.3 |
 | 3.3 | `dashboard-giay` | Doanh thu, số đơn, top sản phẩm, tồn kho thấp ở `/admin` | 2.3 |
 | **4. Hoàn thiện kiểm thử (phần chấm điểm chính)** |
 | 4.1 | `kiem-thu-hoi-quy` | Luồng xuyên suốt `e2e-flows/`, data-driven bộ lọc, network mocking, tag smoke / regression, chạy đủ 4 project trình duyệt | 2.4, 3.2 |
@@ -281,7 +283,7 @@ Làm song song được (trong một lát, BE ∥ FE; giữa các lát thì cook
 - Phí ship: tạm tính 4.999.999₫ → 30.000₫, 5.000.000₫ → 0₫.
 - Giá trong đơn là giá lúc đặt, không đổi khi quản trị sửa giá sau đó.
 - Webhook payOS sai chữ ký bị từ chối; gọi lặp không xử lý hai lần. Đơn payOS quá 15 phút tự huỷ và hoàn kho.
-- Khách không xem được đơn của khách khác (403); `noaccess` không vào được `/admin/san-pham`.
+- Khách không xem được đơn của khách khác (403); `noaccess` không vào được `/admin/products`.
 - Sản phẩm `HIDDEN` không hiện ở danh sách, mở link chi tiết → trang "Không tìm thấy sản phẩm".
 
 ## 11. Việc cần làm trước khi cook

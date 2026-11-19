@@ -1,4 +1,4 @@
-# DownBeat Backend — quy tắc cho worker backend (agy)
+# nike Backend — quy tắc cho worker backend (agy)
 
 Đọc `../AGENTS.md` (giao thức worker chung) trước file này.
 
@@ -23,7 +23,7 @@ mvn -q -DskipTests "-Djooq.codegen.skip=true" package   # build khi DB chưa ch�
 mvn -q "-Djooq.codegen.skip=true" -pl <module> -am test # unit test (không cần DB)
 sh scripts/ai/backend-restart.sh                        # (gốc repo) build + restart :9500 + in dòng Flyway
 ```
-Base URL `http://localhost:9500/api` · OpenAPI `/api/v3/api-docs`. Tài khoản local (seed `db/seed/V1_1__seed_auth.sql`, mật khẩu `Admin@123`): `admin@downbeat.local` (toàn quyền), `noaccess@downbeat.local` (không quyền). Lấy token: `POST /api/user/authenticate` với `{email, plainPassword}` → `result.token`.
+Base URL `http://localhost:9500/api` · OpenAPI `/api/v3/api-docs`. Tài khoản local (seed `db/seed/V1_1__seed_auth.sql`, mật khẩu `Admin@123`): `admin@nike.local` (toàn quyền), `noaccess@nike.local` (không quyền). Lấy token: `POST /api/user/authenticate` với `{email, plainPassword}` → `result.token`.
 
 Flyway: `app/src/main/resources/db/migration/V<n+1>__<mo_ta>.sql`. **Không sửa migration đã chạy** (checksum sai → app không lên). Viết idempotent (`CREATE TABLE IF NOT EXISTS`, `INSERT … WHERE NOT EXISTS`). Flyway chỉ chạy khi app khởi động, còn codegen đọc DB lúc build, nên thêm bảng mới phải restart rồi build lại. DB trống (chưa từng chạy app) thì build với `-Djooq.codegen.skip=true`, nếu không codegen sẽ sinh ra schema rỗng.
 

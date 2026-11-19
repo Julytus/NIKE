@@ -20,14 +20,15 @@ import { Route as AdminResourcesRouteImport } from './routes/admin/resources'
 import { Route as AdminPermissionsRouteImport } from './routes/admin/permissions'
 import { Route as AdminModulesRouteImport } from './routes/admin/modules'
 import { Route as ShopFavoritesRouteImport } from './routes/_shop/favorites'
-import { Route as ShopCheckoutRouteImport } from './routes/_shop/checkout'
 import { Route as ShopCartRouteImport } from './routes/_shop/cart'
 import { Route as AuthLogoutRouteImport } from './routes/_auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as ShopWIndexRouteImport } from './routes/_shop/w.index'
+import { Route as ShopCheckoutIndexRouteImport } from './routes/_shop/checkout.index'
 import { Route as ShopWCategoryRouteImport } from './routes/_shop/w.$category'
 import { Route as ShopTSlugRouteImport } from './routes/_shop/t.$slug'
 import { Route as ShopInfoPageRouteImport } from './routes/_shop/info.$page'
+import { Route as ShopCheckoutResultCodeRouteImport } from './routes/_shop/checkout.result.$code'
 
 const SigninRoute = SigninRouteImport.update({
   id: '/signin',
@@ -82,11 +83,6 @@ const ShopFavoritesRoute = ShopFavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => ShopRoute,
 } as any)
-const ShopCheckoutRoute = ShopCheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
-  getParentRoute: () => ShopRoute,
-} as any)
 const ShopCartRoute = ShopCartRouteImport.update({
   id: '/cart',
   path: '/cart',
@@ -107,6 +103,11 @@ const ShopWIndexRoute = ShopWIndexRouteImport.update({
   path: '/w/',
   getParentRoute: () => ShopRoute,
 } as any)
+const ShopCheckoutIndexRoute = ShopCheckoutIndexRouteImport.update({
+  id: '/checkout/',
+  path: '/checkout/',
+  getParentRoute: () => ShopRoute,
+} as any)
 const ShopWCategoryRoute = ShopWCategoryRouteImport.update({
   id: '/w/$category',
   path: '/w/$category',
@@ -122,6 +123,11 @@ const ShopInfoPageRoute = ShopInfoPageRouteImport.update({
   path: '/info/$page',
   getParentRoute: () => ShopRoute,
 } as any)
+const ShopCheckoutResultCodeRoute = ShopCheckoutResultCodeRouteImport.update({
+  id: '/checkout/result/$code',
+  path: '/checkout/result/$code',
+  getParentRoute: () => ShopRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
@@ -129,7 +135,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/logout': typeof AuthLogoutRoute
   '/cart': typeof ShopCartRoute
-  '/checkout': typeof ShopCheckoutRoute
   '/favorites': typeof ShopFavoritesRoute
   '/admin/modules': typeof AdminModulesRoute
   '/admin/permissions': typeof AdminPermissionsRoute
@@ -140,14 +145,15 @@ export interface FileRoutesByFullPath {
   '/info/$page': typeof ShopInfoPageRoute
   '/t/$slug': typeof ShopTSlugRoute
   '/w/$category': typeof ShopWCategoryRoute
+  '/checkout': typeof ShopCheckoutIndexRoute
   '/w': typeof ShopWIndexRoute
+  '/checkout/result/$code': typeof ShopCheckoutResultCodeRoute
 }
 export interface FileRoutesByTo {
   '/signin': typeof SigninRoute
   '/login': typeof AuthLoginRoute
   '/logout': typeof AuthLogoutRoute
   '/cart': typeof ShopCartRoute
-  '/checkout': typeof ShopCheckoutRoute
   '/favorites': typeof ShopFavoritesRoute
   '/admin/modules': typeof AdminModulesRoute
   '/admin/permissions': typeof AdminPermissionsRoute
@@ -158,7 +164,9 @@ export interface FileRoutesByTo {
   '/info/$page': typeof ShopInfoPageRoute
   '/t/$slug': typeof ShopTSlugRoute
   '/w/$category': typeof ShopWCategoryRoute
+  '/checkout': typeof ShopCheckoutIndexRoute
   '/w': typeof ShopWIndexRoute
+  '/checkout/result/$code': typeof ShopCheckoutResultCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -169,7 +177,6 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/logout': typeof AuthLogoutRoute
   '/_shop/cart': typeof ShopCartRoute
-  '/_shop/checkout': typeof ShopCheckoutRoute
   '/_shop/favorites': typeof ShopFavoritesRoute
   '/admin/modules': typeof AdminModulesRoute
   '/admin/permissions': typeof AdminPermissionsRoute
@@ -180,7 +187,9 @@ export interface FileRoutesById {
   '/_shop/info/$page': typeof ShopInfoPageRoute
   '/_shop/t/$slug': typeof ShopTSlugRoute
   '/_shop/w/$category': typeof ShopWCategoryRoute
+  '/_shop/checkout/': typeof ShopCheckoutIndexRoute
   '/_shop/w/': typeof ShopWIndexRoute
+  '/_shop/checkout/result/$code': typeof ShopCheckoutResultCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -190,7 +199,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/cart'
-    | '/checkout'
     | '/favorites'
     | '/admin/modules'
     | '/admin/permissions'
@@ -201,14 +209,15 @@ export interface FileRouteTypes {
     | '/info/$page'
     | '/t/$slug'
     | '/w/$category'
+    | '/checkout'
     | '/w'
+    | '/checkout/result/$code'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/signin'
     | '/login'
     | '/logout'
     | '/cart'
-    | '/checkout'
     | '/favorites'
     | '/admin/modules'
     | '/admin/permissions'
@@ -219,7 +228,9 @@ export interface FileRouteTypes {
     | '/info/$page'
     | '/t/$slug'
     | '/w/$category'
+    | '/checkout'
     | '/w'
+    | '/checkout/result/$code'
   id:
     | '__root__'
     | '/_auth'
@@ -229,7 +240,6 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/logout'
     | '/_shop/cart'
-    | '/_shop/checkout'
     | '/_shop/favorites'
     | '/admin/modules'
     | '/admin/permissions'
@@ -240,7 +250,9 @@ export interface FileRouteTypes {
     | '/_shop/info/$page'
     | '/_shop/t/$slug'
     | '/_shop/w/$category'
+    | '/_shop/checkout/'
     | '/_shop/w/'
+    | '/_shop/checkout/result/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -329,13 +341,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopFavoritesRouteImport
       parentRoute: typeof ShopRoute
     }
-    '/_shop/checkout': {
-      id: '/_shop/checkout'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof ShopCheckoutRouteImport
-      parentRoute: typeof ShopRoute
-    }
     '/_shop/cart': {
       id: '/_shop/cart'
       path: '/cart'
@@ -364,6 +369,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopWIndexRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/_shop/checkout/': {
+      id: '/_shop/checkout/'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof ShopCheckoutIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
     '/_shop/w/$category': {
       id: '/_shop/w/$category'
       path: '/w/$category'
@@ -385,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopInfoPageRouteImport
       parentRoute: typeof ShopRoute
     }
+    '/_shop/checkout/result/$code': {
+      id: '/_shop/checkout/result/$code'
+      path: '/checkout/result/$code'
+      fullPath: '/checkout/result/$code'
+      preLoaderRoute: typeof ShopCheckoutResultCodeRouteImport
+      parentRoute: typeof ShopRoute
+    }
   }
 }
 
@@ -402,24 +421,26 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface ShopRouteChildren {
   ShopCartRoute: typeof ShopCartRoute
-  ShopCheckoutRoute: typeof ShopCheckoutRoute
   ShopFavoritesRoute: typeof ShopFavoritesRoute
   ShopIndexRoute: typeof ShopIndexRoute
   ShopInfoPageRoute: typeof ShopInfoPageRoute
   ShopTSlugRoute: typeof ShopTSlugRoute
   ShopWCategoryRoute: typeof ShopWCategoryRoute
+  ShopCheckoutIndexRoute: typeof ShopCheckoutIndexRoute
   ShopWIndexRoute: typeof ShopWIndexRoute
+  ShopCheckoutResultCodeRoute: typeof ShopCheckoutResultCodeRoute
 }
 
 const ShopRouteChildren: ShopRouteChildren = {
   ShopCartRoute: ShopCartRoute,
-  ShopCheckoutRoute: ShopCheckoutRoute,
   ShopFavoritesRoute: ShopFavoritesRoute,
   ShopIndexRoute: ShopIndexRoute,
   ShopInfoPageRoute: ShopInfoPageRoute,
   ShopTSlugRoute: ShopTSlugRoute,
   ShopWCategoryRoute: ShopWCategoryRoute,
+  ShopCheckoutIndexRoute: ShopCheckoutIndexRoute,
   ShopWIndexRoute: ShopWIndexRoute,
+  ShopCheckoutResultCodeRoute: ShopCheckoutResultCodeRoute,
 }
 
 const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)

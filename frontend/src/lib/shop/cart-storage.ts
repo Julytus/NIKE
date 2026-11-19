@@ -87,6 +87,12 @@ export function setQuantity(items: CartItem[], sizeId: number, quantity: number)
 export const removeItem = (items: CartItem[], sizeId: number): CartItem[] =>
   items.filter((x) => x.sizeId !== sizeId);
 
+/** Bỏ nhiều size một lần (các dòng vừa đặt hàng, plan dat-hang §6.7 bước 3); không có gì để bỏ → trả lại mảng cũ. */
+export function removeItems(items: CartItem[], sizeIds: number[]): CartItem[] {
+  const ids = new Set(sizeIds);
+  return items.some((x) => ids.has(x.sizeId)) ? items.filter((x) => !ids.has(x.sizeId)) : items;
+}
+
 /**
  * Đổi size của một dòng (§6.5.1). `max` = `min(10, tồn kho size mới)`.
  * Size mới chưa có → thay tại chỗ (giữ vị trí), số lượng không quá `max`;

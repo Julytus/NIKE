@@ -1,0 +1,35 @@
+{
+  "$comment": "Lát dat-hang (plan §5.3, §9 TC-04): body sai của POST /shop-order/create → 400 + message nguyên văn. Body gốc = giao hàng hợp lệ + COD + items [{1305,1}]. `set` = ghi đè field, `omit` = bỏ field, `lines: n` = items là n size id khác nhau (quantity 1), `raw` = gửi nguyên giá trị này làm body.",
+  "baseItems": [{ "sizeId": 1305, "quantity": 1 }],
+  "cases": [
+    { "name": "bỏ items", "omit": ["items"], "message": "Your bag is empty." },
+    { "name": "items []", "set": { "items": [] }, "message": "Your bag is empty." },
+    { "name": "51 dòng", "lines": 51, "message": "Your bag can hold up to 50 different items." },
+    { "name": "sizeId 0", "set": { "items": [{ "sizeId": 0, "quantity": 1 }] }, "message": "Invalid size in bag." },
+    { "name": "quantity 0", "set": { "items": [{ "sizeId": 1305, "quantity": 0 }] }, "message": "Quantity must be between 1 and 10." },
+    { "name": "quantity 11", "set": { "items": [{ "sizeId": 1305, "quantity": 11 }] }, "message": "Quantity must be between 1 and 10." },
+    {
+      "name": "trùng size",
+      "set": { "items": [{ "sizeId": 1305, "quantity": 1 }, { "sizeId": 1305, "quantity": 2 }] },
+      "message": "Each size can only appear once in the bag."
+    },
+    { "name": "receiverName chỉ khoảng trắng", "set": { "receiverName": "   " }, "message": "Please enter the recipient's name." },
+    { "name": "bỏ phone", "omit": ["phone"], "message": "Please enter a phone number." },
+    { "name": "address rỗng", "set": { "address": "" }, "message": "Please enter a delivery address." },
+    { "name": "paymentMethod PAYOS", "set": { "paymentMethod": "PAYOS" }, "message": "This payment method is not available." },
+    { "name": "bỏ paymentMethod", "omit": ["paymentMethod"], "message": "This payment method is not available." },
+    { "name": "paymentMethod cod (chữ thường)", "set": { "paymentMethod": "cod" }, "message": "This payment method is not available." },
+    {
+      "name": "giao hàng kiểm trước luật giỏ",
+      "set": { "receiverName": "", "items": [{ "sizeId": 1305, "quantity": 11 }] },
+      "message": "Please enter the recipient's name."
+    },
+    { "name": "body []", "raw": [], "message": "Malformed request body" },
+    { "name": "body \"abc\"", "raw": "abc", "message": "Malformed request body" },
+    {
+      "name": "quantity \"two\"",
+      "set": { "items": [{ "sizeId": 1305, "quantity": "two" }] },
+      "message": "Malformed request body"
+    }
+  ]
+}
