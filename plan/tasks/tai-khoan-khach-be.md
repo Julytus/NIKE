@@ -10,7 +10,7 @@ Lát này backend do **agy** làm (Codex hết quota). Quy tắc backend giữ n
 
 ## Việc cần làm (đúng §7, đường dẫn tính từ `backend/`)
 1. `app/src/main/resources/db/migration/V5__vai_tro_khach_hang.sql`: chép nguyên khối SQL ở plan §4.
-2. `app/src/main/resources/db/seed/V5_1__seed_khach_hang.sql`: tài khoản `free@downbeat.local` theo bảng §4 (`INSERT … SELECT … WHERE NOT EXISTS`, không ghi cứng `id`, `role_id` lấy bằng subquery theo tên "Khách hàng").
+2. `app/src/main/resources/db/seed/V5_1__seed_khach_hang.sql`: tài khoản `free@nike.local` theo bảng §4 (`INSERT … SELECT … WHERE NOT EXISTS`, không ghi cứng `id`, `role_id` lấy bằng subquery theo tên "Khách hàng").
 3. `base/.../constant/ErrorCode.java`: thêm `EMAIL_EXISTS(400, "Email đã được đăng ký")`. Không sửa / xoá mã cũ (`DUPLICATED_EMAIL` để nguyên). Kiểm tra `REGISTRATION_DISABLED` đang là 403 "Hệ thống không mở đăng ký", `WEAK_PASSWORD` là 400 "Mật khẩu phải có từ 8 đến 72 ký tự" (nếu lệch, báo `question`, đừng tự đổi).
 4. `entity/.../data/mysql/auth/User.java`: thêm `private String plan;` và `private Timestamp planExpiresAt;` (không phải cột DB, cùng loại với `roleName`; comment "Gói khách hàng, chỉ trả ở /account/me").
 5. `authenticate/.../repository/auth/RoleRepository.java`: `Role getDefaultCustomerRole()` → `getOne(ROLE.IS_DEFAULT.eq(1).and(ROLE.IS_OPERATOR.eq(0)))` (không có → `null`).
