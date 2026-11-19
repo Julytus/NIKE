@@ -5,16 +5,17 @@ import { ProductPrice } from "./product-price";
 
 /** Một nhãn theo thứ tự ưu tiên (plan giao-dien-nike §6.6); không có nhãn → null. */
 export function productBadgeLabel(p: ProductCardDTO): string | null {
-  if (p.totalStock === 0) return "Hết hàng";
-  if (p.badge === "JUST_IN") return "Mới về";
-  if (p.badge === "BESTSELLER") return "Bán chạy";
-  if (p.salePrice != null) return "Giảm giá";
+  if (p.totalStock === 0) return "Sold Out";
+  if (p.badge === "JUST_IN") return "Just In";
+  if (p.badge === "BESTSELLER") return "Bestseller";
+  if (p.salePrice != null) return "Sale";
   return null;
 }
 
 /**
  * Thẻ sản phẩm: cả thẻ là link `/t/<slug>`; ảnh vuông, nhãn đỏ, tên, phụ đề, giá (§6.6). Dùng lại ở lát sau.
  * `size="sm"`: thẻ nhỏ trong khung tìm kiếm (testid `search-suggestion`).
+ * `preload="intent"`: rê chuột / focus thẻ là tải sẵn chi tiết sản phẩm (plan chi-tiet-giay §6.10).
  */
 export function ProductCard({
   product,
@@ -36,6 +37,7 @@ export function ProductCard({
     <Link
       to="/t/$slug"
       params={{ slug: product.slug }}
+      preload="intent"
       data-testid={testId}
       onClick={onNavigate}
       className={cn(

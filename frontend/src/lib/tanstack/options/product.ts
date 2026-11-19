@@ -1,9 +1,12 @@
 import { infiniteQueryOptions, keepPreviousData, queryOptions } from "@tanstack/react-query";
 
+import { apiErrorOf } from "@/lib/axios/error";
 import {
   getNewArrivals,
   getProductCategories,
+  getProductDetail,
   getProductFacets,
+  getRelatedProducts,
   listProducts,
   suggestProducts
 } from "@/lib/axios/product";
@@ -70,4 +73,25 @@ export const createProductFacetsQueryOptions = (params: ProductFilterParams) =>
     staleTime: 60_000,
     retry: 1,
     placeholderData: keepPreviousData
+  });
+
+/**
+ * Chi tiết sản phẩm `/t/$slug` (plan chi-tiet-giay §8 bước 3): route nạp bằng `ensureQueryData`, rê chuột lên
+ * `ProductCard` tải sẵn. 404 (không tìm thấy) không thử lại; lỗi khác thử lại 1 lần.
+ */
+export const createProductDetailQueryOptions = (slug: string) =>
+  queryOptions({
+    queryKey: [...PRODUCTS_QUERY_KEY, "detail", slug],
+    queryFn: () => getProductDetail(slug),
+    staleTime: 60_000,
+    retry: (failureCount, error) => apiErrorOf(error).status !== 404 && failureCount < 1
+  });
+
+/** "You Might Also Like" của trang chi tiết (plan chi-tiet-giay §5.2, §6.6). */
+export const createRelatedProductsQueryOptions = (slug: string) =>
+  queryOptions({
+    queryKey: [...PRODUCTS_QUERY_KEY, "related", slug],
+    queryFn: () => getRelatedProducts(slug),
+    staleTime: 60_000,
+    retry: 1
   });

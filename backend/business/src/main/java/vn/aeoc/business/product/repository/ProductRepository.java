@@ -123,6 +123,25 @@ public class ProductRepository extends AbsMysqlRepository<ProductRecord, Product
         return getCountWithCriteria(condition);
     }
 
+    /* ---------- Chi tiết + "You Might Also Like" (plan chi-tiet-giay §5.1, §5.2) ---------- */
+
+    /** Thẻ của sản phẩm đang bán có {@code slug} (đã chuẩn hoá ở service); không có → {@code null}. */
+    public Product getPublishedBySlug(String slug) {
+        return getOneByCriteriaWithJoin(cardFields(), PRODUCT, published().and(PRODUCT.SLUG.eq(slug)));
+    }
+
+    /**
+     * Thẻ sản phẩm đang bán khác {@code productId}: cùng danh mục {@code categoryId} trước, rồi danh mục khác;
+     * trong mỗi phần theo "Featured"; tối đa {@code limit}.
+     */
+    public List<Product> listRelated(Integer productId, Integer categoryId, int limit) {
+        List<SortField<?>> orders = new ArrayList<>();
+        orders.add(DSL.when(PRODUCT.CATEGORY_ID.eq(categoryId), 0).otherwise(1).asc());
+        orders.addAll(catalogOrders(CatalogSort.FEATURED));
+        return getListByCriteriaWithJoin(cardFields(), PRODUCT, published().and(PRODUCT.ID.ne(productId)),
+                orders, new Pageable().setLimit(limit));
+    }
+
     /* ---------- Danh sách giày có lọc + số đếm theo bộ lọc (plan danh-sach-giay §5) ---------- */
 
     /** Giá đang bán = {@code COALESCE(sale_price, price)}. */

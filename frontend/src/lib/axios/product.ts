@@ -3,6 +3,7 @@ import type { ApiResponse } from "@/lib/types/common";
 import type {
   ProductCardDTO,
   ProductCategoryDTO,
+  ProductDetailDTO,
   ProductFacetsDTO,
   ProductFilterParams,
   ProductListDTO,
@@ -46,6 +47,22 @@ export async function listProducts(params: ProductListParams): Promise<ProductLi
 export async function getProductFacets(params: ProductFilterParams): Promise<ProductFacetsDTO> {
   const res = await axiosInstance.get<ApiResponse<ProductFacetsDTO>>("/product/public/facets", {
     params
+  });
+  return res.data.result;
+}
+
+/** `GET /product/public/get?slug=` — chi tiết sản phẩm đang bán; slug không có / ẩn → 404 (plan chi-tiet-giay §5.1). */
+export async function getProductDetail(slug: string): Promise<ProductDetailDTO> {
+  const res = await axiosInstance.get<ApiResponse<ProductDetailDTO>>("/product/public/get", {
+    params: { slug }
+  });
+  return res.data.result;
+}
+
+/** `GET /product/public/related?slug=` — tối đa 8 thẻ "You Might Also Like" (plan chi-tiet-giay §5.2). */
+export async function getRelatedProducts(slug: string): Promise<ProductCardDTO[]> {
+  const res = await axiosInstance.get<ApiResponse<ProductCardDTO[]>>("/product/public/related", {
+    params: { slug }
   });
   return res.data.result;
 }

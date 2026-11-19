@@ -1,0 +1,62 @@
+{
+  "$comment": "Lát chi-tiet-giay (plan §6.5, §9 TC-18): bảng quy đổi size tĩnh (theo bảng size nam của nike.com; US nữ = US nam + 1,5; trẻ em = số US nam + \"Y\"). Mọi ô là chuỗi đúng như hiện trên giao diện; null = \"—\". `cases`: mỗi sản phẩm một ca data-driven, `sampleRow` = các ô của một dòng (EU, UK, US, cm).",
+  "title": "Size Guide",
+  "intro": "Find your size by foot length. If you're between sizes, we recommend sizing up.",
+  "usColumnTitle": {
+    "MEN": "US Men's",
+    "WOMEN": "US Women's",
+    "UNISEX": "US",
+    "BOYS": "US Kids'",
+    "GIRLS": "US Kids'"
+  },
+  "rows": [
+    { "eu": "35.5", "uk": "3", "usMen": "3.5", "usWomen": "5", "usKids": "3.5Y", "cm": "22.5" },
+    { "eu": "36", "uk": "3.5", "usMen": "4", "usWomen": "5.5", "usKids": "4Y", "cm": "23" },
+    { "eu": "36.5", "uk": "4", "usMen": "4.5", "usWomen": "6", "usKids": "4.5Y", "cm": "23.5" },
+    { "eu": "37.5", "uk": "4.5", "usMen": "5", "usWomen": "6.5", "usKids": "5Y", "cm": "23.5" },
+    { "eu": "38", "uk": "5", "usMen": "5.5", "usWomen": "7", "usKids": "5.5Y", "cm": "24" },
+    { "eu": "38.5", "uk": "5.5", "usMen": "6", "usWomen": "7.5", "usKids": "6Y", "cm": "24" },
+    { "eu": "39", "uk": "6", "usMen": "6.5", "usWomen": "8", "usKids": "6.5Y", "cm": "24.5" },
+    { "eu": "40", "uk": "6", "usMen": "7", "usWomen": "8.5", "usKids": "7Y", "cm": "25" },
+    { "eu": "40.5", "uk": "6.5", "usMen": "7.5", "usWomen": "9", "usKids": null, "cm": "25.5" },
+    { "eu": "41", "uk": "7", "usMen": "8", "usWomen": "9.5", "usKids": null, "cm": "26" },
+    { "eu": "42", "uk": "7.5", "usMen": "8.5", "usWomen": "10", "usKids": null, "cm": "26.5" },
+    { "eu": "42.5", "uk": "8", "usMen": "9", "usWomen": "10.5", "usKids": null, "cm": "27" },
+    { "eu": "43", "uk": "8.5", "usMen": "9.5", "usWomen": "11", "usKids": null, "cm": "27.5" },
+    { "eu": "44", "uk": "9", "usMen": "10", "usWomen": "11.5", "usKids": null, "cm": "28" },
+    { "eu": "44.5", "uk": "9.5", "usMen": "10.5", "usWomen": "12", "usKids": null, "cm": "28.5" },
+    { "eu": "45", "uk": "10", "usMen": "11", "usWomen": "12.5", "usKids": null, "cm": "29" },
+    { "eu": "46", "uk": "11", "usMen": "12", "usWomen": "13.5", "usKids": null, "cm": "30" },
+    { "eu": "47", "uk": "11.5", "usMen": "12.5", "usWomen": "14", "usKids": null, "cm": "30.5" }
+  ],
+  "cases": [
+    {
+      "slug": "nike-air-force-1-07",
+      "gender": "MEN",
+      "usTitle": "US Men's",
+      "rowCount": 13,
+      "sampleRow": ["42", "7.5", "8.5", "26.5"]
+    },
+    {
+      "slug": "nike-pegasus-42",
+      "gender": "WOMEN",
+      "usTitle": "US Women's",
+      "rowCount": 11,
+      "sampleRow": ["38", "5", "7", "24"]
+    },
+    {
+      "slug": "ja-4-blur-ep",
+      "gender": "UNISEX",
+      "usTitle": "US",
+      "rowCount": 13,
+      "sampleRow": ["42", "7.5", "M 8.5 / W 10", "26.5"]
+    },
+    {
+      "slug": "caitlin-1-midnight-fever",
+      "gender": "GIRLS",
+      "usTitle": "US Kids'",
+      "rowCount": 8,
+      "sampleRow": ["38.5", "5.5", "6Y", "24"]
+    }
+  ]
+}

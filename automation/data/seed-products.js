@@ -398,3 +398,92 @@ export function catalogTitle(filter, categoryName = null) {
   const audience = audiences[`${(filter.gender ?? '').trim()}|${(filter.kids ?? '').trim()}`];
   return [audience, categoryName, 'Shoes'].filter(Boolean).join(' ');
 }
+
+/* ---------- Lát chi-tiet-giay (plan §5.1, §5.2, §6.4): chi tiết, "You Might Also Like", giảm giá, sắp hết hàng ---------- */
+
+/** Số thẻ tối đa của `related` (plan chi-tiet-giay §5.2). */
+export const RELATED_LIMIT = 8;
+/** Tồn kho tối đa còn hiện "Just a few left. Order soon." (plan §6.4 mục 5). */
+export const LOW_STOCK_MAX = 3;
+
+/**
+ * Sản phẩm theo slug (mọi trạng thái); không có → ném lỗi để test hỏng rõ ràng.
+ * @param {string} slug
+ * @returns {SeedProduct}
+ */
+export function seedBySlug(slug) {
+  const p = seedProducts.find((x) => x.slug === slug);
+  if (!p) throw new Error(`Không có sản phẩm "${slug}" trong products.json`);
+  return p;
+}
+
+/** id danh mục theo slug danh mục. @param {SeedProduct} p */
+const categoryIdOf = (p) =>
+  /** @type {SeedCategory} */ (seedCategories.find((c) => c.slug === p.category)).id;
+
+/**
+ * `GET /product/public/get?slug=` mong đợi (plan §5.1), trừ `url` ảnh kiểm theo đuôi `urlSuffix`.
+ * Ảnh id = productId × 10 + sortOrder; size id = productId × 100 + thứ tự (1-based) trong lưới.
+ * @param {string} slug
+ */
+export function expectedDetail(slug) {
+  const p = seedBySlug(slug);
+  return {
+    ...cardOf(p),
+    categoryId: categoryIdOf(p),
+    description: p.description,
+    images: Array.from({ length: IMAGES_PER_PRODUCT }, (_, i) => ({
+      id: p.id * 10 + i + 1,
+      productId: p.id,
+      sortOrder: i + 1,
+      urlSuffix: `/products/${p.slug}/${i + 1}.webp`,
+    })),
+    sizes: stockOf(p).map((s, i) => ({
+      id: p.id * 100 + i + 1,
+      productId: p.id,
+      sizeLabel: s.sizeLabel,
+      sizeValue: s.sizeValue,
+      stock: s.stock,
+    })),
+  };
+}
+
+/**
+ * `GET /product/public/related?slug=` mong đợi (plan §5.2): PUBLISHED, khác chính nó,
+ * cùng danh mục trước rồi danh mục khác, trong mỗi phần theo "Featured"; tối đa 8.
+ * @param {string} slug
+ */
+export function expectedRelated(slug) {
+  const current = seedBySlug(slug);
+  const featured = catalogComparator('featured');
+  return publishedProducts()
+    .filter((p) => p.id !== current.id)
+    .sort(
+      (a, b) =>
+        Number(a.category !== current.category) - Number(b.category !== current.category) ||
+        featured(a, b)
+    )
+    .slice(0, RELATED_LIMIT)
+    .map(cardOf);
+}
+
+/**
+ * Phần trăm giảm làm tròn xuống (plan §6.4 mục 3); không giảm → 0.
+ * @param {SeedProduct} p
+ */
+export const discountPercent = (p) =>
+  p.salePrice === null ? 0 : Math.floor(((p.price - p.salePrice) * 100) / p.price);
+
+/**
+ * Có hiện "Just a few left. Order soon." không (plan §6.4 mục 5): tồn của size đang chọn,
+ * hoặc tổng tồn khi chưa chọn size, nằm trong 1 → 3.
+ * @param {SeedProduct} p
+ * @param {string | null} [selectedSizeLabel] vd "EU 42"
+ */
+export function lowStockShown(p, selectedSizeLabel = null) {
+  const n =
+    selectedSizeLabel === null
+      ? totalStockOf(p)
+      : (stockOf(p).find((s) => s.sizeLabel === selectedSizeLabel)?.stock ?? 0);
+  return n >= 1 && n <= LOW_STOCK_MAX;
+}

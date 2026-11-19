@@ -13,6 +13,7 @@
   --sh-warning: #9e3500;
   --sh-danger: #d30005;
   --sh-success: #007d48;
+  --sh-disabled: #cacacb; /* chữ ô size hết hàng (trang chi tiết) */
   /* nike.com dùng Helvetica Now Text (bản quyền) → Inter gần nhất về độ rộng / độ đậm khi weight 500 */
   font-family: "Inter Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
   color-scheme: light;
@@ -40,6 +41,14 @@
 .shop-rail {
   scrollbar-width: thin;
   scrollbar-color: #cacacb transparent;
+}
+
+/* Dải ảnh trang chi tiết (plan chi-tiet-giay §6.2): cuộn native + scroll-snap, ẩn thanh cuộn */
+.pdp-gallery-track {
+  scrollbar-width: none;
+}
+.pdp-gallery-track::-webkit-scrollbar {
+  display: none;
 }
 
 /* Thanh tiến trình chuyển trang (route-progress.tsx) */
