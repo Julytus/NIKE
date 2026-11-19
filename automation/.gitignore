@@ -6,3 +6,5 @@ playwright-report/
 blob-report/
 allure-results/
 allure-report/
+test-results-stock/
+playwright-report-stock/

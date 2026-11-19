@@ -30,10 +30,11 @@ Backend chưa chạy thì `global-setup.js` dừng ngay với thông báo
 
 | Lệnh | Việc |
 |---|---|
-| `pnpm test` | Toàn bộ: project `api` + 4 project giao diện |
-| `pnpm test:smoke` | Chỉ test gắn tag `@smoke` (luồng chính), mọi project |
-| `pnpm test:regression` | Chỉ test gắn tag `@regression` |
-| `pnpm test:api` | Chỉ nhóm API (không bật frontend) |
+| `pnpm test` | Toàn bộ: project `api` + 4 project giao diện, hai pha (thường rồi `@stock`) |
+| `pnpm test:smoke` | Chỉ test gắn tag `@smoke` (luồng chính), mọi project, hai pha |
+| `pnpm test:regression` | Chỉ test gắn tag `@regression`, hai pha |
+| `pnpm test:api` | Chỉ nhóm API (không bật frontend), hai pha |
+| `pnpm test:stock` | Chỉ pha `@stock` (test tạo đơn / đổi tồn kho) |
 | `pnpm test:headed` | Chromium có giao diện, 1 worker |
 | `pnpm test:ui` | Chế độ UI của Playwright (chọn test, xem từng bước) |
 | `pnpm exec playwright test tests/admin/role.spec.js -g "TC-14"` | Chạy một test theo ID |
@@ -49,11 +50,29 @@ E2E_SLOWMO=400 pnpm exec playwright test tests/admin --project=chromium --headed
 
 Chụp ảnh cho tài liệu chức năng: đặt `E2E_DOC_SHOTS=../docs/chuc-nang/img/<slug>`; hàm `docShot()` chỉ chụp ở project `chromium`.
 
+### Hai pha: thường và `@stock` (từ lát `dat-hang`)
+
+Nhiều spec so tồn kho chính xác với `products.json` (`totalStock`, tồn từng size…), còn test tạo đơn thì trừ kho.
+Để không chập chờn, `pnpm test*` chạy qua `scripts/run-phases.mjs`: **pha thường** (mọi test trừ `@stock`) rồi
+**pha stock** (`E2E_STOCK=1`, chỉ `@stock`); mỗi pha có global-setup reset dữ liệu riêng. Pha 2 vẫn chạy khi pha 1
+đỏ; mã thoát ≠ 0 nếu một pha đỏ; `--phase=main|stock` chỉ chạy một pha. Pha stock ghi `test-results-stock/` và
+`playwright-report-stock/` (`pnpm report:stock`), Allure dùng chung `allure-results/`.
+
+- Test tạo đơn / đổi tồn kho **phải** nằm trong `test.describe('… @stock')`; mỗi test dùng size riêng và đặt lại tồn kho
+  bằng `testSupport.setStockOk(sizeId, n)` ở đầu test. Test giao diện cần đặt tồn kho dùng size theo project
+  (`laneOf(testInfo)` ở `utils/lane.js`) để 4 trình duyệt không giẫm nhau.
+- `pnpm exec playwright test` gọi thẳng chỉ chạy pha thường; chạy riêng một spec `@stock`:
+
+```bash
+E2E_STOCK=1 E2E_SLOWMO=400 pnpm exec playwright test tests/checkout/dat-hang.spec.js --project=chromium --headed --workers=1
+```
+
 ## 3. Báo cáo
 
 | Báo cáo | Lệnh | Vị trí |
 |---|---|---|
 | Playwright HTML (trace, ảnh, video khi lỗi) | `pnpm report` | `playwright-report/index.html` |
+| Playwright HTML của pha `@stock` | `pnpm report:stock` | `playwright-report-stock/index.html` |
 | Allure | `pnpm allure:generate` rồi `pnpm allure:open` | `allure-results/` → `allure-report/index.html` |
 
 Khi test lỗi Playwright giữ lại **trace** (`trace: retain-on-failure`), **ảnh chụp** và **video**; mở trace bằng `pnpm exec playwright show-trace <file trace.zip>`.
@@ -127,4 +146,4 @@ pages/ (BasePage → AdminLoginPage, AdminLayout, RolePage, components/) ──�
 ## 6. CI (GitHub Actions)
 
 `.github/workflows/e2e-smoke.yml` chạy khi push / mở PR vào `main` (và chạy tay bằng `workflow_dispatch`):
-dựng MySQL + MinIO bằng `docker-compose.local.yml` → build và chạy backend (jar, profile `local`) → cài phụ thuộc frontend + automation + Chromium → `pnpm test:smoke --project=api --project=chromium` → tải lên `playwright-report/` và `allure-results/` làm artifact (kể cả khi đỏ).
+dựng MySQL + MinIO bằng `docker-compose.local.yml` → build và chạy backend (jar, profile `local`) → cài phụ thuộc frontend + automation + Chromium → `pnpm test:smoke --project=api --project=chromium` → tải lên `playwright-report/`, `playwright-report-stock/` và `allure-results/` làm artifact (kể cả khi đỏ).

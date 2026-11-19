@@ -6,6 +6,7 @@ import {
   readCart,
   reconcileCart,
   removeItem,
+  removeItems,
   setQuantity,
   writeCart
 } from "@/lib/shop/cart-storage";
@@ -18,6 +19,8 @@ interface CartState {
   add: (sizeId: number, max: number) => boolean;
   setQuantity: (sizeId: number, quantity: number) => void;
   remove: (sizeId: number) => void;
+  /** Bỏ các size vừa đặt hàng (plan dat-hang §6.7). */
+  removeMany: (sizeIds: number[]) => void;
   changeSize: (fromId: number, toId: number, max: number) => void;
   /** Đối soát với kết quả `check` của giỏ hiện tại (§6.9). */
   reconcile: (lines: CartLineDTO[]) => void;
@@ -46,6 +49,7 @@ export const useCart = create<CartState>()((set, get) => {
     },
     setQuantity: (sizeId, quantity) => commit(setQuantity(get().items, sizeId, quantity)),
     remove: (sizeId) => commit(removeItem(get().items, sizeId)),
+    removeMany: (sizeIds) => commit(removeItems(get().items, sizeIds)),
     changeSize: (fromId, toId, max) => commit(changeSize(get().items, fromId, toId, max)),
     reconcile: (lines) => commit(reconcileCart(get().items, lines)),
     reload: () => set({ items: readCart() })

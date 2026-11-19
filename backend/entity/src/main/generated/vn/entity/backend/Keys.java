@@ -19,6 +19,8 @@ import vn.entity.backend.tables.ProductSize;
 import vn.entity.backend.tables.RefreshToken;
 import vn.entity.backend.tables.Resource;
 import vn.entity.backend.tables.Role;
+import vn.entity.backend.tables.ShopOrder;
+import vn.entity.backend.tables.ShopOrderItem;
 import vn.entity.backend.tables.UserApp;
 import vn.entity.backend.tables.records.ModuleRecord;
 import vn.entity.backend.tables.records.PermissionRecord;
@@ -29,6 +31,8 @@ import vn.entity.backend.tables.records.ProductSizeRecord;
 import vn.entity.backend.tables.records.RefreshTokenRecord;
 import vn.entity.backend.tables.records.ResourceRecord;
 import vn.entity.backend.tables.records.RoleRecord;
+import vn.entity.backend.tables.records.ShopOrderItemRecord;
+import vn.entity.backend.tables.records.ShopOrderRecord;
 import vn.entity.backend.tables.records.UserAppRecord;
 
 
@@ -62,6 +66,9 @@ public class Keys {
     public static final UniqueKey<ResourceRecord> KEY_RESOURCE_RESOURCE_CODE_UINDEX = Internal.createUniqueKey(Resource.RESOURCE, DSL.name("KEY_resource_resource_code_uindex"), new TableField[] { Resource.RESOURCE.CODE }, true);
     public static final UniqueKey<RoleRecord> KEY_ROLE_PRIMARY = Internal.createUniqueKey(Role.ROLE, DSL.name("KEY_role_PRIMARY"), new TableField[] { Role.ROLE.ID }, true);
     public static final UniqueKey<RoleRecord> KEY_ROLE_ROLE_NAME_UINDEX = Internal.createUniqueKey(Role.ROLE, DSL.name("KEY_role_role_name_uindex"), new TableField[] { Role.ROLE.NAME }, true);
+    public static final UniqueKey<ShopOrderRecord> KEY_SHOP_ORDER_PRIMARY = Internal.createUniqueKey(ShopOrder.SHOP_ORDER, DSL.name("KEY_shop_order_PRIMARY"), new TableField[] { ShopOrder.SHOP_ORDER.ID }, true);
+    public static final UniqueKey<ShopOrderRecord> KEY_SHOP_ORDER_UK_SHOP_ORDER_CODE = Internal.createUniqueKey(ShopOrder.SHOP_ORDER, DSL.name("KEY_shop_order_uk_shop_order_code"), new TableField[] { ShopOrder.SHOP_ORDER.CODE }, true);
+    public static final UniqueKey<ShopOrderItemRecord> KEY_SHOP_ORDER_ITEM_PRIMARY = Internal.createUniqueKey(ShopOrderItem.SHOP_ORDER_ITEM, DSL.name("KEY_shop_order_item_PRIMARY"), new TableField[] { ShopOrderItem.SHOP_ORDER_ITEM.ID }, true);
     public static final UniqueKey<UserAppRecord> KEY_USER_APP_PRIMARY = Internal.createUniqueKey(UserApp.USER_APP, DSL.name("KEY_user_app_PRIMARY"), new TableField[] { UserApp.USER_APP.ID }, true);
     public static final UniqueKey<UserAppRecord> KEY_USER_APP_USER_APP_EMAIL_UINDEX = Internal.createUniqueKey(UserApp.USER_APP, DSL.name("KEY_user_app_user_app_email_uindex"), new TableField[] { UserApp.USER_APP.EMAIL }, true);
     public static final UniqueKey<UserAppRecord> KEY_USER_APP_USER_APP_PHONE_UINDEX = Internal.createUniqueKey(UserApp.USER_APP, DSL.name("KEY_user_app_user_app_phone_uindex"), new TableField[] { UserApp.USER_APP.PHONE }, true);
@@ -77,5 +84,9 @@ public class Keys {
     public static final ForeignKey<ProductSizeRecord, ProductRecord> FK_PRODUCT_SIZE_PRODUCT = Internal.createForeignKey(ProductSize.PRODUCT_SIZE, DSL.name("fk_product_size_product"), new TableField[] { ProductSize.PRODUCT_SIZE.PRODUCT_ID }, Keys.KEY_PRODUCT_PRIMARY, new TableField[] { Product.PRODUCT.ID }, true);
     public static final ForeignKey<RefreshTokenRecord, UserAppRecord> REFRESH_TOKEN_USER_FK = Internal.createForeignKey(RefreshToken.REFRESH_TOKEN, DSL.name("refresh_token_user_fk"), new TableField[] { RefreshToken.REFRESH_TOKEN.USER_ID }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
     public static final ForeignKey<ResourceRecord, ModuleRecord> RESOURCE_MODULE_FK = Internal.createForeignKey(Resource.RESOURCE, DSL.name("resource_module_fk"), new TableField[] { Resource.RESOURCE.MODULE_ID }, Keys.KEY_MODULE_PRIMARY, new TableField[] { Module.MODULE.ID }, true);
+    public static final ForeignKey<ShopOrderRecord, UserAppRecord> FK_SHOP_ORDER_USER = Internal.createForeignKey(ShopOrder.SHOP_ORDER, DSL.name("fk_shop_order_user"), new TableField[] { ShopOrder.SHOP_ORDER.USER_ID }, Keys.KEY_USER_APP_PRIMARY, new TableField[] { UserApp.USER_APP.ID }, true);
+    public static final ForeignKey<ShopOrderItemRecord, ShopOrderRecord> FK_SHOP_ORDER_ITEM_ORDER = Internal.createForeignKey(ShopOrderItem.SHOP_ORDER_ITEM, DSL.name("fk_shop_order_item_order"), new TableField[] { ShopOrderItem.SHOP_ORDER_ITEM.ORDER_ID }, Keys.KEY_SHOP_ORDER_PRIMARY, new TableField[] { ShopOrder.SHOP_ORDER.ID }, true);
+    public static final ForeignKey<ShopOrderItemRecord, ProductRecord> FK_SHOP_ORDER_ITEM_PRODUCT = Internal.createForeignKey(ShopOrderItem.SHOP_ORDER_ITEM, DSL.name("fk_shop_order_item_product"), new TableField[] { ShopOrderItem.SHOP_ORDER_ITEM.PRODUCT_ID }, Keys.KEY_PRODUCT_PRIMARY, new TableField[] { Product.PRODUCT.ID }, true);
+    public static final ForeignKey<ShopOrderItemRecord, ProductSizeRecord> FK_SHOP_ORDER_ITEM_SIZE = Internal.createForeignKey(ShopOrderItem.SHOP_ORDER_ITEM, DSL.name("fk_shop_order_item_size"), new TableField[] { ShopOrderItem.SHOP_ORDER_ITEM.SIZE_ID }, Keys.KEY_PRODUCT_SIZE_PRIMARY, new TableField[] { ProductSize.PRODUCT_SIZE.ID }, true);
     public static final ForeignKey<UserAppRecord, RoleRecord> USER_APP_ROLE_FK = Internal.createForeignKey(UserApp.USER_APP, DSL.name("user_app_role_fk"), new TableField[] { UserApp.USER_APP.ROLE_ID }, Keys.KEY_ROLE_PRIMARY, new TableField[] { Role.ROLE.ID }, true);
 }

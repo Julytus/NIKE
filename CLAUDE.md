@@ -1,4 +1,4 @@
-# Nike Shoes (repo DownBeat) — Đồ án: Xây dựng Automation test cho web thương mại điện tử bán giày dùng JavaScript với Playwright
+# Nike Shoes (repo nike) — Đồ án: Xây dựng Automation test cho web thương mại điện tử bán giày dùng JavaScript với Playwright
 
 Monorepo: `backend/` (Spring Boot 3.2, Java 21, jOOQ, MySQL, MinIO) · `frontend/` (React 19, Vite, TanStack) · `automation/` (Playwright + JavaScript, POM + fixture + API client, hướng dẫn ở `automation/README.md`).
 Đang chuyển từ cửa hàng LUT cũ sang cửa hàng giày mô phỏng nike.com/vn (dùng tên, logo, ảnh Nike **chỉ để học, chạy local**). Kế hoạch tổng: `plan/thiet-ke-giay.md`; đặc tả UI + ảnh tham chiếu: `plan/ui-nike/README.md`; danh sách plan: `plan/README.md`.
@@ -44,19 +44,22 @@ Trạng thái plan: `draft` → `approved` → `in-progress` → `done` (hoặc 
 
 ```bash
 sh scripts/ai/backend-restart.sh                    # build + restart backend :9500, in dòng Flyway
-docker compose -f docker-compose.local.yml --env-file backend/.env up -d   # MySQL / MinIO local (container downBeat-*)
+docker compose -f docker-compose.local.yml --env-file backend/.env up -d   # MySQL / MinIO local (container nike-*)
 cd backend && mvn -q "-Djooq.codegen.skip=true" -pl <module> -am test
 cd frontend && pnpm build && pnpm lint
 cd automation && pnpm test:smoke                    # nhóm @smoke, mọi trình duyệt (api, chromium, firefox, webkit, mobile-chrome)
 cd automation && pnpm test:api && pnpm lint        # chỉ nhóm API (không bật frontend) + ESLint code test
 cd automation && E2E_SLOWMO=400 pnpm exec playwright test <spec> --project=chromium --headed --workers=1 --reporter=line
+cd automation && E2E_STOCK=1 E2E_SLOWMO=400 pnpm exec playwright test <spec @stock> --project=chromium --headed --workers=1   # spec tạo đơn / đổi tồn kho
 ```
+
+`pnpm test*` chạy hai pha qua `automation/scripts/run-phases.mjs`: pha thường (trừ `@stock`) rồi pha `@stock` (`E2E_STOCK=1`), mỗi pha reset dữ liệu. Test tạo đơn / đổi tồn kho phải nằm trong `test.describe('… @stock')` (chi tiết `automation/README.md` §2).
 
 ## Quy tắc chung
 
 - Hợp đồng API ở §5 và chuỗi giao diện ở §6 của plan là nguồn sự thật cho code và test. Cần đổi thì sửa plan trước, ghi §12.
 - Không commit, push hay đổi branch khi người dùng chưa bảo. Ngoại lệ đã được cho phép sẵn: `/doc-chuc-nang` tự tạo branch `feature/<slug>`, commit, push và mở PR vào `main`; không bao giờ tự merge hay push thẳng vào `main`. Không dùng `git stash/reset/checkout -- <file>/clean` làm mất thay đổi chưa commit.
-- Báo cáo, tài liệu và chữ giao diện viết bằng tiếng Việt; tên / mô tả sản phẩm giữ tiếng Anh như nike.com; tiền VNĐ `5.279.000 ₫`.
+- Chữ giao diện (cửa hàng + quản trị), URL, slug, khoá query: **tiếng Anh** như nike.com (D6, đổi 18/11/2026); **chỉ tiền là VNĐ** `5.279.000 ₫`. Message API trả client cũng tiếng Anh (FE hiện nguyên văn). Báo cáo, tài liệu, plan, comment code viết tiếng Việt.
 - Một cửa hàng duy nhất: không có bảng `branch`, cột `bsn_id` hay `BsnScope`. Phân quyền quản trị bằng `role` + `permission` + `resource` (cấp qua migration).
 - Ghi dữ liệu đồng bộ, đơn giản: không dùng `@Idempotent` / header `Idempotency-Key` / Kafka. Chống trùng bằng ràng buộc DB + kiểm tra ở service.
-- Tài khoản local: `admin@downbeat.local` / `Admin@123` (toàn quyền), `noaccess@downbeat.local` / `Admin@123` (không quyền), `free@downbeat.local` / `Admin@123` (khách hàng).
+- Tài khoản local: `admin@nike.local` / `Admin@123` (toàn quyền), `noaccess@nike.local` / `Admin@123` (không quyền), `free@nike.local` / `Admin@123` (khách hàng).

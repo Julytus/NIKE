@@ -1,5 +1,5 @@
 {
-  "$comment": "Lát tieng-anh-cua-hang (plan §7.1 bước 2, TC-10): 22 trang cửa hàng quét chữ có dấu tiếng Việt. Lát chi-tiet-giay (plan §7.1 bước 6) thêm trang \"Product Not Found\" (sản phẩm ẩn). Lát gio-hang (plan §7.1 bước 7) thêm trang tạm /checkout.",
+  "$comment": "Lát tieng-anh-cua-hang (plan §7.1 bước 2, TC-10): 22 trang cửa hàng quét chữ có dấu tiếng Việt. Lát chi-tiet-giay (plan §7.1 bước 6) thêm trang \"Product Not Found\" (sản phẩm ẩn). Lát gio-hang (plan §7.1 bước 7) thêm trang tạm /checkout; lát dat-hang (plan §7.1 bước 7) bỏ /checkout (bắt đăng nhập — quét chữ ở TC-14 / TC-23 của dat-hang).",
   "routes": [
     { "path": "/", "name": "Home" },
     { "path": "/w", "name": "Catalog" },
@@ -8,7 +8,6 @@
     { "path": "/t/nike-air-max-plus-premium", "name": "Product Not Found" },
     { "path": "/favorites", "name": "Favourites" },
     { "path": "/cart", "name": "Bag" },
-    { "path": "/checkout", "name": "Checkout" },
     { "path": "/info/find-a-store", "name": "Find a Store" },
     { "path": "/info/membership", "name": "Become a Member" },
     { "path": "/info/feedback", "name": "Send Us Feedback" },

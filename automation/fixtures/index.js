@@ -5,9 +5,11 @@ import { accounts } from '../data/accounts.js';
 import { AdminLayout } from '../pages/AdminLayout.js';
 import { AdminLoginPage } from '../pages/AdminLoginPage.js';
 import { CartPage } from '../pages/CartPage.js';
+import { CheckoutPage } from '../pages/CheckoutPage.js';
 import { HomePage } from '../pages/HomePage.js';
 import { InfoPage } from '../pages/InfoPage.js';
 import { NotFoundPage } from '../pages/NotFoundPage.js';
+import { OrderResultPage } from '../pages/OrderResultPage.js';
 import { PermissionPage } from '../pages/PermissionPage.js';
 import { ProductDetailPage } from '../pages/ProductDetailPage.js';
 import { ProductListPage } from '../pages/ProductListPage.js';
@@ -33,6 +35,8 @@ import { SignInPage } from '../pages/SignInPage.js';
  *   productListPage: ProductListPage,
  *   productDetailPage: ProductDetailPage,
  *   cartPage: CartPage,
+ *   checkoutPage: CheckoutPage,
+ *   orderResultPage: OrderResultPage,
  * }} TestFixtures
  * @typedef {{ tokenCache: { get: (role: Role) => Promise<string> } }} WorkerFixtures
  */
@@ -41,7 +45,7 @@ import { SignInPage } from '../pages/SignInPage.js';
  * `test` dùng chung cho mọi spec:
  * - `api`: API client chưa đăng nhập.
  * - `apiAs(role)`: API client đã gắn token của vai trò (đăng nhập bằng API một lần mỗi worker).
- * - Page object: `loginPage`, `adminLayout`, `rolePage`, `permissionPage`, `resourcePage`, `homePage`, `infoPage`, `notFoundPage`, `signInPage`, `productListPage`, `productDetailPage`, `cartPage`.
+ * - Page object: `loginPage`, `adminLayout`, `rolePage`, `permissionPage`, `resourcePage`, `homePage`, `infoPage`, `notFoundPage`, `signInPage`, `productListPage`, `productDetailPage`, `cartPage`, `checkoutPage`, `orderResultPage`.
  * Đăng nhập giao diện dùng `test.use({ storageState: storageStateOf('admin') })` (tạo ở auth.setup.js).
  * @type {import('@playwright/test').TestType<
  *   import('@playwright/test').PlaywrightTestArgs & import('@playwright/test').PlaywrightTestOptions & TestFixtures,
@@ -125,6 +129,14 @@ export const test = base.extend({
 
   cartPage: async ({ page }, use) => {
     await use(new CartPage(page));
+  },
+
+  checkoutPage: async ({ page }, use) => {
+    await use(new CheckoutPage(page));
+  },
+
+  orderResultPage: async ({ page }, use) => {
+    await use(new OrderResultPage(page));
   },
 });
 

@@ -8,6 +8,8 @@ export default [
       'node_modules/',
       'playwright-report/',
       'test-results/',
+      'test-results-stock/',
+      'playwright-report-stock/',
       'allure-results/',
       'allure-report/',
       '.auth/',

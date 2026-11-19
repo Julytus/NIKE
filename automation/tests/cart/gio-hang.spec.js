@@ -638,9 +638,8 @@ test.describe('Giỏ hàng — giao diện (desktop)', () => {
         await signInPage.signIn(accounts.khach1);
         await expect.poll(() => new URL(page.url()).pathname).toBe('/checkout');
         await expect(page).toHaveTitle('Checkout | Nike');
-        await expect(
-          page.getByRole('main').getByText('Coming Soon', { exact: true })
-        ).toBeVisible();
+        // Lát dat-hang thay trang tạm "Coming Soon" bằng trang /checkout thật (plan dat-hang §7.1 bước 7)
+        await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toHaveText('Checkout');
         await expect(cart.header.cartCount).toHaveText('1');
         await expectStoredCart(page, [{ sizeId: S.dunk42, quantity: 1 }]);
       });

@@ -77,6 +77,21 @@ public class ProductSizeRepository extends AbsMysqlRepository<ProductSizeRecord,
                 .fetchInto(CartLine.class);
     }
 
+    /**
+     * Trừ kho có điều kiện (plan dat-hang §5.3 bước 7): chỉ trừ khi còn đủ, nên hai đơn tranh đôi cuối thì một
+     * đơn nhận 0 dòng và tồn kho không bao giờ âm. Trả số dòng được cập nhật (0 hoặc 1).
+     */
+    public int decreaseStock(Integer sizeId, int quantity) {
+        return dslContext.update(PRODUCT_SIZE)
+                .set(PRODUCT_SIZE.STOCK, PRODUCT_SIZE.STOCK.minus(quantity))
+                .where(PRODUCT_SIZE.ID.eq(sizeId).and(PRODUCT_SIZE.STOCK.ge(quantity)))
+                .execute();
+    }
+
+    public void updateStock(Integer sizeId, Integer stock) {
+        updateFieldByCondition(PRODUCT_SIZE.ID.eq(sizeId), PRODUCT_SIZE.STOCK, stock);
+    }
+
     public void deleteAll() {
         delete(DSL.trueCondition());
     }

@@ -13,6 +13,7 @@ import vn.aeoc.business.product.repository.ProductCategoryRepository;
 import vn.aeoc.business.product.repository.ProductImageRepository;
 import vn.aeoc.business.product.repository.ProductRepository;
 import vn.aeoc.business.product.repository.ProductSizeRepository;
+import vn.aeoc.business.shoporder.service.ShopOrderService;
 import vn.aeoc.business.testsupport.SeedSummary;
 import vn.aeoc.entity.data.mysql.product.Product;
 import vn.aeoc.entity.data.mysql.product.ProductImage;
@@ -33,7 +34,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * Phần DB chạy trong một transaction; phần MinIO ngoài transaction, lỗi chỉ ghi log cảnh báo.
  * Seed / reset giữ một khoá để hai lần reset song song không đan xen DELETE / INSERT.
  * <p>Các lát sau thêm bảng tham chiếu {@code product} / {@code product_size} (giỏ, đơn, yêu thích) phải mở rộng
- * {@link #reloadDatabase()}: xoá bảng con trước.
+ * {@link #reloadDatabase()}: xoá bảng con trước. Lát dat-hang: reset xoá luôn toàn bộ đơn
+ * ({@code shop_order_item}, {@code shop_order}) trước bảng sản phẩm.
  */
 @Slf4j
 @Service
@@ -44,6 +46,7 @@ public class ShoeSeedService extends BaseService<ProductRepository, Product, Int
     private final ProductCategoryRepository categoryRepository;
     private final ProductImageRepository imageRepository;
     private final ProductSizeRepository sizeRepository;
+    private final ShopOrderService shopOrderService;
     private final FileStorageService fileStorageService;
     private final TransactionTemplate transactionTemplate;
     /** {@code {system.file-url}/{minio.bucket}}: cùng công thức URL với {@link FileStorageService#putPublic}. */
@@ -56,6 +59,7 @@ public class ShoeSeedService extends BaseService<ProductRepository, Product, Int
                            ProductCategoryRepository categoryRepository,
                            ProductImageRepository imageRepository,
                            ProductSizeRepository sizeRepository,
+                           ShopOrderService shopOrderService,
                            FileStorageService fileStorageService,
                            TransactionTemplate transactionTemplate,
                            @Value("${system.file-url}") String fileUrl,
@@ -64,6 +68,7 @@ public class ShoeSeedService extends BaseService<ProductRepository, Product, Int
         this.categoryRepository = categoryRepository;
         this.imageRepository = imageRepository;
         this.sizeRepository = sizeRepository;
+        this.shopOrderService = shopOrderService;
         this.fileStorageService = fileStorageService;
         this.transactionTemplate = transactionTemplate;
         this.imageBaseUrl = StringUtils.removeEnd(fileUrl, "/") + "/" + bucket;
@@ -146,6 +151,7 @@ public class ShoeSeedService extends BaseService<ProductRepository, Product, Int
 
     private void reloadDatabase() {
         // Xoá bảng con trước (FK); lát sau thêm bảng tham chiếu product / product_size thì xoá thêm ở đầu.
+        shopOrderService.deleteAll();
         sizeRepository.deleteAll();
         imageRepository.deleteAll();
         repository.deleteAll();

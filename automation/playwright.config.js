@@ -12,11 +12,22 @@ const onlyApi =
   process.argv.some((a) => a === '--project=api' || a === 'api') &&
   !process.argv.some((a) => /--project=(chromium|firefox|webkit|mobile-chrome|setup)/.test(a));
 
-const uiProject = { dependencies: ['setup'], testIgnore: /tests[\\/]api[\\/]/ };
+// Pha `@stock` (plan dat-hang §7.1 bước 1): test làm đổi tồn kho (tạo đơn, setStock) chạy ở lần
+// `playwright test` thứ hai với `E2E_STOCK=1`, sau một lần reset riêng, để không làm sai các spec cũ
+// đang so tồn kho chính xác với products.json. `scripts/run-phases.mjs` chạy lần lượt hai pha.
+const stockPhase = process.env.E2E_STOCK === '1';
+const STOCK_TAG = /@stock/;
+const phaseFilter = stockPhase ? { grep: STOCK_TAG } : { grepInvert: STOCK_TAG };
+
+const uiProject = {
+  dependencies: ['setup'],
+  testIgnore: /tests[\\/]api[\\/]/,
+  ...phaseFilter,
+};
 
 export default defineConfig({
   testDir: './tests',
-  outputDir: './test-results',
+  outputDir: stockPhase ? './test-results-stock' : './test-results',
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
@@ -27,7 +38,10 @@ export default defineConfig({
   globalSetup: './global-setup.js',
   reporter: [
     ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    [
+      'html',
+      { outputFolder: stockPhase ? 'playwright-report-stock' : 'playwright-report', open: 'never' },
+    ],
     ['allure-playwright', { resultsDir: 'allure-results', detail: true, suiteTitle: true }],
   ],
   use: {
@@ -42,7 +56,7 @@ export default defineConfig({
   },
   projects: [
     { name: 'setup', testMatch: /.*\.setup\.js/, use: { ...devices['Desktop Chrome'] } },
-    { name: 'api', testMatch: /tests[\\/]api[\\/].*\.spec\.js/ },
+    { name: 'api', testMatch: /tests[\\/]api[\\/].*\.spec\.js/, ...phaseFilter },
     { name: 'chromium', use: { ...devices['Desktop Chrome'] }, ...uiProject },
     { name: 'firefox', use: { ...devices['Desktop Firefox'] }, ...uiProject },
     { name: 'webkit', use: { ...devices['Desktop Safari'] }, ...uiProject },

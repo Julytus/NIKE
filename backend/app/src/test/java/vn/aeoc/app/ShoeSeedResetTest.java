@@ -1,5 +1,6 @@
 package vn.aeoc.app;
 
+import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,17 +9,24 @@ import vn.aeoc.business.product.repository.ProductRepository;
 import vn.aeoc.business.product.repository.ProductSizeRepository;
 import vn.aeoc.business.product.seed.ShoeSeedData;
 import vn.aeoc.business.product.seed.ShoeSeedService;
+import vn.aeoc.business.shoporder.service.ShopOrderService;
 import vn.aeoc.business.testsupport.SeedSummary;
 import vn.aeoc.entity.data.mysql.product.Product;
 import vn.aeoc.entity.data.mysql.product.ProductSize;
+import vn.aeoc.entity.data.mysql.shoporder.ShopOrder;
+import vn.aeoc.entity.data.mysql.shoporder.ShopOrderItem;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static vn.entity.backend.tables.Product.PRODUCT;
 import static vn.entity.backend.tables.ProductSize.PRODUCT_SIZE;
+import static vn.entity.backend.tables.ShopOrder.SHOP_ORDER;
+import static vn.entity.backend.tables.ShopOrderItem.SHOP_ORDER_ITEM;
+import static vn.entity.backend.tables.UserApp.USER_APP;
 
 /**
  * TC-U7 (plan du-lieu-giay §9): reset khôi phục dữ liệu mẫu sau khi bị đổi. Đặt ở module app vì cần
@@ -35,6 +43,10 @@ class ShoeSeedResetTest {
     private ProductImageRepository imageRepository;
     @Autowired
     private ProductSizeRepository sizeRepository;
+    @Autowired
+    private ShopOrderService shopOrderService;
+    @Autowired
+    private DSLContext dslContext;
 
     @Test
     void tcU7_resetKhoiPhucSauKhiDuLieuBiDoi() {
@@ -49,7 +61,7 @@ class ShoeSeedResetTest {
         extra.setSlug("giay-them-tay");
         extra.setStyleCode("TEST-99");
         extra.setName("Giay them tay");
-        extra.setSubtitle("Giày nam");
+        extra.setSubtitle("Men's Shoes");
         extra.setGender("MEN");
         extra.setCategoryId(1);
         extra.setDescription("x");
@@ -83,5 +95,35 @@ class ShoeSeedResetTest {
         assertEquals(data.sizes().stream().filter(s -> s.getStock() == 0).count(), summary.outOfStockSizes());
         assertEquals(data.sizes().stream().mapToLong(ProductSize::getStock).sum(), summary.totalStock());
         assertNotNull(summary.resetAt());
+    }
+
+    /** TC-U8 (plan dat-hang §9): reset xoá toàn bộ đơn và trả tồn kho size đã đặt về products.json. */
+    @Test
+    void tcU8_resetXoaDon() {
+        ShoeSeedData data = ShoeSeedData.load();
+        shoeSeedService.reset();
+        Integer userId = dslContext.select(USER_APP.ID).from(USER_APP)
+                .where(USER_APP.EMAIL.eq("khach1@nike.local")).fetchOne(USER_APP.ID);
+        assertNotNull(userId);
+
+        ShopOrderItem item = new ShopOrderItem();
+        item.setSizeId(206);
+        item.setQuantity(2);
+        ShopOrder request = new ShopOrder();
+        request.setReceiverName("Customer One");
+        request.setPhone("0901234567");
+        request.setAddress("12 Nguyen Hue Street");
+        request.setPaymentMethod(ShopOrder.PAYMENT_COD);
+        request.setItems(List.of(item));
+        ShopOrder order = shopOrderService.create(userId, request);
+        assertNotNull(order.getCode());
+        int seedStock = data.sizes().stream().filter(s -> s.getId() == 206).findFirst().orElseThrow().getStock();
+        assertEquals(seedStock - 2, sizeRepository.getById(206).getStock());
+
+        shoeSeedService.reset();
+
+        assertEquals(0, dslContext.fetchCount(SHOP_ORDER));
+        assertEquals(0, dslContext.fetchCount(SHOP_ORDER_ITEM));
+        assertEquals(seedStock, sizeRepository.getById(206).getStock());
     }
 }

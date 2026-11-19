@@ -12,7 +12,12 @@ export const CART_KEY = 'nike.cart';
  * @param {CartItem[] | string} items mảng giỏ, hoặc chuỗi thô (kiểm dữ liệu hỏng)
  */
 export async function setCart(page, items) {
-  if (!page.url().startsWith('http')) await page.goto('/', { waitUntil: 'load' });
+  if (!page.url().startsWith('http')) {
+    await page.goto('/', { waitUntil: 'load' });
+    // WebKit báo trễ lần router `history.replaceState` ở `/` thành điều hướng mới, cắt ngang `goto` ngay sau đó
+    // ("Frame load interrupted", plan dat-hang §12) → chờ trang yên rồi mới trả về
+    await page.waitForLoadState('networkidle');
+  }
   const raw = typeof items === 'string' ? items : JSON.stringify(items);
   await page.evaluate(([key, value]) => window.localStorage.setItem(key, value), [CART_KEY, raw]);
 }

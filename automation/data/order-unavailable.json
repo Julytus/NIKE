@@ -1,0 +1,24 @@
+{
+  "$comment": "Lát dat-hang (plan §5.3 bước 6, §5.5, §9 TC-05): giỏ có dòng không mua được → 400, lỗi theo dòng đầu tiên (thứ tự request). Không đơn nào được tạo, tồn kho không đổi.",
+  "cases": [
+    { "name": "hết hàng", "items": [{ "sizeId": 201, "quantity": 1 }], "message": "Nike Dunk Low Retro (EU 38.5) is sold out. Please update your bag." },
+    { "name": "vượt tồn kho", "items": [{ "sizeId": 1805, "quantity": 4 }], "message": "Only 3 left of Nike Vaporfly 4 (EU 38). Please update your bag." },
+    { "name": "sản phẩm ẩn", "items": [{ "sizeId": 3106, "quantity": 1 }], "message": "An item in your bag is no longer available. Please update your bag." },
+    { "name": "size không tồn tại", "items": [{ "sizeId": 999999, "quantity": 1 }], "message": "An item in your bag is no longer available. Please update your bag." },
+    {
+      "name": "dòng mua được + dòng hết hàng",
+      "items": [{ "sizeId": 1304, "quantity": 1 }, { "sizeId": 201, "quantity": 1 }],
+      "message": "Nike Dunk Low Retro (EU 38.5) is sold out. Please update your bag."
+    },
+    {
+      "name": "vượt tồn kho trước sản phẩm ẩn",
+      "items": [{ "sizeId": 1805, "quantity": 4 }, { "sizeId": 3106, "quantity": 1 }],
+      "message": "Only 3 left of Nike Vaporfly 4 (EU 38). Please update your bag."
+    },
+    {
+      "name": "sản phẩm ẩn trước vượt tồn kho",
+      "items": [{ "sizeId": 3106, "quantity": 1 }, { "sizeId": 1805, "quantity": 4 }],
+      "message": "An item in your bag is no longer available. Please update your bag."
+    }
+  ]
+}
