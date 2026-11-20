@@ -19,8 +19,9 @@ if (import.meta.env.DEV && import.meta.env.VITE_REACT_SCAN === "true") {
 const router = createRouter({
   routeTree,
   scrollRestoration: true, // enables built-in scroll restoration
-  scrollToTopSelectors: ["#app-scroll"], // vùng cuộn chính (__root.tsx)
-  getScrollRestorationKey: (location) => location.pathname, // optional
+  // Vùng cuộn chính (__root.tsx). Khoá khôi phục để mặc định (mỗi mục lịch sử một khoá): Back / Forward
+  // trả lại vị trí cũ, điều hướng mới (kể cả tới pathname đã thăm) luôn về đầu trang.
+  scrollToTopSelectors: ["#app-scroll"],
   scrollRestorationBehavior: "instant" // optional, can be 'smooth', 'instant', 'auto'
 });
 
