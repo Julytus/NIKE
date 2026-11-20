@@ -75,7 +75,7 @@ sequenceDiagram
 
 ## 4. Cơ sở dữ liệu
 
-Migration [`V21__dat_hang.sql`](../../backend/app/src/main/resources/db/migration/V21__dat_hang.sql), không thêm resource / permission.
+Migration `V21__dat_hang.sql` (nay nằm trong [`V1__baseline.sql`](../../backend/app/src/main/resources/db/migration/V1__baseline.sql)), không thêm resource / permission.
 
 **`shop_order`**: `id`, `code` (UNIQUE, chỉ NULL trong lúc transaction đang tạo đơn), `user_id` (FK `user_app`), `receiver_name`, `phone`, `address`, `note` (rỗng → NULL), `item_count`, `subtotal`, `shipping_fee`, `total`, `payment_method` (lát này chỉ `COD`), `status` (lát này chỉ `PLACED`), `created_time`, `updated_time`; index `idx_shop_order_user (user_id, created_time)` cho `my-list` của lát sau.
 

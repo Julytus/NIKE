@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import type { ModuleDTO, ModuleUpsertApiRequest } from "@/lib/types/module";
 import { toFieldErrors } from "@/lib/utils/form-errors";
 
-// Giới hạn theo cột bảng `module` (V1__auth_schema.sql). Backend không kiểm định dạng.
+// Giới hạn theo cột bảng `module` (V1__baseline.sql). Backend không kiểm định dạng.
 const moduleSchema = z.object({
   name: z.string().trim().min(1, "Please enter a module name").max(300, "Module name must be at most 300 characters"),
   code: z
