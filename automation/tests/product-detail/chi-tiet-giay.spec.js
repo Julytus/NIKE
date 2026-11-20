@@ -13,6 +13,7 @@ import {
 import { expect, test } from '../../fixtures/index.js';
 import { docShot } from '../../utils/doc-shot.js';
 import { formatVnd } from '../../utils/format.js';
+import { apiPath, collectPageErrors, fail500, sleep } from '../../utils/network.js';
 import { scanVietnamese } from '../../utils/vietnamese.js';
 
 /**
@@ -29,8 +30,8 @@ const DESKTOP_1440 = { width: 1440, height: 900 };
 const DUNK = 'nike-dunk-low-retro';
 const DUNK_NAME = 'Nike Dunk Low Retro';
 const API = {
-  get: /\/api\/product\/public\/get\?/,
-  related: /\/api\/product\/public\/related\?/,
+  get: apiPath('/product/public/get'),
+  related: apiPath('/product/public/related'),
 };
 const LOW_STOCK_TEXT = 'Just a few left. Order soon.';
 const SIZE_ERROR_TEXT = 'Please select a size.';
@@ -43,21 +44,6 @@ const RETURNS_TEXT = 'Not the right fit? Return your order for free within 30 da
 
 /** @typedef {import('../../pages/ProductDetailPage.js').ProductDetailPage} ProductDetailPage */
 /** @typedef {import('../../data/seed-products.js').SeedProduct} SeedProduct */
-
-/** Trả 500 cho một API. @param {import('@playwright/test').Route} route */
-const fail500 = (route) =>
-  route.fulfill({ status: 500, json: { code: 500, message: 'Simulated error' } });
-
-/** @param {number} ms */
-const delay = (ms) => new Promise((r) => setTimeout(r, ms));
-
-/** Ghi lỗi JS của trang. @param {import('@playwright/test').Page} page */
-function collectPageErrors(page) {
-  /** @type {string[]} */
-  const errors = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  return errors;
-}
 
 /** Ghi giá trị `page` của mọi request tới `list`. @param {import('@playwright/test').Page} page */
 function collectListPages(page) {
@@ -476,6 +462,7 @@ test.describe('Chi tiết giày desktop', () => {
           await expect(pdp.size(42)).toHaveAttribute('aria-checked', 'true');
           await pdp.thumbnail(3).click();
           await expectCurrentImage(pdp, 3);
+          await pdp.waitGallerySettled();
         });
 
         await test.step('bấm thẻ "Nike Dunk Low Retro"', async () => {
@@ -639,13 +626,14 @@ test.describe('Chi tiết giày desktop', () => {
       await expect(pdp.relatedCardList).toHaveCount(8);
     });
 
-    await test.step('(c) get chậm 1,5 giây → skeleton', async () => {
+    await test.step('(c) get chậm 3 giây → skeleton', async () => {
+      // Khung xương chỉ hiện sau `pendingMs` (1 giây) của router: trễ 1,5 giây chỉ chừa ~0,5 giây, máy tải
+      // nặng thì khung xương biến mất giữa hai lần kiểm (kiem-thu-hoi-quy §12) → trễ 3 giây, một khẳng định
       await page.route(API.get, async (route) => {
-        await delay(1500);
+        await sleep(3000);
         await route.continue();
       });
       await page.goto(`/t/${DUNK}`, { waitUntil: 'commit' });
-      await expect(pdp.skeleton).toBeVisible();
       await expect(pdp.skeleton).toHaveAttribute('aria-busy', 'true');
       await expect(pdp.skeleton).toHaveCount(0);
       await expect(pdp.heading).toHaveText(DUNK_NAME);
@@ -668,6 +656,7 @@ test.describe('Chi tiết giày desktop', () => {
       const card = list.card(19);
       await expect(card.name).toHaveText(expected.name);
       await card.root.scrollIntoViewIfNeeded();
+      await list.waitScrollSaved();
       await card.root.click();
       await expectUrl(page, `/t/${expected.slug}`);
       await expect(pdp.heading).toHaveText(expected.name);

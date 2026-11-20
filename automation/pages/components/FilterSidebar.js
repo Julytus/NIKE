@@ -57,12 +57,25 @@ export class FilterSidebar {
   /** Mở nhóm nếu đang đóng. @param {string} key */
   async openGroup(key) {
     const button = this.groupButton(key);
-    if ((await button.getAttribute('aria-expanded')) !== 'true') await button.click();
-    await expect(button).toHaveAttribute('aria-expanded', 'true');
+    // Sidebar dính + header ẩn / hiện khi cuộn: cú bấm đầu có lúc trượt (WebKit / Firefox khi máy bận,
+    // plan kiem-thu-hoi-quy §12) → bấm lại tới khi nhóm mở
+    await expect(async () => {
+      if ((await button.getAttribute('aria-expanded')) !== 'true') await button.click();
+      await expect(button).toHaveAttribute('aria-expanded', 'true', { timeout: 2_000 });
+    }).toPass({ timeout: 10_000 });
   }
 
   /** Bấm một lựa chọn (tick / bỏ tick, bật / tắt size). @param {string} key @param {string} value */
   async toggle(key, value) {
-    await this.option(key, value).click();
+    const option = this.option(key, value);
+    const before = await option.getAttribute('data-state');
+    // Bấm xong trang cuộn về đầu → sidebar dịch chuyển, cú bấm kế tiếp có lúc trượt (WebKit / Firefox khi máy
+    // bận, plan kiem-thu-hoi-quy §12) → bấm lại khi trạng thái (`data-state`) chưa đổi
+    await expect(async () => {
+      if ((await option.getAttribute('data-state')) === before) await option.click();
+      await expect(option).not.toHaveAttribute('data-state', /** @type {string} */ (before), {
+        timeout: 2_000,
+      });
+    }).toPass({ timeout: 10_000 });
   }
 }

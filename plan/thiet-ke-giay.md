@@ -3,7 +3,7 @@ title: Kế hoạch tổng — cửa hàng giày Nike (đồ án Automation test
 slug: thiet-ke-giay
 status: approved         # tài liệu khung; mỗi lát ở §9 sẽ có plan riêng qua /plan-feature
 created: 2026-11-18
-updated: 2026-11-18      # gỡ hẳn LUT, dùng tên + logo Nike, 30 sản phẩm × 5 ảnh, bỏ màu, thêm phần automation test; giỏ localStorage
+updated: 2026-11-19      # D13: làm giai đoạn 4 (kiểm thử) trước các lát nghiệp vụ còn lại
 approved: 2026-11-18
 ---
 
@@ -38,6 +38,7 @@ Tài liệu này **không** dùng để `/cook` trực tiếp. Mỗi lát ở §
 | D9 | Thanh toán **COD + payOS** (`mock-pay` ở profile local để test không phụ thuộc mạng) |
 | D10 | Bộ test ở **thư mục riêng `automation/`** tại gốc repo (package.json, `playwright.config.js` riêng) |
 | D11 | Báo cáo **Playwright HTML report + Allure** |
+| D13 | **Đổi 19/11/2026 (người dùng): làm giai đoạn 4 (hoàn thiện kiểm thử) trước**, trên các chức năng đã có (đăng nhập, danh sách, chi tiết, giỏ, đặt COD, phân quyền quản trị). Các lát nghiệp vụ còn lại (2.1, 2.3a, 2.4, 3.x) làm sau, mỗi lát tự bổ sung phần của mình vào bộ hồi quy (luồng `e2e-flows/`, trang chụp ảnh / quét a11y, dòng ở ma trận truy vết). Thứ tự: 4.1 → 4.3 → 4.2 → 4.4 (§9) |
 
 ### Lưu ý
 
@@ -265,11 +266,11 @@ Mỗi lát đi theo luồng `/plan-feature` → `/cook` → `/doc-chuc-nang`. E2
 | 3.1 | `quan-ly-giay` | CRUD sản phẩm / ảnh / size + tồn kho, xuất bản / ẩn ở `/admin/products` | 1.5 |
 | 3.2 | `quan-ly-don-hang` | resource `SHOP_ORDER`, lọc theo trạng thái, đổi trạng thái (hoàn kho khi huỷ) ở `/admin/orders` | 2.3 |
 | 3.3 | `dashboard-giay` | Doanh thu, số đơn, top sản phẩm, tồn kho thấp ở `/admin` | 2.3 |
-| **4. Hoàn thiện kiểm thử (phần chấm điểm chính)** |
-| 4.1 | `kiem-thu-hoi-quy` | Luồng xuyên suốt `e2e-flows/`, data-driven bộ lọc, network mocking, tag smoke / regression, chạy đủ 4 project trình duyệt | 2.4, 3.2 |
-| 4.2 | `kiem-thu-giao-dien` | Visual regression + accessibility (axe), sửa lỗi a11y tìm được | 4.1 |
+| **4. Hoàn thiện kiểm thử (phần chấm điểm chính) — làm trước các lát 2.1, 2.3a, 2.4, 3.x (D13)** |
+| 4.1 | `kiem-thu-hoi-quy` | Luồng xuyên suốt `e2e-flows/` trên chức năng đã có (tìm → lọc → xem → thêm giỏ → đăng nhập → đặt COD), data-driven bộ lọc, network mocking, rà tag smoke / regression, chạy đủ 4 project trình duyệt | 2.3 (các lát sau nối thêm bước: xem / huỷ đơn, quản trị duyệt đơn) |
 | 4.3 | `ci-bao-cao` | GitHub Actions đầy đủ (smoke mỗi push, regression mỗi đêm), Allure có lịch sử, ảnh / số liệu cho quyển | 4.1 |
-| 4.4 | `tai-lieu-kiem-thu` | Test plan, `test-cases.xlsx`, ma trận truy vết, bug report, báo cáo kết quả (§8.3) | 4.1 → 4.3 |
+| 4.2 | `kiem-thu-giao-dien` | Visual regression + accessibility (axe) trên các trang đã có, sửa lỗi a11y tìm được | 4.1 (lát sau thêm trang mới vào danh sách) |
+| 4.4 | `tai-lieu-kiem-thu` | Test plan, `test-cases.xlsx`, ma trận truy vết (sinh từ ID `TC-xx` + tag trong spec để tự cập nhật khi thêm lát), bug report, báo cáo kết quả (§8.3) | 4.1 → 4.3 |
 
 Làm song song được (trong một lát, BE ∥ FE; giữa các lát thì cook lần lượt vì chung worktree): **1.2 ∥ 1.3**, **2.1 ∥ 2.2**, **3.1 ∥ 2.x**, **3.2 ∥ 3.3**, **4.2 ∥ 4.3**.
 

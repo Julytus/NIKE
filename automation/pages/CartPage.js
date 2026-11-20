@@ -72,6 +72,19 @@ export class CartPage extends BasePage {
     this.relatedCards = this.related.getByTestId('product-card');
   }
 
+  /**
+   * Summary của giỏ: Subtotal / Shipping / Total đúng chữ; `hint` là gợi ý miễn phí giao hàng
+   * (`null` → không có dòng gợi ý).
+   * @param {{ subtotal: string, shipping: string, total: string, hint: string | null }} expected
+   */
+  async expectSummary({ subtotal, shipping, total, hint }) {
+    await expect(this.subtotal).toHaveText(subtotal);
+    await expect(this.shipping).toHaveText(shipping);
+    await expect(this.total).toHaveText(total);
+    if (hint === null) await expect(this.deliveryHint).toHaveCount(0);
+    else await expect(this.deliveryHint).toHaveText(hint);
+  }
+
   /** Dòng thứ `i` (0-based). @param {number} i */
   item(i) {
     return new CartItem(this.items.nth(i));

@@ -10,6 +10,7 @@ import {
 import { expect, test } from '../../fixtures/index.js';
 import { docShot } from '../../utils/doc-shot.js';
 import { formatVnd } from '../../utils/format.js';
+import { apiPath, collectPageErrors, fail500, sleep } from '../../utils/network.js';
 
 /**
  * Lát `giao-dien-nike` (plan/giao-dien-nike.md §6, §9 TC-10 → TC-30): khung giao diện Nike —
@@ -24,9 +25,9 @@ const ANNOUNCEMENT = 'Free delivery on orders from 5.000.000 ₫ & free 30-day r
 const MOBILE = 'mobile-chrome';
 
 const API = {
-  categories: '**/api/product-category/public/list',
-  newArrivals: '**/api/product/public/new-arrivals',
-  suggest: '**/api/product/public/suggest**',
+  categories: apiPath('/product-category/public/list'),
+  newArrivals: apiPath('/product/public/new-arrivals'),
+  suggest: apiPath('/product/public/suggest'),
 };
 
 /**
@@ -62,14 +63,6 @@ async function expectHref(locator, expected) {
 /** URL hiện tại của trang. @param {import('@playwright/test').Page} page */
 const currentUrl = (page) => new URL(page.url());
 
-/** Ghi lại lỗi JS của trang. @param {import('@playwright/test').Page} page */
-function collectPageErrors(page) {
-  /** @type {string[]} */
-  const errors = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  return errors;
-}
-
 /** 13 link mong đợi của mega menu cho một mục (theo cột). @param {Record<string, string>} scope */
 function megaLinksOf(scope) {
   return [
@@ -78,10 +71,6 @@ function megaLinksOf(scope) {
     ...nav.priceRanges.map((l) => ({ label: l.label, href: withScope(l.href, scope) })),
   ];
 }
-
-/** Trả 500 cho một API. @param {import('@playwright/test').Route} route */
-const fail500 = (route) =>
-  route.fulfill({ status: 500, json: { code: 500, message: 'Simulated error' } });
 
 test.describe('Khung cửa hàng desktop', () => {
   test.beforeEach(({}, testInfo) => {
@@ -174,7 +163,7 @@ test.describe('Khung cửa hàng desktop', () => {
 
       await test.step('(b) danh mục đang tải', async () => {
         await page.route(API.categories, async (route) => {
-          await new Promise((r) => setTimeout(r, 1500));
+          await sleep(1500);
           await route.continue();
         });
         await homePage.goto();
@@ -379,12 +368,10 @@ test.describe('Khung cửa hàng desktop', () => {
       // WebKit (như Safari) mặc định Tab bỏ qua mọi link, Playwright trên Windows không bật lại được
       // → bước bàn phím chỉ kiểm ở chromium / firefox / mobile-chrome; phần axe ở trên vẫn chạy mọi trình duyệt
       if (browserName === 'webkit') {
-        test
-          .info()
-          .annotations.push({
-            type: 'skip-step',
-            description: 'Tab tới link: WebKit tắt mặc định',
-          });
+        test.info().annotations.push({
+          type: 'skip-step',
+          description: 'Tab tới link: WebKit tắt mặc định',
+        });
         return;
       }
       await homePage.goto();
@@ -403,7 +390,7 @@ test.describe('Khung tìm kiếm', () => {
     const expected = expectedSuggest('jordan');
     // Chậm API một chút để thấy trạng thái đang tải ổn định
     await page.route(API.suggest, async (route) => {
-      await new Promise((r) => setTimeout(r, 800));
+      await sleep(800);
       await route.continue();
     });
     await homePage.goto();
@@ -499,7 +486,7 @@ test.describe('Khung tìm kiếm', () => {
 
 test.describe('Footer và trang thông tin', () => {
   test(
-    'TC-22 footer + 15 trang thông tin (data-driven)',
+    'TC-22 footer: nhóm link, href 15 trang thông tin, nội dung mẫu, 404',
     { tag: '@regression' },
     async ({ page, homePage, infoPage, notFoundPage }, testInfo) => {
       test.skip(testInfo.project.name === MOBILE, 'Footer desktop (mobile: TC-29)');
@@ -516,14 +503,6 @@ test.describe('Footer và trang thông tin', () => {
         await expectHref(footer.link(info.label), `/info/${info.slug}`);
       }
 
-      for (const info of nav.infoPages) {
-        await test.step(info.slug, async () => {
-          await infoPage.open(info.slug);
-          await expect(infoPage.heading).toHaveText(info.label);
-          await expect(page.getByText(NOT_FOUND)).toHaveCount(0);
-        });
-      }
-
       await infoPage.open('delivery');
       await expect(infoPage.main).toContainText('30.000 ₫');
       await expect(infoPage.main).toContainText('5.000.000 ₫');
@@ -535,6 +514,21 @@ test.describe('Footer và trang thông tin', () => {
       await expect(notFoundPage.message).toBeVisible();
     }
   );
+
+  // Mỗi trang thông tin một test (trước đây gộp 15 lần mở trang vào TC-22 → quá 30 giây khi máy tải nặng,
+  // kiem-thu-hoi-quy §12)
+  for (const info of nav.infoPages) {
+    test(
+      `TC-22b trang thông tin /info/${info.slug}`,
+      { tag: '@regression' },
+      async ({ page, infoPage }, testInfo) => {
+        test.skip(testInfo.project.name === MOBILE, 'Footer desktop (mobile: TC-29)');
+        await infoPage.open(info.slug);
+        await expect(infoPage.heading).toHaveText(info.label);
+        await expect(page.getByText(NOT_FOUND)).toHaveCount(0);
+      }
+    );
+  }
 
   test('TC-25 trang tạm không 404', { tag: '@regression' }, async ({ page, homePage }) => {
     const errors = collectPageErrors(page);

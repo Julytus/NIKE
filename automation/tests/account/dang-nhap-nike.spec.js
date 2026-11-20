@@ -84,7 +84,7 @@ test.describe('Trang /signin (desktop)', () => {
 
   test(
     'TC-07 bước email hiển thị đúng',
-    { tag: '@smoke' },
+    { tag: '@regression' },
     async ({ page, signInPage }, testInfo) => {
       await signInPage.goto();
 
@@ -281,7 +281,7 @@ test.describe('Trang /signin (desktop)', () => {
 
   test(
     'TC-16 quay lại trang trước sau khi đăng nhập',
-    { tag: '@smoke' },
+    { tag: '@regression' },
     async ({ page, baseURL, signInPage }) => {
       const header = new HeaderComponent(page);
       await page.goto('/w/basketball?gender=men', { waitUntil: 'load' });
@@ -330,7 +330,7 @@ test.describe('Trang /signin (desktop)', () => {
 
   test(
     'TC-18 lối vào từ khung cửa hàng',
-    { tag: '@smoke' },
+    { tag: '@regression' },
     async ({ page, baseURL, homePage, signInPage }) => {
       const { header } = homePage;
       await homePage.goto();

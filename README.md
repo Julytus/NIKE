@@ -51,9 +51,11 @@ cp frontend/.env.example frontend/.env
 # 2. MySQL, MinIO
 docker compose -f docker-compose.local.yml --env-file backend/.env up -d
 
-# 3. Backend: http://localhost:9500/api (Flyway tự tạo bảng và tài khoản mẫu)
-cd backend && mvn -q -DskipTests package && java -jar app/target/aeoc-backend.jar
-#    hoặc trên Windows / Git Bash: sh scripts/ai/backend-restart.sh
+# 3. Backend: http://localhost:9500/api
+#    Lần đầu DB còn trống: Flyway tạo bảng + tài khoản mẫu, ShoeSeedRunner nạp 31 giày từ products.json
+#    và đẩy ảnh lên MinIO. -Djooq.codegen.skip=true vì codegen đọc DB lúc build (DB trống → sinh schema rỗng).
+cd backend && mvn -q -DskipTests "-Djooq.codegen.skip=true" package && java -jar app/target/aeoc-backend.jar
+#    hoặc trên Windows / Git Bash: sh scripts/ai/backend-restart.sh "-Djooq.codegen.skip=true"
 
 # 4. Frontend: http://localhost:4500
 cd frontend && pnpm install && pnpm dev
@@ -74,6 +76,16 @@ Các địa chỉ khác khi chạy local:
 | Quản trị `/login` | `admin@nike.local` | `Admin@123` | Toàn quyền |
 | Quản trị `/login` | `noaccess@nike.local` | `Admin@123` | Không có quyền nào |
 | Cửa hàng (nút Đăng nhập) | `free@nike.local` | `Admin@123` | Khách hàng |
+| Cửa hàng (nút Đăng nhập) | `khach1@nike.local`, `khach2@nike.local` | `Admin@123` | Khách hàng (dùng cho test) |
+
+### DB tạo trước ngày 20/11/2026
+
+Migration đã gộp thành `V1__baseline.sql` (bỏ lịch sử cửa hàng LUT cũ). DB local tạo trước đó sẽ báo lỗi Flyway validate khi khởi động: xoá volume rồi tạo lại (dữ liệu giày tự nạp lại).
+
+```bash
+docker compose -f docker-compose.local.yml --env-file backend/.env down -v
+docker compose -f docker-compose.local.yml --env-file backend/.env up -d
+```
 
 
 ## Kiểm tra chất lượng
@@ -95,3 +107,4 @@ Mã test JUnit của backend (`backend/**/src/test/`) đang nằm trong `.gitign
 - [plan/thiet-ke-giay.md](plan/thiet-ke-giay.md): kế hoạch tổng cửa hàng giày, thiết kế CSDL / API và các lát chức năng.
 - [plan/README.md](plan/README.md): danh sách plan.
 - `docs/chuc-nang/`: tài liệu từng chức năng khi làm xong (phục vụ báo cáo).
+- [docs/kiem-thu/](docs/kiem-thu/README.md): hướng dẫn cài đặt và chạy test, tài liệu học Playwright, kịch bản demo bảo vệ.

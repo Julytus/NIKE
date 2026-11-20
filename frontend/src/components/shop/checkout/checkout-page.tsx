@@ -8,6 +8,7 @@ import {
   type DeliveryField,
   type DeliveryValues
 } from "@/lib/shop/checkout-form";
+import { useAuthStore } from "@/lib/stores/auth";
 import { useCart } from "@/lib/stores/cart";
 import { useShopSession } from "@/lib/stores/shop-session";
 import { createCartCheckQueryOptions } from "@/lib/tanstack/options/cart";
@@ -131,6 +132,12 @@ export function CheckoutPage() {
       },
       onError: (err) => {
         submitting.current = false;
+        // Hết phiên (refresh token cũng hỏng → axios đã xoá token): về đăng nhập, giỏ giữ nguyên,
+        // đăng nhập xong quay lại /checkout (kiem-thu-hoi-quy TC-05b)
+        if (!useAuthStore.getState().accessToken) {
+          void navigate({ to: "/signin", search: { redirect: "/checkout" }, replace: true });
+          return;
+        }
         setSubmitError(getServerErrorMessage(err) ?? NETWORK_ERROR);
         // Tải lại giỏ để dòng thiếu hàng được tự giảm (A3, A4)
         void refetch();

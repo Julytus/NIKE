@@ -27,13 +27,15 @@ Sau lát này hệ thống chỉ còn **nền dùng chung**: đăng nhập / là
 
 ## 3. Cơ sở dữ liệu
 
-Migration [`V18__go_lut.sql`](../../backend/app/src/main/resources/db/migration/V18__go_lut.sql). Các migration V3 → V17 và seed V3_1 / V5_1 **giữ nguyên** vì Flyway kiểm checksum: DB đang chạy không báo lỗi validate, DB mới tạo bảng LUT rồi V18 xoá ngay.
+Migration `V18__go_lut.sql` (lúc làm lát này). Các migration V3 → V17 và seed V3_1 / V5_1 **giữ nguyên** vì Flyway kiểm checksum: DB đang chạy không báo lỗi validate, DB mới tạo bảng LUT rồi V18 xoá ngay.
 
 - `DROP TABLE` 18 bảng (`lut`, `lut_*`, `creator`, `collection*`, `download_log`, `plan`, `payment_order`, `subscription`, `user_preference`, `user_event`, `rec_*`), tắt `FOREIGN_KEY_CHECKS` trong lúc xoá.
 - Xoá resource `LUT`, `RECOMMEND`, `DASHBOARD` (permission xoá theo `ON DELETE CASCADE`).
 - Xoá module `CATALOG`, `RECOMMENDER`, `SALES` khi không còn resource nào thuộc về.
 
 Sau V18 còn đúng 6 bảng `module`, `resource`, `role`, `permission`, `user_app`, `refresh_token` (và `flyway_schema_history`). Đã kiểm trên DB local có sẵn dữ liệu LUT: Flyway áp V18 thành công, `SHOW TABLES` đúng như trên.
+
+> Ngày 20/11/2026 toàn bộ migration được gộp thành [`V1__baseline.sql`](../../backend/app/src/main/resources/db/migration/V1__baseline.sql) (seed local: `db/seed/V1_1__seed_tai_khoan.sql`), bỏ hẳn các file LUT V3 → V18; schema không đổi, đã so bằng `mysqldump --no-data`.
 
 ## 4. API
 

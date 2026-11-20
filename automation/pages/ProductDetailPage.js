@@ -1,4 +1,7 @@
 /* global getComputedStyle -- dùng trong locator.evaluate (chạy ở trình duyệt) */
+import { expect } from '@playwright/test';
+
+import { sleep } from '../utils/network.js';
 import { BasePage } from './BasePage.js';
 import { AddedToBagDialog } from './components/AddedToBagDialog.js';
 import { FooterComponent } from './components/FooterComponent.js';
@@ -165,6 +168,24 @@ export class ProductDetailPage extends BasePage {
     });
   }
 
+  /**
+   * Chờ dải ảnh hết cuộn mượt: `scrollLeft` không đổi qua hai lần đọc cách nhau 200 ms. Cần trước khi
+   * rời trang: router ghi vị trí cuộn (throttle 100 ms) theo location lúc ghi, nên cuộn còn chạy khi đã
+   * điều hướng sẽ bị ghi dưới khoá của trang mới rồi áp lại vào dải ảnh mới (§12 kiem-thu-hoi-quy).
+   */
+  async waitGallerySettled() {
+    await expect
+      .poll(
+        async () => {
+          const a = (await this.galleryScroll()).scrollLeft;
+          await sleep(200);
+          return a === (await this.galleryScroll()).scrollLeft;
+        },
+        { message: 'dải ảnh đứng yên' }
+      )
+      .toBe(true);
+  }
+
   /** Cuộn dải ảnh tới `left` px (không hiệu ứng). @param {number} left */
   scrollGalleryTo(left) {
     return this.gallery.evaluate((root, x) => {
@@ -180,7 +201,9 @@ export class ProductDetailPage extends BasePage {
    * @param {number} dx
    */
   async dragGallery(dx) {
-    const box = /** @type {import('@playwright/test').BoundingBox} */ (await this.gallery.boundingBox());
+    const box = /** @type {import('@playwright/test').BoundingBox} */ (
+      await this.gallery.boundingBox()
+    );
     const x = box.x + box.width / 2;
     const y = box.y + Math.min(box.height, this.page.viewportSize()?.height ?? box.height) / 2;
     await this.page.mouse.move(x, y);

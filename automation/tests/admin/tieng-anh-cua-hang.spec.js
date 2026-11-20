@@ -88,7 +88,7 @@ test.describe('Quản trị tiếng Anh: quét chữ (toàn quyền)', () => {
   }
 
   test(
-    'TC-19 không còn chữ tiếng Việt: hộp thoại quản trị',
+    'TC-19b không còn chữ tiếng Việt: hộp thoại quản trị',
     { tag: '@regression' },
     async ({ page, rolePage }, testInfo) => {
       await test.step('Add Role + lỗi validate', async () => {
@@ -285,7 +285,7 @@ test.describe('Quản trị tiếng Anh: URL cũ', () => {
   });
 
   test(
-    'TC-22 URL quản trị tiếng Việt cũ là 404',
+    'TC-22b URL quản trị tiếng Việt cũ là 404',
     { tag: '@regression' },
     async ({ notFoundPage }) => {
       for (const path of [

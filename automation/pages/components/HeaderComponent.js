@@ -98,6 +98,21 @@ export class HeaderComponent {
     return this.search;
   }
 
+  /**
+   * Tìm từ khoá qua khung tìm kiếm ở header (desktop + mobile): mở khung, gõ, Enter, chờ tới `/w?q=…`.
+   * (Tên `searchFor` vì `search` đã là khung `SearchOverlay`.)
+   * @param {string} q
+   */
+  async searchFor(q) {
+    const overlay = await this.openSearch();
+    await overlay.type(q);
+    await overlay.submit();
+    await expect(this.page).toHaveURL(
+      (url) => url.pathname === '/w' && url.searchParams.get('q') === q.trim()
+    );
+    await expect(overlay.root).toBeHidden();
+  }
+
   async openMobileMenu() {
     await this.menuButton.click();
     await expect(this.mobileMenu.root).toBeVisible();

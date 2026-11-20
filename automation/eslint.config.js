@@ -39,6 +39,7 @@ export default [
             'create',
             'expectAllRemoved',
             'expectLoggedOut',
+            'runCase',
           ],
         },
       ],

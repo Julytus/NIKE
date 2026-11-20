@@ -20,6 +20,9 @@ export const createShopOrderQueryOptions = (code: string) =>
 /** Đặt đơn: lỗi hiện ngay trên nút "Place Order" (`checkout-error`), nên tắt toast (§6.7 bước 4). */
 export const createShopOrderMutationOptions = mutationOptions({
   mutationFn: createShopOrder,
+  // Mặc định "online": mất mạng thì mutation bị tạm dừng (nút kẹt "Placing Order…") rồi tự gửi khi có mạng
+  // lại, khách không bấm. "always": gửi ngay → lỗi mạng → hiện lỗi kết nối (kiem-thu-hoi-quy TC-04).
+  networkMode: "always",
   meta: {
     silentError: true
   }

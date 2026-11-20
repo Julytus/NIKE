@@ -31,7 +31,16 @@ export class RolePage extends BasePage {
   /** Lọc bảng theo tên (ô tìm có độ trễ 400 ms). @param {string} keyword */
   async search(keyword) {
     if (!(await this.searchInput.isVisible())) await this.filterToggle.click();
+    // Ô lọc debounce 400 ms rồi bảng tải lại: thao tác trên dòng trước lúc đó có thể mất (menu ⋮ mở trên bảng
+    // cũ, plan kiem-thu-hoi-quy §12) → chờ response `role/list` đúng từ khoá
+    const loaded = this.page.waitForResponse((res) => {
+      const url = new URL(res.url());
+      return (
+        url.pathname.endsWith('/role/list') && url.searchParams.get('keyword') === keyword.trim()
+      );
+    });
     await this.searchInput.fill(keyword);
+    await loaded;
   }
 
   /** Bấm "Add Role", trả về hộp thoại. */

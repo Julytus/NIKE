@@ -28,7 +28,7 @@ Sau lát 1.1 hệ thống chỉ còn nền đăng nhập và phân quyền. Lát
 
 ## 3. Luồng hoạt động
 
-1. Backend khởi động → Flyway chạy `V19__du_lieu_giay.sql` (bốn bảng, module, resource) và seed local `V19_1__seed_khach_test.sql` (hai tài khoản khách).
+1. Backend khởi động → Flyway chạy `V1__baseline.sql` (bốn bảng giày, module, resource) và seed local `V1_1__seed_tai_khoan.sql` (có hai tài khoản khách `khach1` / `khach2`).
 2. `ShoeSeedRunner` chạy sau Flyway: bảng `product_category` trống thì nạp toàn bộ từ `seed/giay/products.json` trong một transaction (5 danh mục, 31 sản phẩm, 155 ảnh, 363 size); sau đó đẩy lên MinIO các ảnh `products/<slug>/<n>.webp` còn thiếu.
 3. `global-setup.js` đăng nhập admin và gọi `POST /test-support/reset` → dữ liệu về đúng `products.json` (kể cả id, tồn kho, giá, trạng thái).
 4. Test gọi `GET /test-support/summary` và so với `expectedSummary()` tính từ chính `products.json`, không ghi cứng số.
@@ -54,7 +54,7 @@ sequenceDiagram
 
 ## 4. Cơ sở dữ liệu
 
-Migration [`V19__du_lieu_giay.sql`](../../backend/app/src/main/resources/db/migration/V19__du_lieu_giay.sql) chỉ chứa **schema** và dòng module / resource. Dữ liệu sản phẩm nạp bằng code từ `products.json` thay vì migration, vì `reset` cần dùng lại đúng nguồn dữ liệu đó và sửa dữ liệu mẫu không phải viết migration mới.
+Migration (lúc làm lát này là `V19__du_lieu_giay.sql`, nay nằm trong [`V1__baseline.sql`](../../backend/app/src/main/resources/db/migration/V1__baseline.sql)) chỉ chứa **schema** và dòng module / resource. Dữ liệu sản phẩm nạp bằng code từ `products.json` thay vì migration, vì `reset` cần dùng lại đúng nguồn dữ liệu đó và sửa dữ liệu mẫu không phải viết migration mới.
 
 | Bảng | Cột chính | Ràng buộc |
 |---|---|---|
