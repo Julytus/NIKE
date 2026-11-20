@@ -1,9 +1,37 @@
 {
   "$comment": "Lát dat-hang (plan §5.1 \"Ví dụ tổng\", §9 TC-02): phí giao hàng biên khi tạo đơn — 30.000 ₫, miễn phí từ 5.000.000 ₫; giá giảm được dùng thay giá gốc.",
   "cases": [
-    { "name": "4.999.000 → phí 30.000", "items": [{ "sizeId": 2506, "quantity": 1 }], "itemCount": 1, "subtotal": 4999000, "shippingFee": 30000, "total": 5029000 },
-    { "name": "5.000.000 (1 đôi) → miễn phí", "items": [{ "sizeId": 1705, "quantity": 1 }], "itemCount": 1, "subtotal": 5000000, "shippingFee": 0, "total": 5000000 },
-    { "name": "5 × 1.000.000 → miễn phí", "items": [{ "sizeId": 605, "quantity": 5 }], "itemCount": 5, "subtotal": 5000000, "shippingFee": 0, "total": 5000000 },
-    { "name": "815.000 (giá giảm) → phí 30.000", "items": [{ "sizeId": 1203, "quantity": 1 }], "itemCount": 1, "subtotal": 815000, "shippingFee": 30000, "total": 845000 }
+    {
+      "name": "4.999.000 → phí 30.000",
+      "items": [{ "sizeId": 2506, "quantity": 1 }],
+      "itemCount": 1,
+      "subtotal": 4999000,
+      "shippingFee": 30000,
+      "total": 5029000
+    },
+    {
+      "name": "5.000.000 (1 đôi) → miễn phí",
+      "items": [{ "sizeId": 1705, "quantity": 1 }],
+      "itemCount": 1,
+      "subtotal": 5000000,
+      "shippingFee": 0,
+      "total": 5000000
+    },
+    {
+      "name": "5 × 1.000.000 → miễn phí",
+      "items": [{ "sizeId": 605, "quantity": 5 }],
+      "itemCount": 5,
+      "subtotal": 5000000,
+      "shippingFee": 0,
+      "total": 5000000
+    },
+    {
+      "name": "815.000 (giá giảm) → phí 30.000",
+      "items": [{ "sizeId": 1203, "quantity": 1 }],
+      "itemCount": 1,
+      "subtotal": 815000,
+      "shippingFee": 30000,
+      "total": 845000
+    }
   ]
 }

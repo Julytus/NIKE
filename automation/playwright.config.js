@@ -31,7 +31,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
-  workers: isCI ? 2 : undefined,
+  // Local: mọi trình duyệt cùng lấy module từ một tiến trình Vite dev; mặc định (nửa số nhân, 8 trên máy 16 nhân)
+  // làm `goto` của Firefox / WebKit có lúc > 30 giây (plan kiem-thu-hoi-quy §12) → 4, đổi bằng E2E_WORKERS
+  workers: isCI ? 2 : Number(process.env.E2E_WORKERS ?? 4),
   timeout: 30_000,
   // Vite dev biên dịch module ở lần tải đầu: Firefox / WebKit chạy song song có thể mất > 7 giây
   expect: { timeout: 10_000 },

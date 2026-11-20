@@ -17,9 +17,7 @@
     "name": "Join Test",
     "password": "abcdefgh",
     "terms": true,
-    "errors": [
-      "Password must contain a number."
-    ]
+    "errors": ["Password must contain a number."]
   },
   {
     "id": "c",
@@ -27,9 +25,7 @@
     "name": "Join Test",
     "password": "12345678",
     "terms": true,
-    "errors": [
-      "Password must contain a letter."
-    ]
+    "errors": ["Password must contain a letter."]
   },
   {
     "id": "d",
@@ -37,9 +33,7 @@
     "name": "Join Test",
     "password": "Abc1234",
     "terms": true,
-    "errors": [
-      "Password must be at least 8 characters."
-    ]
+    "errors": ["Password must be at least 8 characters."]
   },
   {
     "id": "e",
@@ -47,9 +41,7 @@
     "name": "Join Test",
     "password": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
     "terms": true,
-    "errors": [
-      "Password must be at most 72 characters."
-    ]
+    "errors": ["Password must be at most 72 characters."]
   },
   {
     "id": "f",
@@ -57,8 +49,6 @@
     "name": "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN",
     "password": "Abc12345",
     "terms": true,
-    "errors": [
-      "Full name must be at most 100 characters."
-    ]
+    "errors": ["Full name must be at most 100 characters."]
   }
 ]

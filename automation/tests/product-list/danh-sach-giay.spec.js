@@ -6,6 +6,7 @@ import {
 } from '../../data/seed-products.js';
 import { expect, test } from '../../fixtures/index.js';
 import { docShot } from '../../utils/doc-shot.js';
+import { apiPath, collectPageErrors, fail500, sleep } from '../../utils/network.js';
 import { scanVietnamese } from '../../utils/vietnamese.js';
 
 /**
@@ -17,8 +18,8 @@ import { scanVietnamese } from '../../utils/vietnamese.js';
 
 const MOBILE = 'mobile-chrome';
 const API = {
-  list: '**/api/product/public/list**',
-  facets: '**/api/product/public/facets**',
+  list: apiPath('/product/public/list'),
+  facets: apiPath('/product/public/facets'),
 };
 const SORTS = [
   { label: 'Price: Low-High', value: 'price-asc' },
@@ -52,21 +53,6 @@ function headingOf(path, search = {}) {
 
 /** Tên 12 thẻ đầu mong đợi. @param {CatalogFilter} filter */
 const namesOf = (filter) => expectedList(filter).items.map((i) => i.name);
-
-/** Trả 500 cho một API. @param {import('@playwright/test').Route} route */
-const fail500 = (route) =>
-  route.fulfill({ status: 500, json: { code: 500, message: 'Simulated error' } });
-
-/** @param {number} ms */
-const delay = (ms) => new Promise((r) => setTimeout(r, ms));
-
-/** Ghi lỗi JS của trang. @param {import('@playwright/test').Page} page */
-function collectPageErrors(page) {
-  /** @type {string[]} */
-  const errors = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  return errors;
-}
 
 /**
  * Ghi giá trị `page` của mọi request tới `list`.
@@ -159,7 +145,7 @@ test.describe('Danh sách giày desktop', () => {
       const pages = collectListPages(page);
       await page.route(API.list, async (route) => {
         const url = new URL(route.request().url());
-        if (url.searchParams.get('page') === '2') await delay(800);
+        if (url.searchParams.get('page') === '2') await sleep(800);
         await route.continue();
       });
       await list.goto();
@@ -216,7 +202,7 @@ test.describe('Danh sách giày desktop', () => {
 
       await test.step('chọn EU 42', async () => {
         await sidebar.openGroup('size');
-        await sidebar.size(42).click();
+        await sidebar.toggle('size', '42');
         await expectUrl(page, '/w?gender=men&price=1m-2m&size=42');
         await expect(list.heading).toHaveText("Men's Shoes (2)");
         await expect(list.cards).toHaveCount(2);
@@ -490,7 +476,7 @@ test.describe('Danh sách giày desktop', () => {
     await expect(sidebar.sizeButtons()).toHaveText(expectedFacets({}).size.map((s) => s.label));
     await expect(sidebar.sizeButtons()).toHaveCount(18);
 
-    await sidebar.size(38).click();
+    await sidebar.toggle('size', '38');
     await expect(sidebar.size(38)).toHaveAttribute('aria-pressed', 'true');
     await expectUrl(page, '/w?size=38');
     await expect(list.heading).toHaveText('Shoes (12)');
@@ -499,11 +485,11 @@ test.describe('Danh sách giày desktop', () => {
     expect(names).toContain('Nike Vaporfly 4');
     expect(names).not.toContain('Nike P-6000');
 
-    await sidebar.size(42).click();
+    await sidebar.toggle('size', '42');
     await expectUrl(page, '/w?size=38,42');
     await expect(list.heading).toHaveText('Shoes (29)');
 
-    await sidebar.size(38).click();
+    await sidebar.toggle('size', '38');
     await expect(sidebar.size(38)).toHaveAttribute('aria-pressed', 'false');
     await expectUrl(page, '/w?size=42');
     await expect(list.heading).toHaveText('Shoes (21)');
@@ -590,7 +576,7 @@ test.describe('Danh sách giày desktop', () => {
 
       await test.step('(d) list chậm → skeleton', async () => {
         await page.route(API.list, async (route) => {
-          await delay(1000);
+          await sleep(1000);
           await route.continue();
         });
         await list.goto();

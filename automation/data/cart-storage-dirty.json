@@ -3,7 +3,11 @@
   "cases": [
     { "name": "không phải JSON", "raw": "not json", "cart": [] },
     { "name": "không phải mảng", "raw": "{}", "cart": [] },
-    { "name": "số lượng 999", "raw": "[{\"sizeId\":206,\"quantity\":999}]", "cart": [{ "sizeId": 206, "quantity": 10 }] },
+    {
+      "name": "số lượng 999",
+      "raw": "[{\"sizeId\":206,\"quantity\":999}]",
+      "cart": [{ "sizeId": 206, "quantity": 10 }]
+    },
     {
       "name": "phần tử sai kiểu",
       "raw": "[{\"sizeId\":-1,\"quantity\":1},{\"sizeId\":206,\"quantity\":0},\"x\",null]",

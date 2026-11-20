@@ -11,7 +11,8 @@ import path from 'node:path';
 export async function docShot(page, testInfo, name) {
   const dir = process.env.E2E_DOC_SHOTS;
   const project = testInfo.project.name;
-  const allowed = project === 'chromium' || (project === 'mobile-chrome' && name.endsWith('-mobile'));
+  const allowed =
+    project === 'chromium' || (project === 'mobile-chrome' && name.endsWith('-mobile'));
   if (!dir || !allowed) return;
   await page.screenshot({ path: path.resolve(dir, `${name}.png`), fullPage: false });
 }

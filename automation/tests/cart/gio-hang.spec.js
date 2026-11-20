@@ -9,6 +9,7 @@ import { HeaderComponent } from '../../pages/components/HeaderComponent.js';
 import { readCart, setCart } from '../../utils/cart-storage.js';
 import { docShot } from '../../utils/doc-shot.js';
 import { formatVnd } from '../../utils/format.js';
+import { apiPath, collectPageErrors, fail500, sleep } from '../../utils/network.js';
 import { findVietnamese } from '../../utils/vietnamese.js';
 
 /**
@@ -23,7 +24,7 @@ const MOBILE = 'mobile-chrome';
 const DESKTOP_1440 = { width: 1440, height: 900 };
 const DUNK = 'nike-dunk-low-retro';
 const DUNK_NAME = 'Nike Dunk Low Retro';
-const CHECK_URL = /\/api\/cart\/public\/check$/;
+const CHECK_URL = apiPath('/cart/public/check');
 const MAX_REACHED = "You've reached the maximum quantity for this size.";
 const EMPTY_TEXT = 'There are no items in your bag.';
 const QUALIFY_TEXT = 'You qualify for free delivery.';
@@ -49,14 +50,6 @@ const S = {
 /** @typedef {import('@playwright/test').Page} Page */
 /** @typedef {import('../../pages/CartPage.js').CartPage} CartPageType */
 
-/** Ghi lỗi JS của trang. @param {Page} page */
-function collectPageErrors(page) {
-  /** @type {string[]} */
-  const errors = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  return errors;
-}
-
 /**
  * Đếm request `POST …/cart/public/check` và response 400 của nó.
  * @param {Page} page
@@ -72,13 +65,6 @@ function watchCheck(page) {
   });
   return state;
 }
-
-/** Trả 500 cho `check`. @param {import('@playwright/test').Route} route */
-const fail500 = (route) =>
-  route.fulfill({ status: 500, json: { code: 500, message: 'Simulated error' } });
-
-/** @param {number} ms */
-const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /** Giỏ trong localStorage phải bằng `expected` (chờ vì ghi sau khi render). @param {Page} page @param {unknown} expected */
 async function expectStoredCart(page, expected) {
@@ -103,22 +89,9 @@ async function expectBagCount(page, count) {
   await expect(header.root.getByRole('link', { name, exact: true })).toBeVisible();
 }
 
-/**
- * Summary (plan §6.6): ba giá trị + gợi ý (null = không có gợi ý).
- * @param {CartPageType} cart
- * @param {{ subtotal: string, shipping: string, total: string, hint: string | null }} expected
- */
-async function expectSummary(cart, { subtotal, shipping, total, hint }) {
-  await expect(cart.subtotal).toHaveText(subtotal);
-  await expect(cart.shipping).toHaveText(shipping);
-  await expect(cart.total).toHaveText(total);
-  if (hint === null) await expect(cart.deliveryHint).toHaveCount(0);
-  else await expect(cart.deliveryHint).toHaveText(hint);
-}
-
 /** Summary trống: "—" × 3, không gợi ý, Checkout khoá. @param {CartPageType} cart */
 async function expectEmptySummary(cart) {
-  await expectSummary(cart, { subtotal: DASH, shipping: DASH, total: DASH, hint: null });
+  await cart.expectSummary({ subtotal: DASH, shipping: DASH, total: DASH, hint: null });
   await expect(cart.checkout).toBeDisabled();
 }
 
@@ -204,7 +177,7 @@ test.describe('Giỏ hàng — giao diện (desktop)', () => {
       const vp = /** @type {{ width: number, height: number }} */ (page.viewportSize());
       await page.mouse.move(20, vp.height - 20);
       const openedAt = await open();
-      await delay(1_000);
+      await sleep(1_000);
       await expect(dialog.root).toBeVisible();
       await expect(dialog.root).toHaveCount(0, {
         timeout: AUTO_CLOSE_MAX_MS - (Date.now() - openedAt),
@@ -214,7 +187,7 @@ test.describe('Giỏ hàng — giao diện (desktop)', () => {
     await test.step('(d) rê chuột lên popup thì không tự đóng', async () => {
       await open();
       await dialog.root.hover();
-      await delay(AUTO_CLOSE_MAX_MS);
+      await sleep(AUTO_CLOSE_MAX_MS);
       await expect(dialog.root).toBeVisible();
       const vp = /** @type {{ width: number, height: number }} */ (page.viewportSize());
       await page.mouse.move(20, vp.height - 20);
@@ -316,7 +289,7 @@ test.describe('Giỏ hàng — giao diện (desktop)', () => {
           await expect(line.qty).toHaveText('2');
         });
 
-        await expectSummary(cart, {
+        await cart.expectSummary({
           subtotal: '7.519.000 ₫',
           shipping: 'Free',
           total: '7.519.000 ₫',
@@ -372,14 +345,14 @@ test.describe('Giỏ hàng — giao diện (desktop)', () => {
 
       await test.step('ban đầu: dưới ngưỡng 1.000 ₫', async () => {
         await expect(line.qty).toHaveText('1');
-        await expectSummary(cart, under);
+        await cart.expectSummary(under);
         expect(under.hint).toBe('Add 1.000 ₫ more to get free delivery.');
       });
 
       await test.step('tăng lên 2', async () => {
         await line.increase.click();
         await expect(line.qty).toHaveText('2');
-        await expectSummary(cart, {
+        await cart.expectSummary({
           subtotal: '9.998.000 ₫',
           shipping: 'Free',
           total: '9.998.000 ₫',
@@ -392,7 +365,7 @@ test.describe('Giỏ hàng — giao diện (desktop)', () => {
       await test.step('giảm về 1', async () => {
         await line.decrease.click();
         await expect(line.qty).toHaveText('1');
-        await expectSummary(cart, under);
+        await cart.expectSummary(under);
       });
 
       await test.step('xoá → giỏ trống', async () => {
@@ -417,7 +390,7 @@ test.describe('Giỏ hàng — giao diện (desktop)', () => {
         await test.step(c.name, async () => {
           await setCart(page, c.items);
           await cart.goto();
-          await expectSummary(cart, {
+          await cart.expectSummary({
             subtotal: '5.000.000 ₫',
             shipping: 'Free',
             total: '5.000.000 ₫',
@@ -500,7 +473,7 @@ test.describe('Giỏ hàng — giao diện (desktop)', () => {
         await expect(line.lowStock).toHaveCount(0);
       });
 
-      await expectSummary(cart, {
+      await cart.expectSummary({
         subtotal: '23.346.000 ₫',
         shipping: 'Free',
         total: '23.346.000 ₫',
@@ -639,7 +612,9 @@ test.describe('Giỏ hàng — giao diện (desktop)', () => {
         await expect.poll(() => new URL(page.url()).pathname).toBe('/checkout');
         await expect(page).toHaveTitle('Checkout | Nike');
         // Lát dat-hang thay trang tạm "Coming Soon" bằng trang /checkout thật (plan dat-hang §7.1 bước 7)
-        await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toHaveText('Checkout');
+        await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toHaveText(
+          'Checkout'
+        );
         await expect(cart.header.cartCount).toHaveText('1');
         await expectStoredCart(page, [{ sizeId: S.dunk42, quantity: 1 }]);
       });
@@ -702,7 +677,7 @@ test.describe('Giỏ hàng — giao diện (desktop)', () => {
 
     await test.step('(b) chậm 1,5 giây → skeleton', async () => {
       await page.route(CHECK_URL, async (route) => {
-        await delay(1_500);
+        await sleep(1_500);
         await route.continue();
       });
       await cart.goto();

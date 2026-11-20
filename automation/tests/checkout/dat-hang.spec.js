@@ -13,6 +13,7 @@ import { OrderResultPage } from '../../pages/OrderResultPage.js';
 import { readCart, setCart } from '../../utils/cart-storage.js';
 import { docShot } from '../../utils/doc-shot.js';
 import { laneOf } from '../../utils/lane.js';
+import { abortRoute, apiPath, collectPageErrors, sleep } from '../../utils/network.js';
 import { scanVietnamese } from '../../utils/vietnamese.js';
 
 /**
@@ -24,9 +25,9 @@ import { scanVietnamese } from '../../utils/vietnamese.js';
  */
 
 const MOBILE = 'mobile-chrome';
-const CREATE_URL = /\/api\/shop-order\/create$/;
-const GET_URL = /\/api\/shop-order\/get(\?|$)/;
-const CHECK_URL = /\/api\/cart\/public\/check$/;
+const CREATE_URL = apiPath('/shop-order/create');
+const GET_URL = apiPath('/shop-order/get');
+const CHECK_URL = apiPath('/cart/public/check');
 const AF1 = 'nike-air-force-1-07';
 const AF1_NAME = "Nike Air Force 1 '07";
 const EXCLUDED_TEXT =
@@ -37,14 +38,6 @@ const SERVER_ERROR = 'Something went wrong. Please try again later';
 const NOT_FOUND_CODE = 'DH2611190001';
 
 /** @typedef {import('@playwright/test').Page} Page */
-
-/** Ghi lỗi JS của trang. @param {Page} page */
-function collectPageErrors(page) {
-  /** @type {string[]} */
-  const errors = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  return errors;
-}
 
 /**
  * Ghi lại các request `POST …/shop-order/create` (body JSON) và số request `check` của giỏ.
@@ -60,9 +53,6 @@ function watchOrders(page) {
   });
   return state;
 }
-
-/** @param {number} ms */
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /** Pathname hiện tại. @param {Page} page */
 const pathOf = (page) => new URL(page.url()).pathname;
@@ -383,7 +373,7 @@ test.describe('Đặt hàng — khach1 (desktop) @stock', () => {
       });
 
       await test.step('(b) mất mạng', async () => {
-        await page.route(CREATE_URL, (route) => route.abort());
+        await page.route(CREATE_URL, abortRoute);
         await checkout.placeOrder.click();
         await expect(checkout.error).toHaveText(NETWORK_ERROR);
         await expect(checkout.placeOrder).toBeEnabled();

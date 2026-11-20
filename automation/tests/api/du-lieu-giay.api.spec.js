@@ -23,7 +23,7 @@ function counts(summary) {
 }
 
 test.describe('API test-support: summary', () => {
-  test('TC-12 global-setup đã reset trước khi chạy', { tag: '@smoke' }, async ({ apiAs }) => {
+  test('TC-12 global-setup đã reset trước khi chạy', { tag: '@regression' }, async ({ apiAs }) => {
     const admin = await apiAs('admin');
     const summary = await admin.client.expectOk(await admin.testSupport.summary());
 
@@ -119,7 +119,7 @@ test.describe('API test-support: summary', () => {
 test.describe('API test-support: reset', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('TC-05 reset trả về đúng dữ liệu ban đầu', { tag: '@smoke' }, async ({ apiAs }) => {
+  test('TC-05 reset trả về đúng dữ liệu ban đầu', { tag: '@regression' }, async ({ apiAs }) => {
     const admin = await apiAs('admin');
     const reset = await admin.client.expectOk(await admin.testSupport.reset());
 
