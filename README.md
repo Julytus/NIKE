@@ -107,3 +107,4 @@ Mã test JUnit của backend (`backend/**/src/test/`) đang nằm trong `.gitign
 - [plan/thiet-ke-giay.md](plan/thiet-ke-giay.md): kế hoạch tổng cửa hàng giày, thiết kế CSDL / API và các lát chức năng.
 - [plan/README.md](plan/README.md): danh sách plan.
 - `docs/chuc-nang/`: tài liệu từng chức năng khi làm xong (phục vụ báo cáo).
+- [docs/kiem-thu/](docs/kiem-thu/README.md): hướng dẫn cài đặt và chạy test, tài liệu học Playwright, kịch bản demo bảo vệ.
