@@ -6,3 +6,8 @@ allure-results
 allure-report
 pnpm-lock.yaml
 data/har
+playwright-report-stock
+test-results-stock
+playwright-report-all
+allure-report-single
+blob-report

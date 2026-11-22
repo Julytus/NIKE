@@ -1,4 +1,5 @@
 import { test as base, expect } from '@playwright/test';
+import * as allure from 'allure-js-commons';
 
 import { createApi } from '../api/index.js';
 import { accounts } from '../data/accounts.js';
@@ -16,6 +17,7 @@ import { ProductListPage } from '../pages/ProductListPage.js';
 import { ResourcePage } from '../pages/ResourcePage.js';
 import { RolePage } from '../pages/RolePage.js';
 import { SignInPage } from '../pages/SignInPage.js';
+import { labelsForFile, severityForTags } from '../utils/report-labels.js';
 
 /** @typedef {'admin' | 'noaccess' | 'customer' | 'khach1' | 'khach2'} Role */
 
@@ -37,6 +39,7 @@ import { SignInPage } from '../pages/SignInPage.js';
  *   cartPage: CartPage,
  *   checkoutPage: CheckoutPage,
  *   orderResultPage: OrderResultPage,
+ *   allureLabels: void,
  * }} TestFixtures
  * @typedef {{ tokenCache: { get: (role: Role) => Promise<string> } }} WorkerFixtures
  */
@@ -46,6 +49,8 @@ import { SignInPage } from '../pages/SignInPage.js';
  * - `api`: API client chưa đăng nhập.
  * - `apiAs(role)`: API client đã gắn token của vai trò (đăng nhập bằng API một lần mỗi worker).
  * - Page object: `loginPage`, `adminLayout`, `rolePage`, `permissionPage`, `resourcePage`, `homePage`, `infoPage`, `notFoundPage`, `signInPage`, `productListPage`, `productDetailPage`, `cartPage`, `checkoutPage`, `orderResultPage`.
+ * - `allureLabels` (tự chạy): gắn nhãn Allure epic / feature / severity + link tới plan theo đường dẫn spec
+ *   (plan ci-bao-cao §6.3), spec không phải tự gắn.
  * Đăng nhập giao diện dùng `test.use({ storageState: storageStateOf('admin') })` (tạo ở auth.setup.js).
  * @type {import('@playwright/test').TestType<
  *   import('@playwright/test').PlaywrightTestArgs & import('@playwright/test').PlaywrightTestOptions & TestFixtures,
@@ -53,6 +58,21 @@ import { SignInPage } from '../pages/SignInPage.js';
  * >}
  */
 export const test = base.extend({
+  allureLabels: [
+    // eslint-disable-next-line no-empty-pattern
+    async ({}, use, testInfo) => {
+      const l = labelsForFile(testInfo.file);
+      await allure.epic(l.epic);
+      await allure.feature(l.feature);
+      const severity = severityForTags(testInfo.tags);
+      if (severity) await allure.severity(severity);
+      // URL + tên lấy theo mẫu `links.tms` ở playwright.config.js: <repo>/blob/main/plan/<slug>.md
+      if (l.hasPlan) await allure.tms(l.slug);
+      await use();
+    },
+    { auto: true },
+  ],
+
   tokenCache: [
     async ({ playwright }, use) => {
       const context = await playwright.request.newContext();

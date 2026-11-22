@@ -243,9 +243,10 @@ Hai lỗi thật của frontend được phát hiện nhờ nhóm này (mất m�
 
 ## 13. Báo cáo và CI
 
-- **Playwright HTML**: có sẵn, gồm `test.step`, tệp đính kèm, trace.
-- **Allure** (`allure-playwright`): báo cáo tổng hợp kiểu dashboard cho quyển báo cáo; `pnpm allure:generate && pnpm allure:open`.
-- **GitHub Actions** ([.github/workflows/e2e-smoke.yml](../../.github/workflows/e2e-smoke.yml)): mỗi lần push / mở PR vào `main`, dựng MySQL + MinIO, build backend, chạy `@smoke` trên `api` + `chromium`, tải báo cáo lên làm artifact.
+- **Playwright HTML**: có sẵn, gồm `test.step`, tệp đính kèm, trace. Mỗi pha một báo cáo; `pnpm report:all` gộp hai pha (reporter `blob` + `playwright merge-reports`) thành `playwright-report-all/`.
+- **Bảng số liệu**: `pnpm report:summary` đọc `results.json` của báo cáo gộp, in bảng Markdown theo project / khu vực / tag + danh sách test lỗi / chập chờn (trên CI ghi vào job summary).
+- **Allure** (`allure-playwright`): báo cáo tổng hợp kiểu dashboard cho quyển báo cáo; `pnpm allure:generate && pnpm allure:open`. Có Trend (giữ lịch sử giữa các lần sinh), Environment, Categories (nhóm lỗi), Behaviors (epic = lát) gắn tự động bằng auto fixture `allureLabels`.
+- **GitHub Actions**: [e2e-smoke.yml](../../.github/workflows/e2e-smoke.yml) chạy `@smoke` trên 5 project mỗi lần push (bỏ qua commit chỉ sửa tài liệu); [e2e-regression.yml](../../.github/workflows/e2e-regression.yml) chạy toàn bộ mỗi đêm 02:00 theo ma trận 4 trình duyệt rồi gộp báo cáo. Hạ tầng dựng bằng composite action `.github/actions/setup-sut`; frontend chạy bản build (`vite preview`).
 
 ## 14. Số liệu bộ test (20/11/2026)
 

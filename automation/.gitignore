@@ -8,3 +8,5 @@ allure-results/
 allure-report/
 test-results-stock/
 playwright-report-stock/
+playwright-report-all/
+allure-report-single/

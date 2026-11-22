@@ -1,5 +1,7 @@
 # Nike Shoes (nike)
 
+[![E2E smoke](https://github.com/Julytus/NIKE/actions/workflows/e2e-smoke.yml/badge.svg)](https://github.com/Julytus/NIKE/actions/workflows/e2e-smoke.yml) [![E2E regression (nightly)](https://github.com/Julytus/NIKE/actions/workflows/e2e-regression.yml/badge.svg)](https://github.com/Julytus/NIKE/actions/workflows/e2e-regression.yml)
+
 Đồ án: **xây dựng automation test cho web thương mại điện tử bán giày** bằng JavaScript với Playwright. Cửa hàng mô phỏng nike.com/vn (tên, logo, ảnh Nike chỉ dùng để học, chạy local, không kinh doanh). Monorepo gồm `backend/` (Spring Boot), `frontend/` (React) và `automation/` (Playwright + JS).
 
 ## Trạng thái hiện tại
@@ -99,7 +101,7 @@ cd automation && pnpm test                         # toàn bộ: api + chromium 
 cd automation && pnpm report                       # mở báo cáo HTML; pnpm allure:generate && pnpm allure:open cho Allure
 ```
 
-Bộ automation test (Playwright + JavaScript, Page Object Model) nằm ở [`automation/`](automation/README.md); GitHub Actions chạy nhóm `@smoke` (API + Chromium) mỗi lần push / mở PR vào `main` (`.github/workflows/e2e-smoke.yml`).
+Bộ automation test (Playwright + JavaScript, Page Object Model) nằm ở [`automation/`](automation/README.md); GitHub Actions chạy nhóm `@smoke` trên 5 project mỗi lần push (`.github/workflows/e2e-smoke.yml`) và toàn bộ bộ test mỗi đêm 02:00 theo ma trận 4 trình duyệt (`.github/workflows/e2e-regression.yml`), báo cáo gộp + Allure có lịch sử (chi tiết `automation/README.md` mục 3, 6).
 Mã test JUnit của backend (`backend/**/src/test/`) đang nằm trong `.gitignore` nên chỉ có trên máy phát triển.
 
 ## Tài liệu

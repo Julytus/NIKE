@@ -1,0 +1,174 @@
+# Chạy toàn bộ bộ automation test mỗi đêm (02:00 giờ VN) + chạy tay (plan ci-bao-cao §5.3).
+# 4 job song song theo trình duyệt, mỗi job một máy ảo với hạ tầng riêng (composite action setup-sut);
+# job `report` gộp blob report + kết quả Allure của cả 4 job thành một báo cáo, viết bảng số liệu vào job summary.
+# Lịch chỉ chạy trên nhánh mặc định (main).
+name: E2E regression (nightly)
+
+on:
+  schedule:
+    - cron: '0 19 * * *' # 19:00 UTC = 02:00 giờ VN
+  workflow_dispatch:
+  # TẠM để kiểm trong lúc cook (plan ci-bao-cao §5.3) — xoá trước phiên C.
+  push:
+    branches: [feature/ci-bao-cao]
+
+concurrency:
+  group: e2e-regression
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: regression (${{ matrix.shard }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: api-chromium
+            projects: --project=api --project=chromium
+            browsers: chromium
+          - shard: firefox
+            projects: --project=firefox
+            browsers: firefox
+          - shard: webkit
+            projects: --project=webkit
+            browsers: webkit
+          - shard: mobile-chrome
+            projects: --project=mobile-chrome
+            browsers: chromium
+    env:
+      CI: 'true'
+      TZ: Asia/Ho_Chi_Minh
+      E2E_FRONTEND: preview
+      E2E_REPORT_TAG: ${{ matrix.shard }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dựng SUT
+        uses: ./.github/actions/setup-sut
+        with:
+          browsers: ${{ matrix.browsers }}
+
+      - name: Chạy toàn bộ test (${{ matrix.shard }}, 2 pha)
+        working-directory: automation
+        run: node scripts/run-phases.mjs ${{ matrix.projects }}
+
+      - name: Tải lên blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-${{ matrix.shard }}
+          path: automation/blob-report/
+          retention-days: 3
+
+      - name: Tải lên kết quả Allure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.shard }}
+          path: automation/allure-results/
+          retention-days: 3
+
+      - name: Tải lên log backend khi lỗi
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-log-${{ matrix.shard }}
+          path: backend-run.log
+          retention-days: 7
+
+  report:
+    name: report
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      TZ: Asia/Ho_Chi_Minh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cài Java 21 (Allure)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Cài pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.5.1
+
+      - name: Cài Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: automation/pnpm-lock.yaml
+
+      - name: Cài phụ thuộc automation
+        working-directory: automation
+        run: pnpm install --frozen-lockfile
+
+      - name: Tải blob report của các shard
+        uses: actions/download-artifact@v4
+        with:
+          pattern: blob-*
+          path: automation/blob-report
+          merge-multiple: true
+
+      - name: Tải kết quả Allure của các shard
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: automation/allure-results
+          merge-multiple: true
+
+      - name: Khôi phục lịch sử Allure
+        uses: actions/cache/restore@v4
+        with:
+          path: automation/allure-report/history
+          key: allure-history-regression-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: allure-history-regression-
+
+      - name: Gộp báo cáo HTML (4 shard × 2 pha)
+        working-directory: automation
+        run: pnpm report:all
+
+      - name: Bảng số liệu → job summary
+        if: always() && hashFiles('automation/playwright-report-all/results.json') != ''
+        working-directory: automation
+        run: pnpm report:summary --title "Regression đêm"
+
+      - name: Sinh báo cáo Allure
+        if: always() && hashFiles('automation/allure-results/*-result.json') != ''
+        working-directory: automation
+        run: pnpm allure:generate --single-file --title "Regression đêm"
+
+      - name: Lưu lịch sử Allure
+        if: always() && hashFiles('automation/allure-report/history/*.json') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: automation/allure-report/history
+          key: allure-history-regression-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Tải lên báo cáo Playwright (gộp)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-playwright-report
+          path: automation/playwright-report-all/
+          retention-days: 14
+
+      - name: Tải lên báo cáo Allure (một file)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-allure-report
+          path: automation/allure-report-single/
+          retention-days: 14
