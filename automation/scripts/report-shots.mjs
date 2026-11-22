@@ -160,13 +160,22 @@ try {
   if (smokeRun) {
     await open(smokeRun);
     await shot('01-actions-smoke.png');
+    // Job summary được GitHub tải lười khi cuộn tới → cuộn xuống cuối rồi chờ tiêu đề hiện ra.
     const summary = page.getByRole('heading', { name: /Kết quả kiểm thử/ }).first();
-    if (await summary.count()) {
+    await page.mouse.wheel(0, 5000);
+    const found = await summary
+      .waitFor({ timeout: 20_000 })
+      .then(() => true)
+      .catch(() => false);
+    if (found) {
       await summary.scrollIntoViewIfNeeded();
       await page.mouse.wheel(0, -120);
       await shot('02-actions-summary.png');
     } else {
-      console.log('  (không thấy job summary trên trang run smoke, bỏ qua 02)');
+      // GitHub chỉ hiện job summary cho người đã đăng nhập; trình duyệt ẩn danh của script không thấy.
+      console.log(
+        '  (không thấy job summary — GitHub chỉ hiện khi đã đăng nhập; chụp tay 02-actions-summary.png)'
+      );
     }
   }
   if (regressionRun) {
