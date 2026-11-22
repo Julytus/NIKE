@@ -2,6 +2,8 @@
 
 Tài liệu này đi từ máy trống tới lúc chạy xong bộ test và mở được báo cáo. Viết cho **Windows 10/11**; lệnh trong khối `bash` chạy ở **Git Bash**, khối `powershell` chạy ở **PowerShell**. Mọi lệnh chạy từ **thư mục gốc repo** trừ khi ghi rõ `cd automation`.
 
+> Máy không có `sh` / Git Bash: mọi bước vẫn làm được bằng PowerShell, xem [mục 13](#13-máy-không-có-sh--git-bash-chạy-hoàn-toàn-bằng-powershell).
+
 Hệ thống gồm 3 phần chạy cùng lúc trên máy:
 
 ```
@@ -212,3 +214,55 @@ docker compose -f docker-compose.local.yml --env-file backend/.env down
 | Swagger | http://localhost:9500/api/swagger-ui.html |
 | MinIO console | http://localhost:9021 (`minioadmin` / `minioadmin`) |
 | phpMyAdmin | http://localhost:8092 (khi bật `--profile tools`) |
+
+## 13. Máy không có `sh` / Git Bash: chạy hoàn toàn bằng PowerShell
+
+`sh` chỉ cần cho `scripts/ai/backend-restart.sh` (build + chạy nền backend). Docker, Maven, Java, pnpm, Playwright đều chạy thẳng trong PowerShell. Mọi lệnh dưới đây chạy từ thư mục gốc repo.
+
+**Tạo file môi trường (bước 2):**
+
+```powershell
+Copy-Item backend\.env.example backend\.env
+Copy-Item frontend\.env.example frontend\.env
+Copy-Item automation\.env.example automation\.env
+```
+
+**Hạ tầng (bước 3):** giống hệt, `docker compose -f docker-compose.local.yml --env-file backend/.env up -d`.
+
+**Backend (bước 4), thay cho `backend-restart.sh`:**
+
+```powershell
+cd backend
+mvn -q -DskipTests "-Djooq.codegen.skip=true" package
+java -jar app/target/aeoc-backend.jar          # giữ cửa sổ này mở; Ctrl+C để tắt
+```
+
+Hoặc chạy nền trong cửa sổ riêng rồi chờ tới khi API trả 200:
+
+```powershell
+Start-Process java -ArgumentList '-jar','app/target/aeoc-backend.jar' -WorkingDirectory backend
+while ($true) {
+  try { if ((Invoke-WebRequest http://localhost:9500/api/v3/api-docs -UseBasicParsing -TimeoutSec 5).StatusCode -eq 200) { 'backend sẵn sàng'; break } } catch {}
+  Start-Sleep 2
+}
+```
+
+Khởi động lại sau khi sửa code: tắt backend (dòng dưới), chạy lại `mvn ... package` rồi `java -jar ...`. Phải tắt trước khi build vì Windows khoá file jar đang chạy.
+
+**Tắt backend đang nghe cổng 9500:**
+
+```powershell
+Get-NetTCPConnection -LocalPort 9500 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+```
+
+**Biến môi trường cho lệnh test:** PowerShell không có cú pháp `BIEN=giatri lệnh`. Đặt biến trước, cách nhau bằng `;`, rồi xoá khi xong (biến giữ nguyên tới khi đóng cửa sổ):
+
+```powershell
+cd automation
+$env:E2E_STOCK=1; $env:E2E_SLOWMO=400; pnpm exec playwright test tests/e2e-flows/kiem-thu-hoi-quy.spec.js -g "TC-01" --project=chromium --headed --workers=1
+Remove-Item Env:E2E_STOCK, Env:E2E_SLOWMO
+```
+
+Quên xoá `E2E_STOCK` thì lần chạy `pnpm exec playwright test` sau chỉ chạy nhóm `@stock`. Các lệnh `pnpm test*` không bị ảnh hưởng vì `run-phases.mjs` tự đặt biến cho từng pha.
+
+Các lệnh `pnpm test`, `pnpm test:smoke`, `pnpm report`, `pnpm allure:*`, `pnpm check:tags` chạy bằng Node, không cần `sh`.

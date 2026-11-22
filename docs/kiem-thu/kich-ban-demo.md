@@ -19,6 +19,8 @@ sh scripts/ai/backend-restart.sh "-Djooq.codegen.skip=true"     # chờ "backend
 cd frontend && pnpm dev                                          # để sẵn một terminal, đỡ chờ Vite lúc demo
 ```
 
+Máy không có `sh`: thay dòng `backend-restart.sh` bằng `cd backend; mvn -q -DskipTests "-Djooq.codegen.skip=true" package; java -jar app/target/aeoc-backend.jar` trong một cửa sổ PowerShell riêng. Các lệnh demo bên dưới đặt biến theo kiểu `$env:E2E_STOCK=1; $env:E2E_SLOWMO=400; pnpm exec ...`. Chi tiết ở [mục 13 hướng dẫn cài đặt](huong-dan-cai-dat-va-chay.md#13-máy-không-có-sh--git-bash-chạy-hoàn-toàn-bằng-powershell).
+
 Mở sẵn:
 
 - VS Code ở thư mục `automation/`, các tab: `playwright.config.js`, `pages/CartPage.js`, `fixtures/index.js`, `tests/e2e-flows/kiem-thu-hoi-quy.spec.js`, `utils/network.js`.
