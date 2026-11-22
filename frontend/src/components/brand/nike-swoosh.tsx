@@ -1,12 +1,15 @@
 import { cn } from "@/lib/utils";
 
-/** Logo swoosh (dùng cho mục đích học tập, chạy local). Màu theo `currentColor`. */
-export function NikeSwoosh({ className }: { className?: string }) {
+/**
+ * Logo swoosh (dùng cho mục đích học tập, chạy local). Màu theo `currentColor`.
+ * Mặc định là hình trang trí (`aria-hidden`); truyền `label` khi logo đứng một mình và cần tên truy cập.
+ */
+export function NikeSwoosh({ className, label }: { className?: string; label?: string }) {
   return (
     <svg
       viewBox="3 8.5 18.2 6.7"
       fill="currentColor"
-      aria-hidden="true"
+      {...(label ? { role: "img", "aria-label": label } : { "aria-hidden": true })}
       focusable="false"
       className={cn("h-5 w-auto", className)}
     >

@@ -21,7 +21,7 @@ export function SortMenu({
 }) {
   const current = SORT_OPTIONS.find((o) => o.value === value);
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger
         data-testid="sort-trigger"
         className="inline-flex h-10 items-center gap-2 rounded-sm text-base outline-none hover:text-(--sh-muted) focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50"
@@ -32,7 +32,7 @@ export function SortMenu({
       <DropdownMenuContent
         align="end"
         // Không có hiệu ứng đóng: bấm lại "Sort By" khi menu cũ còn đang mờ dần thì Radix bỏ qua cú bấm
-        className="shop min-w-48 data-[state=closed]:animate-none! rounded-[12px] border-none bg-(--sh-bg) p-3 text-(--sh-fg) shadow-[0_4px_16px_rgba(0,0,0,0.12)]"
+        className="shop min-w-48 rounded-[12px] border-none bg-(--sh-bg) p-3 text-(--sh-fg) shadow-[0_4px_16px_rgba(0,0,0,0.12)] data-[state=closed]:animate-none!"
       >
         <DropdownMenuRadioGroup value={value} onValueChange={(v) => onChange(v as CatalogSort)}>
           {SORT_OPTIONS.map((o) => (

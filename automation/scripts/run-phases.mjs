@@ -6,7 +6,7 @@
  * Mỗi lần `playwright test` chạy global-setup (reset dữ liệu) nên pha stock bắt đầu sạch và lần chạy sau
  * của pha thường cũng sạch. Pha 2 vẫn chạy khi pha 1 đỏ; mã thoát ≠ 0 nếu một pha đỏ.
  *
- * Ở đầu lần chạy xoá `allure-results/` và `blob-report/` (kết quả của lần trước), trừ khi `E2E_KEEP_RESULTS=1`
+ * Ở đầu lần chạy xoá `allure-results/`, `blob-report/` và `a11y-results/` (kết quả của lần trước), trừ khi `E2E_KEEP_RESULTS=1`
  * (plan ci-bao-cao §5.1). Gọi thẳng `playwright test` thì không dọn: kết quả Allure cộng dồn.
  *
  * Dùng: node scripts/run-phases.mjs [--phase=main|stock] <tham số playwright test…>
@@ -33,7 +33,7 @@ if (only !== undefined && !(only in PHASES)) {
 }
 
 if (process.env.E2E_KEEP_RESULTS !== '1') {
-  for (const dir of ['allure-results', 'blob-report']) {
+  for (const dir of ['allure-results', 'blob-report', 'a11y-results']) {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 }

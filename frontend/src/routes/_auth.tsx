@@ -25,8 +25,8 @@ function AuthLayout() {
         <ThemeToggle />
       </div>
       <main className="mx-auto w-full max-w-[460px] px-4 pt-8 pb-16 sm:pt-10">
-        <div className="mb-8 flex items-center gap-3" aria-label="Nike">
-          <NikeSwoosh className="h-6" />
+        <div className="mb-8 flex items-center gap-3">
+          <NikeSwoosh className="h-6" label="Nike" />
         </div>
         <Outlet />
       </main>

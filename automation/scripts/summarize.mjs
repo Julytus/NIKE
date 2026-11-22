@@ -30,7 +30,7 @@ if (!fs.existsSync(opts.input)) {
 const report = JSON.parse(fs.readFileSync(opts.input, 'utf8'));
 
 const PROJECT_ORDER = ['api', 'chromium', 'firefox', 'webkit', 'mobile-chrome'];
-const TAGS = ['@smoke', '@regression', '@stock', '@flow', '@mock'];
+const TAGS = ['@smoke', '@regression', '@stock', '@flow', '@mock', '@visual', '@a11y'];
 
 /**
  * @typedef {{ file: string, line: number, title: string, tags: string[], project: string,

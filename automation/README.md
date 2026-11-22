@@ -30,37 +30,42 @@ Backend chưa chạy thì `global-setup.js` dừng ngay với thông báo
 
 ## 2. Chạy test
 
-| Lệnh                                                            | Việc                                                                        |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `pnpm test`                                                     | Toàn bộ: project `api` + 4 project giao diện, hai pha (thường rồi `@stock`) |
-| `pnpm test:smoke`                                               | Chỉ test gắn tag `@smoke` (luồng chính), mọi project, hai pha               |
-| `pnpm test:regression`                                          | Chỉ test gắn tag `@regression`, hai pha                                     |
-| `pnpm test:api`                                                 | Chỉ nhóm API (không bật frontend), hai pha                                  |
-| `pnpm test:stock`                                               | Chỉ pha `@stock` (test tạo đơn / đổi tồn kho)                               |
-| `pnpm test:flows`                                               | Chỉ luồng xuyên suốt `@flow` (`tests/e2e-flows/`, mục 7)                    |
-| `pnpm test:mock`                                                | Chỉ test network mocking `@mock` (mục 8)                                    |
-| `pnpm check:tags`                                               | Kiểm tag + ID của mọi test, in bảng thống kê (mục 9) — không chạy test      |
-| `pnpm test:headed`                                              | Chromium có giao diện, 1 worker                                             |
-| `pnpm test:ui`                                                  | Chế độ UI của Playwright (chọn test, xem từng bước)                         |
-| `pnpm exec playwright test tests/admin/role.spec.js -g "TC-14"` | Chạy một test theo ID                                                       |
-| `pnpm lint`                                                     | ESLint (`eslint-plugin-playwright`) cho code test                           |
-| `pnpm report:all` / `report:summary` / `allure:generate`        | Gộp báo cáo, bảng số liệu, Allure có lịch sử (mục 3)                        |
+| Lệnh                                                            | Việc                                                                            |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `pnpm test`                                                     | Toàn bộ: project `api` + 4 project giao diện, hai pha (thường rồi `@stock`)     |
+| `pnpm test:smoke`                                               | Chỉ test gắn tag `@smoke` (luồng chính), mọi project, hai pha                   |
+| `pnpm test:regression`                                          | Chỉ test gắn tag `@regression`, hai pha                                         |
+| `pnpm test:api`                                                 | Chỉ nhóm API (không bật frontend), hai pha                                      |
+| `pnpm test:stock`                                               | Chỉ pha `@stock` (test tạo đơn / đổi tồn kho)                                   |
+| `pnpm test:flows`                                               | Chỉ luồng xuyên suốt `@flow` (`tests/e2e-flows/`, mục 7)                        |
+| `pnpm test:mock`                                                | Chỉ test network mocking `@mock` (mục 8)                                        |
+| `pnpm check:tags`                                               | Kiểm tag + ID của mọi test, in bảng thống kê (mục 9) — không chạy test          |
+| `pnpm visual:server [start / stop / status]`                    | Playwright server trong Docker cho test so ảnh (`tests/visual/README.md`)       |
+| `pnpm test:visual` / `test:visual:update`                       | So ảnh `@visual` (`chromium` + `mobile-chrome`) / sinh lại ảnh chuẩn            |
+| `pnpm test:a11y`                                                | Quét WCAG 2.1 AA `@a11y` (`chromium` + `mobile-chrome`, `tests/a11y/README.md`) |
+| `pnpm test:headed`                                              | Chromium có giao diện, 1 worker                                                 |
+| `pnpm test:ui`                                                  | Chế độ UI của Playwright (chọn test, xem từng bước)                             |
+| `pnpm exec playwright test tests/admin/role.spec.js -g "TC-14"` | Chạy một test theo ID                                                           |
+| `pnpm lint`                                                     | ESLint (`eslint-plugin-playwright`) cho code test                               |
+| `pnpm report:all` / `report:summary` / `allure:generate`        | Gộp báo cáo, bảng số liệu, Allure có lịch sử (mục 3)                            |
 
-Mỗi lần `pnpm test*` (qua `run-phases.mjs`) **xoá `allure-results/` và `blob-report/` của lần trước** để báo cáo chỉ
+Mỗi lần `pnpm test*` (qua `run-phases.mjs`) **xoá `allure-results/`, `blob-report/` và `a11y-results/` của lần trước** để báo cáo chỉ
 chứa lần chạy này; muốn cộng dồn nhiều lần chạy thì đặt `E2E_KEEP_RESULTS=1`. Gọi thẳng `pnpm exec playwright test`
 thì không dọn (kết quả Allure cộng dồn).
 
 Biến môi trường của bộ test (ngoài `.env`):
 
-| Biến               | Giá trị                                                                                                         |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `E2E_WORKERS`      | số worker; mặc định 4 ở máy, 2 trên CI                                                                          |
-| `E2E_FRONTEND`     | `dev` (mặc định, `pnpm --dir ../frontend dev`) · `preview` (bản build, `vite preview`; phải `pnpm build` trước) |
-| `E2E_REPORT_TAG`   | tên file blob report (`blob-report/<pha>/<pha>-<tag>.zip`), mặc định `local`; CI đặt `smoke` / tên shard        |
-| `E2E_KEEP_RESULTS` | `1` = không dọn `allure-results/` / `blob-report/` ở đầu lần chạy                                               |
-| `E2E_SLOWMO`       | mili giây chờ giữa các thao tác (xem bằng mắt)                                                                  |
-| `E2E_DOC_SHOTS`    | thư mục lưu ảnh tài liệu (`docShot()`)                                                                          |
-| `E2E_STOCK`        | `1` = pha `@stock` (do `run-phases.mjs` đặt)                                                                    |
+| Biến               | Giá trị                                                                                                                |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `E2E_WORKERS`      | số worker; mặc định 4 ở máy, 2 trên CI                                                                                 |
+| `E2E_FRONTEND`     | `dev` (mặc định, `pnpm --dir ../frontend dev`) · `preview` (bản build, `vite preview`; phải `pnpm build` trước)        |
+| `E2E_REPORT_TAG`   | tên file blob report (`blob-report/<pha>/<pha>-<tag>.zip`), mặc định `local`; CI đặt `smoke` / tên shard               |
+| `E2E_KEEP_RESULTS` | `1` = không dọn `allure-results/` / `blob-report/` ở đầu lần chạy                                                      |
+| `E2E_SLOWMO`       | mili giây chờ giữa các thao tác (xem bằng mắt)                                                                         |
+| `E2E_DOC_SHOTS`    | thư mục lưu ảnh tài liệu (`docShot()`)                                                                                 |
+| `E2E_STOCK`        | `1` = pha `@stock` (do `run-phases.mjs` đặt)                                                                           |
+| `E2E_PW_WS`        | `ws://127.0.0.1:3100/` — Playwright server Docker cho `@visual`; không đặt thì `@visual` bỏ qua (`test:visual` tự đặt) |
+| `E2E_PW_PORT`      | cổng trên máy của Playwright server, mặc định `3100`                                                                   |
 
 Local mặc định **4 worker** (`E2E_WORKERS=<n>` để đổi): mọi trình duyệt cùng lấy module từ một tiến trình Vite dev,
 để mặc định của Playwright (nửa số nhân) thì `goto` của Firefox / WebKit có lúc quá 30 giây.
@@ -109,7 +114,8 @@ pnpm allure:open
 | Bảng số liệu (job summary của CI, quyển báo cáo)  | `pnpm report:summary [--title <tên>] [--out <file>]`                             | stdout / file; trên CI nối vào `GITHUB_STEP_SUMMARY`          |
 | Allure (Trend, Behaviors, Categories)             | `pnpm allure:generate [--single-file]` rồi `pnpm allure:open`                    | `allure-report/index.html`, `allure-report-single/index.html` |
 | Playwright HTML từng pha (như trước)              | `pnpm report` / `pnpm report:stock`                                              | `playwright-report/`, `playwright-report-stock/`              |
-| Ảnh báo cáo cho quyển                             | `pnpm report:shots --out <thư mục> [--run <url run>…]`                           | `<thư mục>/0x-*.png`                                          |
+| Bảng vi phạm a11y (job summary, bảng trước / sau) | `pnpm report:a11y [--title <tên>] [--out <file>]` (đọc `a11y-results/`)          | stdout / file; trên CI nối vào `GITHUB_STEP_SUMMARY`          |
+| Ảnh báo cáo cho quyển                             | `pnpm report:shots --out <thư mục> [--run <url run>…]`                           | `<thư mục>/0x-*.png`, `10-playwright-visual-slider.png`       |
 
 - **Bảng số liệu**: một dòng là một cặp (test, project), bỏ project `setup`. "Tỉ lệ đạt" = (Đạt + Chập chờn) / (Tổng − Bỏ
   qua). "Thời gian chạy test" là tổng thời gian của mọi lần chạy; thời gian đồng hồ của cả lần chạy nằm ở dòng đầu.
@@ -153,15 +159,18 @@ automation/
 │  ├─ register-invalid.json  bảng dữ liệu đăng ký sai (data-driven TC-06 → TC-09)
 │  ├─ catalog-filters.json   24 ca bộ lọc: `filter` / `total` / `ids` (API) + `ui` (cách bấm trên giao diện)
 │  ├─ flows.js               làn size theo project + sản phẩm của các luồng xuyên suốt (`flowOf`)
+│  ├─ a11y-known.json        vi phạm WCAG đã biết, chưa sửa (mỗi mục có `reason`) — `tests/a11y/README.md`
 │  ├─ har/catalog.har        HAR API trang /w cho phát lại (ghi lại: E2E_UPDATE_HAR=1)
 │  └─ role-names.json        giá trị biên tên chức vụ (1 / 50 / 51 ký tự)
 ├─ utils/                    unique (email / tên duy nhất), format (tiền VNĐ), jwt, doc-shot, env, lane (size theo project),
 │                            cart-storage (giỏ localStorage), network (helper network mocking, mục 8),
-│                            report-env (thông tin lần chạy), report-labels (nhãn Allure theo đường dẫn spec)
+│                            report-env (thông tin lần chạy), report-labels (nhãn Allure theo đường dẫn spec),
+│                            visual (kết nối server Docker, `settle`, `masks`), a11y (`scanA11y`)
 ├─ allure/categories.json    nhóm lỗi của Allure (tab Categories)
 ├─ scripts/                  run-phases.mjs (hai pha, dọn kết quả cũ), check-tags.mjs (quy tắc tag, mục 9),
 │                            merge-reports.mjs (report:all), summarize.mjs (report:summary),
-│                            allure-generate.mjs (allure:generate), report-shots.mjs (report:shots)
+│                            allure-generate.mjs (allure:generate), report-shots.mjs (report:shots),
+│                            visual-server.mjs (visual:server, test:visual), a11y-report.mjs (report:a11y)
 └─ tests/
    ├─ auth.setup.js          project `setup`: đăng nhập UI admin / noaccess → .auth/<vai-trò>.json
    ├─ api/                   *.api.spec.js — project `api`
@@ -169,17 +178,20 @@ automation/
    ├─ e2e-flows/             luồng xuyên suốt nhiều lát (`@flow`, mục 7)
    ├─ network/               network mocking nâng cao (`@mock`, mục 8)
    ├─ home/ product-list/ product-detail/ cart/ checkout/ account/ system/   spec giao diện từng lát
-   ├─ visual/  a11y/         (để dành cho lát 4.2, xem README trong từng thư mục)
+   ├─ visual/                so ảnh `@visual`; ảnh chuẩn `visual/__screenshots__/<project>/<tên>.png` (một bộ, Chromium
+   │                         Linux trong Docker), CSS lúc chụp `visual/screenshot.css` — xem `visual/README.md`
+   ├─ a11y/                  quét axe `@a11y`; mỗi lần quét ghi `a11y-results/<project>/<tên>.json` — `a11y/README.md`
 ```
 
 ### Project
 
-| Project                           | Chạy gì                                        | Trình duyệt                       |
-| --------------------------------- | ---------------------------------------------- | --------------------------------- |
-| `setup`                           | `tests/auth.setup.js`                          | Chromium                          |
-| `api`                             | `tests/api/**`                                 | không                             |
-| `chromium` / `firefox` / `webkit` | mọi spec trừ `tests/api/**`, phụ thuộc `setup` | Desktop Chrome / Firefox / Safari |
-| `mobile-chrome`                   | như trên                                       | Pixel 7                           |
+| Project              | Chạy gì                                          | Trình duyệt              |
+| -------------------- | ------------------------------------------------ | ------------------------ |
+| `setup`              | `tests/auth.setup.js`                            | Chromium                 |
+| `api`                | `tests/api/**`                                   | không                    |
+| `chromium`           | mọi spec trừ `tests/api/**`, phụ thuộc `setup`   | Desktop Chrome           |
+| `firefox` / `webkit` | như trên, **trừ** `tests/visual/`, `tests/a11y/` | Desktop Firefox / Safari |
+| `mobile-chrome`      | như `chromium`                                   | Pixel 7                  |
 
 ### Từ fixture tới spec
 
@@ -217,20 +229,27 @@ Hai workflow dùng chung composite action `.github/actions/setup-sut` (dựng h�
 
 | Workflow                                            | Khi nào                                                                                                                 | Chạy gì                                                                                                            |
 | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **E2E smoke** (`e2e-smoke.yml`)                     | mỗi push ở mọi nhánh, trừ commit chỉ sửa `docs/`, `plan/`, `*.md`, `.claude/`; chạy tay; push mới huỷ run cũ cùng nhánh | job "smoke (5 project)": `pnpm test:smoke` (5 project × 2 pha), tối đa 40 phút                                     |
+| **E2E smoke** (`e2e-smoke.yml`)                     | mỗi push ở mọi nhánh, trừ commit chỉ sửa `docs/`, `plan/`, `*.md`, `.claude/`; chạy tay; push mới huỷ run cũ cùng nhánh | job "smoke (5 project)": `pnpm test:smoke` (5 project × 2 pha, có Playwright server cho `@visual`), tối đa 40 phút |
 | **E2E regression (nightly)** (`e2e-regression.yml`) | 02:00 giờ VN mỗi đêm trên `main` (cron `0 19 * * *` UTC); chạy tay `gh workflow run e2e-regression.yml`                 | 4 job song song "regression (api-chromium / firefox / webkit / mobile-chrome)" chạy toàn bộ test; job "report" gộp |
 
 Sau phần test (luôn chạy, kể cả khi đỏ): `pnpm report:all` → `pnpm report:summary` (bảng số liệu hiện ở **job
 summary** của run) → khôi phục lịch sử Allure từ `actions/cache` → `pnpm allure:generate --single-file` → lưu lịch sử
 (khoá `allure-history-smoke-<nhánh>-…` / `allure-history-regression-…`; cache hết hạn khi 7 ngày không dùng, khi đó
-Trend bắt đầu lại). Không dùng GitHub Pages: báo cáo chỉ xem qua artifact.
+Trend bắt đầu lại). Có `a11y-results/` thì thêm `pnpm report:a11y` (bảng "Khả năng truy cập" ở job summary).
+Không dùng GitHub Pages: báo cáo chỉ xem qua artifact.
 
-| Artifact                                                  | Nội dung                                    | Giữ     |
-| --------------------------------------------------------- | ------------------------------------------- | ------- |
-| `smoke-playwright-report`, `regression-playwright-report` | Playwright HTML gộp + `results.json`        | 14 ngày |
-| `smoke-allure-report`, `regression-allure-report`         | Allure một file `index.html` (mở thẳng)     | 14 ngày |
-| `blob-<shard>`, `allure-results-<shard>`                  | kết quả thô của từng shard (job report gộp) | 3 ngày  |
-| `backend-log`, `backend-log-<shard>`                      | log backend, chỉ khi run đỏ                 | 7 ngày  |
+**Visual trên CI**: `setup-sut` có input `pw-server: 'true'` (smoke; shard `api-chromium`, `mobile-chrome` của
+regression) → `node automation/scripts/visual-server.mjs start` rồi đặt `E2E_PW_WS`. Cùng image Docker như ở máy nên ảnh
+chuẩn sinh ở máy Windows khớp trên CI. CI dùng `updateSnapshots: 'none'`: trang mới chưa có ảnh chuẩn là đỏ, không tự ghi.
+
+| Artifact                                                  | Nội dung                                                         | Giữ     |
+| --------------------------------------------------------- | ---------------------------------------------------------------- | ------- |
+| `smoke-playwright-report`, `regression-playwright-report` | Playwright HTML gộp + `results.json`                             | 14 ngày |
+| `smoke-allure-report`, `regression-allure-report`         | Allure một file `index.html` (mở thẳng)                          | 14 ngày |
+| `blob-<shard>`, `allure-results-<shard>`                  | kết quả thô của từng shard (job report gộp)                      | 3 ngày  |
+| `backend-log`, `backend-log-<shard>`                      | log backend, chỉ khi run đỏ                                      | 7 ngày  |
+| `visual-diff`, `visual-diff-<shard>`                      | `*-expected.png` / `*-actual.png` / `*-diff.png`, chỉ khi run đỏ | 14 ngày |
+| `a11y-results-<shard>`                                    | kết quả quét axe của shard (job report gộp)                      | 3 ngày  |
 
 Xem bằng `gh`: `gh run list --workflow e2e-smoke.yml`, `gh run watch`, `gh run download <id> -n smoke-allure-report`.
 
@@ -282,10 +301,13 @@ Hàm dùng chung ở `utils/network.js` (spec không tự chép lại):
 | `@stock`      | tạo đơn / đổi tồn kho → chạy ở pha 2                   | tiêu đề `test.describe`                              |
 | `@flow`       | luồng xuyên suốt `tests/e2e-flows/`                    | tiêu đề `test.describe`                              |
 | `@mock`       | test dùng `page.route` / `routeFromHAR` / `setOffline` | `tag` của test                                       |
+| `@visual`     | so ảnh, **chỉ** ở `tests/visual/`                      | tiêu đề `test.describe`                              |
+| `@a11y`       | quét WCAG, **chỉ** ở `tests/a11y/`                     | tiêu đề `test.describe`                              |
 
 `scripts/check-tags.mjs` đọc `playwright test --list --reporter=json` của cả hai pha (không chạy test) và **thoát 1**,
 in `file:dòng — lý do`, khi: (1) test thiếu hoặc thừa `@smoke` / `@regression`; (2) tiêu đề không bắt đầu bằng
 `TC-\d{2}[a-z]?`; (3) trùng ID ở nhiều dòng trong một file (ca data-driven sinh từ cùng một dòng thì được, một TC tách
-thành nhiều test thì dùng hậu tố `TC-19b`). **Cảnh báo** (không đổi mã thoát): thao tác tạo đơn nằm ngoài describe
+thành nhiều test thì dùng hậu tố `TC-19b`); (6) test ở `tests/visual/` thiếu `@visual`, ở `tests/a11y/` thiếu `@a11y`;
+(7) `@visual` / `@a11y` nằm ngoài hai thư mục đó. **Cảnh báo** (không đổi mã thoát): thao tác tạo đơn nằm ngoài describe
 `@stock`; file có quá 3 test `@smoke`. Cuối cùng in bảng thống kê theo file và theo project
-(tổng / smoke / regression / stock / flow / mock).
+(tổng / smoke / regression / stock / flow / mock / visual / a11y).

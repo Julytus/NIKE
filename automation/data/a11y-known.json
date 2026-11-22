@@ -1,0 +1,4 @@
+{
+  "$comment": "Vi phạm WCAG đã biết nhưng chưa sửa trong lát kiem-thu-giao-dien — chuyển lát 4.4 (bug report). Xoá mục khi đã sửa. Mỗi mục: rule (axe rule id), pages (tên quét §6.2 hoặc \"*\"), target (chuỗi con của selector), reason, ticket.",
+  "items": []
+}

@@ -28,15 +28,19 @@ jobs:
           - shard: api-chromium
             projects: --project=api --project=chromium
             browsers: chromium
+            pw-server: 'true'
           - shard: firefox
             projects: --project=firefox
             browsers: chromium firefox # project setup chạy Desktop Chrome ở mọi shard
+            pw-server: 'false' # firefox / webkit không chạy @visual / @a11y
           - shard: webkit
             projects: --project=webkit
             browsers: chromium webkit
+            pw-server: 'false'
           - shard: mobile-chrome
             projects: --project=mobile-chrome
             browsers: chromium
+            pw-server: 'true'
     env:
       CI: 'true'
       TZ: Asia/Ho_Chi_Minh
@@ -49,6 +53,7 @@ jobs:
         uses: ./.github/actions/setup-sut
         with:
           browsers: ${{ matrix.browsers }}
+          pw-server: ${{ matrix.pw-server }}
 
       - name: Chạy toàn bộ test (${{ matrix.shard }}, 2 pha)
         working-directory: automation
@@ -69,6 +74,27 @@ jobs:
           name: allure-results-${{ matrix.shard }}
           path: automation/allure-results/
           retention-days: 3
+
+      - name: Tải lên kết quả a11y
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-results-${{ matrix.shard }}
+          path: automation/a11y-results/
+          retention-days: 3
+          if-no-files-found: ignore
+
+      - name: Tải lên ảnh khác biệt giao diện khi lỗi
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff-${{ matrix.shard }}
+          path: |
+            automation/test-results*/**/*-diff.png
+            automation/test-results*/**/*-actual.png
+            automation/test-results*/**/*-expected.png
+          retention-days: 14
+          if-no-files-found: ignore
 
       - name: Tải lên log backend khi lỗi
         if: failure()
@@ -126,6 +152,13 @@ jobs:
           path: automation/allure-results
           merge-multiple: true
 
+      - name: Tải kết quả a11y của các shard
+        uses: actions/download-artifact@v4
+        with:
+          pattern: a11y-results-*
+          path: automation/a11y-results
+          merge-multiple: true
+
       - name: Khôi phục lịch sử Allure
         uses: actions/cache/restore@v4
         with:
@@ -141,6 +174,11 @@ jobs:
         if: always() && hashFiles('automation/playwright-report-all/results.json') != ''
         working-directory: automation
         run: pnpm report:summary --title "Regression đêm"
+
+      - name: Bảng a11y → job summary
+        if: always() && hashFiles('automation/a11y-results/**/*.json') != ''
+        working-directory: automation
+        run: pnpm report:a11y --title "Regression đêm"
 
       - name: Sinh báo cáo Allure
         if: always() && hashFiles('automation/allure-results/*-result.json') != ''
