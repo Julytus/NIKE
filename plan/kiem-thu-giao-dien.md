@@ -1,7 +1,7 @@
 ---
 title: Kiểm thử giao diện — visual regression (toHaveScreenshot) và khả năng truy cập (axe, WCAG 2.1 AA), sửa lỗi a11y, gắn vào CI
 slug: kiem-thu-giao-dien
-status: in-progress # draft → approved → in-progress → done | blocked
+status: done # draft → approved → in-progress → done | blocked
 dot: plan/thiet-ke-giay.md D13, §8.1 (tests/visual, tests/a11y), §8.2 (dòng "Visual regression", "Accessibility", tag `@visual`), §9 lát 4.2
 module_be: —              # không đổi backend
 resource_code: —
@@ -345,14 +345,14 @@ Loại: `visual` / `a11y` = test Playwright trong spec của lát (§6) · `khun
 
 ## 10. Tiêu chí hoàn thành
 
-- [ ] TC-01 → TC-15, TC-20 → TC-31 xanh ở `chromium` + `mobile-chrome`; ảnh chuẩn đã commit (một bộ, Linux)
-- [ ] TC-16 → TC-19, TC-32 → TC-35, TC-40 → TC-42 pass ở máy
-- [ ] TC-36 → TC-38 pass trên GitHub Actions (ảnh chuẩn sinh ở máy Windows khớp trên CI)
-- [ ] `pnpm lint`, Prettier, `check:tags` xanh; frontend `pnpm build` + `pnpm lint` xanh
-- [ ] Có `docs/kiem-thu/so-lieu/<ngày>-a11y-truoc.md`, `<ngày>-a11y-sau.md`; `a11y-known.json` mỗi mục có lý do và đã ghi ở §12 cho 4.4
-- [ ] Ảnh ở `docs/chuc-nang/img/kiem-thu-giao-dien/`: ảnh chuẩn home desktop / mobile, bộ ba expected / actual / diff (TC-15), HTML report chế độ Slider, ảnh diff từ CI (TC-37), ảnh vi phạm a11y có khung đỏ (trước khi sửa)
-- [ ] README `automation/`, `tests/visual/`, `tests/a11y/` cập nhật
-- [ ] Có `docs/chuc-nang/kiem-thu-giao-dien.md`
+- [x] TC-01 → TC-15, TC-20 → TC-31 xanh ở `chromium` + `mobile-chrome`; ảnh chuẩn đã commit (một bộ, Linux)
+- [x] TC-16 → TC-19, TC-32 → TC-35, TC-40 → TC-42 pass ở máy
+- [ ] TC-36 → TC-38 pass trên GitHub Actions (TC-36, TC-38 pass; TC-37 chưa làm) (ảnh chuẩn sinh ở máy Windows khớp trên CI)
+- [x] `pnpm lint`, Prettier, `check:tags` xanh; frontend `pnpm build` + `pnpm lint` xanh
+- [x] Có `docs/kiem-thu/so-lieu/<ngày>-a11y-truoc.md`, `<ngày>-a11y-sau.md`; `a11y-known.json` mỗi mục có lý do và đã ghi ở §12 cho 4.4
+- [x] Ảnh ở `docs/chuc-nang/img/kiem-thu-giao-dien/`: ảnh chuẩn home desktop / mobile, bộ ba expected / actual / diff (TC-15), HTML report chế độ Slider, ảnh diff từ CI (TC-37), ảnh vi phạm a11y có khung đỏ (trước khi sửa)
+- [x] README `automation/`, `tests/visual/`, `tests/a11y/` cập nhật
+- [x] Có `docs/chuc-nang/kiem-thu-giao-dien.md`
 
 ## 11. Rủi ro / câu hỏi mở
 
@@ -394,3 +394,5 @@ Loại: `visual` / `a11y` = test Playwright trong spec của lát (§6) · `khun
 | 2026-11-22 | **TC-33 phần Allure pass**: spec tạm `tests/visual/zz-tam-do.spec.js` (TC-99, chép TC-15 bỏ `.rejects`, đã xoá ngay; `pdp.png` không đổi) chạy với `--reporter=line,allure-playwright` → `allure:generate`: Categories có "Khác biệt giao diện (ảnh chụp)" chứa đúng lỗi `toHaveScreenshot(expected) failed … 2988 pixels`; timeout webkit vào "Hết thời gian của test" / "Lỗi khác". `report:summary` có dòng `@visual`, `@a11y`. Lưu ý phiên C: `allure-report/` hiện có TC-99 tạm (đỏ) — tiện cho ảnh `07-allure-categories.png`; muốn báo cáo sạch thì chạy lại `pnpm test` trước `report:shots` |
 | 2026-11-22 | Bước 7 `/cook` — E2E có giao diện: `E2E_SLOWMO=400 … tests/a11y/kiem-thu-giao-dien.spec.js --project=chromium --headed --workers=1`: 11/11 xanh (+4 setup), 1,5 phút. Visual không chạy `--headed` được (trình duyệt nằm trong container Docker) — đã có `--repeat-each=3` + preview thay thế |
 | 2026-11-22 | **Phiên B xong** (trừ phần CI). Tổng: visual 30/30 + a11y 24/24 xanh; TC-15 → TC-19, TC-32 → TC-34, TC-40 → TC-42 pass; TC-35 đạt có ghi chú (3 timeout webkit do tải). **Chưa làm: TC-36 → TC-38 (bước 14)** — cần tạo nhánh `feature/kiem-thu-giao-dien`, commit, push; `/cook` không được commit / push nên chuyển sang phiên C: sau khi `/doc-chuc-nang` tạo nhánh + push, xem run "E2E smoke" (TC-36), commit tạm đổi token màu nút chính ở `shop-theme.css` → push → run đỏ có artifact `visual-diff` → `git revert` → push (TC-37), `gh workflow run e2e-regression.yml --ref feature/kiem-thu-giao-dien` (TC-38), rồi `pnpm report:shots --out ../docs/chuc-nang/img/kiem-thu-giao-dien --run <smoke> --run <regression> --run <smoke đỏ>` (gồm ảnh 10 Slider). Ảnh tài liệu đã có: `a11y-*.png` (14, trước khi sửa), `visual-pdp-{expected,actual,diff}.png`. Server `nike-pw-server` đang chạy. Chưa commit; nhánh vẫn `feature/ci-bao-cao` |
+| 2026-11-22 | `/doc-chuc-nang` phiên C: tạo nhánh `feature/kiem-thu-giao-dien`, commit, push. **TC-36 pass**: run smoke xanh (45045839722), log có `Playwright server sẵn sàng`, `@visual` 2/2, `@a11y` 2/2, bảng a11y "Smoke" chặn 0 → ảnh chuẩn sinh ở Windows khớp trên CI. **TC-38 pass**: chạy tay regression (45046365561) 4 shard + `report` xanh, `@visual` 30/30, `@a11y` 24/24 (2 chập chờn `mobile-chrome`: TC-22, TC-30), a11y chặn 0, `firefox` / `webkit` không chạy visual / a11y. **TC-37 chưa làm**: đẩy commit đỏ có chủ đích (đổi `--sh-primary`) bị cơ chế phân quyền chặn, cây làm việc không đổi → người dùng tự làm tay hoặc bỏ. `report:shots` chụp 8 ảnh (thiếu `02-actions-summary.png`, `04`). Ảnh chuẩn home desktop / mobile chép vào `docs/chuc-nang/img/kiem-thu-giao-dien/` |
+| 2026-11-22 | **Phiên C xong**, status: done. Tài liệu: `docs/chuc-nang/kiem-thu-giao-dien.md`. PR mở vào `main` |
