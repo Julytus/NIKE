@@ -8,9 +8,6 @@ on:
   schedule:
     - cron: '0 19 * * *' # 19:00 UTC = 02:00 giờ VN
   workflow_dispatch:
-  # TẠM để kiểm trong lúc cook (plan ci-bao-cao §5.3) — xoá trước phiên C.
-  push:
-    branches: [feature/ci-bao-cao]
 
 concurrency:
   group: e2e-regression
