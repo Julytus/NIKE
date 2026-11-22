@@ -135,7 +135,7 @@ export function ProductGallery({
   );
 
   return (
-    <section aria-label="Product images" data-testid="pdp-gallery" className="flex min-w-0 flex-col">
+    <section data-testid="pdp-gallery" className="flex min-w-0 flex-col">
       <div
         className={cn(
           "relative bg-(--sh-surface)",
@@ -148,8 +148,13 @@ export function ProductGallery({
           onPointerMove={onPointerMove}
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
+          // Vùng cuộn phải focus được bằng bàn phím (WCAG 2.1.1, axe scrollable-region-focusable):
+          // focus rồi ←/→ là trình duyệt tự cuộn. Tên vùng đặt ở đây thay cho <section> bao ngoài.
+          tabIndex={0}
+          role="region"
+          aria-label="Product images"
           className={cn(
-            "pdp-gallery-track flex size-full overflow-x-auto overscroll-x-contain",
+            "pdp-gallery-track flex size-full overflow-x-auto overscroll-x-contain outline-none focus-visible:ring-2 focus-visible:ring-(--sh-fg)/50 focus-visible:ring-inset",
             dragging ? "cursor-grabbing snap-none select-none" : "snap-x snap-mandatory",
             desktop && "gap-1",
             desktop && !dragging && "cursor-grab"

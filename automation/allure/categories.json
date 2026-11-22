@@ -12,16 +12,28 @@
     "messageRegex": "(?s)(?!.*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy)).*Test timeout of \\d+ms exceeded.*"
   },
   {
+    "name": "Khác biệt giao diện (ảnh chụp)",
+    "description": "toHaveScreenshot: ảnh khác ảnh chuẩn hoặc chưa có ảnh chuẩn (plan kiem-thu-giao-dien §5.6)",
+    "matchedStatuses": ["failed"],
+    "messageRegex": "(?s)(?!.*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy|Test timeout of \\d+ms exceeded)).*(toHaveScreenshot\\(|of all image pixels\\) are different|A snapshot doesn't exist).*"
+  },
+  {
+    "name": "Vi phạm khả năng truy cập",
+    "description": "axe: vi phạm WCAG 2.1 AA mức serious / critical chưa có trong data/a11y-known.json",
+    "matchedStatuses": ["failed"],
+    "messageRegex": "(?s)(?!.*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy|Test timeout of \\d+ms exceeded|toHaveScreenshot\\(|of all image pixels\\) are different|A snapshot doesn't exist)).*Vi phạm WCAG 2\\.1 AA.*"
+  },
+  {
     "name": "Sai kết quả mong đợi",
     "description": "Khẳng định expect(…) không đúng",
     "matchedStatuses": ["failed"],
-    "messageRegex": "(?s)(?!.*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy|Test timeout of \\d+ms exceeded)).*expect\\(.*"
+    "messageRegex": "(?s)(?!.*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy|Test timeout of \\d+ms exceeded|toHaveScreenshot\\(|of all image pixels\\) are different|A snapshot doesn't exist|Vi phạm WCAG 2\\.1 AA)).*expect\\(.*"
   },
   {
     "name": "Lỗi khác",
     "description": "Mọi lỗi còn lại",
     "matchedStatuses": ["failed", "broken"],
-    "messageRegex": "(?s)(?!.*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy|Test timeout of \\d+ms exceeded|expect\\()).*"
+    "messageRegex": "(?s)(?!.*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy|Test timeout of \\d+ms exceeded|toHaveScreenshot\\(|of all image pixels\\) are different|A snapshot doesn't exist|Vi phạm WCAG 2\\.1 AA|expect\\()).*"
   },
   {
     "name": "Test chập chờn",

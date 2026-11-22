@@ -6,11 +6,13 @@
  * Lỗi (thoát 1, in `file:dòng — lý do`):
  *   1. test (trừ project `setup`) không có đúng một trong `@smoke` / `@regression`;
  *   2. tiêu đề không bắt đầu bằng ID `TC-\d{2}[a-z]?`;
- *   3. trùng ID trong một file ở nhiều dòng khác nhau (ca data-driven sinh từ cùng một dòng thì được).
+ *   3. trùng ID trong một file ở nhiều dòng khác nhau (ca data-driven sinh từ cùng một dòng thì được);
+ *   6. test trong `tests/visual/` thiếu `@visual`, hoặc trong `tests/a11y/` thiếu `@a11y`;
+ *   7. `@visual` / `@a11y` dùng ngoài hai thư mục đó (plan kiem-thu-giao-dien §5.6).
  * Cảnh báo (không đổi mã thoát):
  *   4. thân test có thao tác tạo đơn (`order.create(`, `placeOrder.click(`) mà test nằm ở pha thường;
  *   5. file có > 3 test `@smoke` (ca data-driven cùng dòng tính 1).
- * In thêm bảng thống kê theo file và theo project: tổng / smoke / regression / stock / flow / mock.
+ * In thêm bảng thống kê theo file và theo project: tổng / smoke / regression / stock / flow / mock / visual / a11y.
  *
  * Dùng: node scripts/check-tags.mjs [--quiet]   (--quiet: không in bảng thống kê)
  */
@@ -27,6 +29,9 @@ const ID_RE = /^(TC-\d{2}[a-z]?)(?:\s|$)/;
 const LEVELS = ['smoke', 'regression'];
 const CREATE_TOKENS = ['order.create(', 'placeOrder.click('];
 const SMOKE_PER_FILE = 3;
+/** Tag gắn với thư mục cùng tên (rule 6, 7). */
+const DIR_TAGS = ['visual', 'a11y'];
+const STAT_TAGS = ['smoke', 'regression', 'stock', 'flow', 'mock', ...DIR_TAGS];
 
 /**
  * @typedef {{ title: string, file: string, line: number, tags: string[], project: string, phase: string }} Entry
@@ -96,6 +101,19 @@ for (const e of all) {
   }
 }
 
+// 6, 7. Tag @visual / @a11y đúng thư mục
+for (const e of all) {
+  const file = e.file.replaceAll('\\', '/');
+  for (const tag of DIR_TAGS) {
+    const inDir = file.startsWith(`${tag}/`);
+    if (inDir && !e.tags.includes(tag)) {
+      errors.set(`${where(e)} — ${tag}`, `test trong tests/${tag}/ thiếu tag @${tag}`);
+    } else if (!inDir && e.tags.includes(tag)) {
+      errors.set(`${where(e)} — ${tag}`, `@${tag} chỉ dùng cho test trong tests/${tag}/`);
+    }
+  }
+}
+
 // 3. Trùng ID ở nhiều dòng trong một file
 /** @type {Map<string, Set<number>>} */
 const idLines = new Map();
@@ -161,15 +179,15 @@ function table(label, keyOf) {
   for (const e of all) {
     const key = keyOf(e);
     if (!rows.has(key)) {
-      rows.set(key, { total: 0, smoke: 0, regression: 0, stock: 0, flow: 0, mock: 0 });
+      rows.set(key, Object.fromEntries(['total', ...STAT_TAGS].map((c) => [c, 0])));
     }
     const r = /** @type {Record<string, number>} */ (rows.get(key));
     r.total += 1;
-    for (const tag of ['smoke', 'regression', 'stock', 'flow', 'mock']) {
+    for (const tag of STAT_TAGS) {
       if (e.tags.includes(tag)) r[tag] += 1;
     }
   }
-  const cols = ['total', 'smoke', 'regression', 'stock', 'flow', 'mock'];
+  const cols = ['total', ...STAT_TAGS];
   const keys = [...rows.keys()].sort();
   const width = Math.max(label.length, ...keys.map((k) => k.length));
   const sum = Object.fromEntries(cols.map((c) => [c, 0]));

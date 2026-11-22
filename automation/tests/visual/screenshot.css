@@ -1,0 +1,44 @@
+/* Chỉ áp dụng lúc chụp `toHaveScreenshot` (stylePath trong playwright.config.js) — plan kiem-thu-giao-dien §5.2 */
+*,
+*::before,
+*::after {
+  transition: none !important;
+  animation: none !important;
+  caret-color: transparent !important;
+}
+::-webkit-scrollbar {
+  display: none !important;
+}
+/* chỉ có ở Vite dev */
+.tsqd-parent-container,
+[data-testid='signin-dev-hint'] {
+  display: none !important;
+}
+/* Bảng quản trị: thân bảng bị che (masks), nhưng số dòng và độ dài tên đổi khi test khác thêm / xoá chức vụ song
+   song → giữ tối đa 3 dòng một hàng chữ và cố định độ rộng cột để chân bảng, header không xê dịch */
+[data-slot='table'] {
+  table-layout: fixed;
+}
+[data-slot='table'] th:first-child {
+  width: 48px;
+}
+[data-slot='table'] tbody tr:nth-child(n + 4) {
+  display: none;
+}
+/* dòng thứ 3 chỉ có viền dưới khi còn dòng sau (shadcn bỏ viền dòng cuối) → bỏ hẳn để cao như nhau */
+[data-slot='table'] tbody tr:nth-child(3) {
+  border-bottom-width: 0;
+}
+[data-slot='table'] td {
+  white-space: nowrap;
+  overflow: hidden;
+}
+/* Mã đơn bị che (masks), nhưng khung che rộng theo chữ (Inter không đều nét) → mỗi đơn mới lệch vài pixel.
+   Cố định độ rộng để khung che luôn bằng nhau */
+[data-testid='order-code'] {
+  display: inline-block;
+  width: 9rem;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+}

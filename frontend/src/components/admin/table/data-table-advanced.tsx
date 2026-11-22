@@ -170,7 +170,13 @@ export function DataTableAdvanced<TData extends { id: number }>({
         </div>
         <div className="flex items-center gap-2">
           {onRefresh && (
-            <Button variant="outline" size="sm" onClick={onRefresh} disabled={isLoading}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onRefresh}
+              disabled={isLoading}
+              aria-label="Refresh"
+            >
               <RefreshCcw className={`size-4 ${isLoading ? "animate-spin" : ""}`} />
               <span className="hidden lg:inline">Refresh</span>
             </Button>
@@ -198,7 +204,7 @@ export function DataTableAdvanced<TData extends { id: number }>({
           )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" aria-label="Customize Columns">
                 <LayoutGrid className="size-4" />
                 <span className="hidden lg:inline">Customize Columns</span>
                 <span className="lg:hidden">Columns</span>
@@ -232,6 +238,7 @@ export function DataTableAdvanced<TData extends { id: number }>({
               size="sm"
               onClick={handleDeleteSelected}
               disabled={!hasSelection}
+              aria-label={deleteLabel}
             >
               <Trash className="size-4" />
               <span className="hidden lg:inline">{deleteLabel}</span>
@@ -239,7 +246,7 @@ export function DataTableAdvanced<TData extends { id: number }>({
           )}
           {toolbarActions}
           {onAdd && (
-            <Button size="sm" onClick={onAdd}>
+            <Button size="sm" onClick={onAdd} aria-label={addLabel}>
               <Plus className="size-4" />
               <span className="hidden lg:inline">{addLabel}</span>
             </Button>

@@ -63,7 +63,10 @@ export function EmailStep({
       <SubmitButton pending={mutation.isPending}>Continue</SubmitButton>
 
       {import.meta.env.DEV && (
-        <p className="rounded-[8px] border border-dashed border-(--sh-border) p-2 text-xs text-(--sh-muted)">
+        <p
+          data-testid="signin-dev-hint"
+          className="rounded-[8px] border border-dashed border-(--sh-border) p-2 text-xs text-(--sh-muted)"
+        >
           Test account: <b>free@nike.local</b>, password <b>Admin@123</b>
         </p>
       )}

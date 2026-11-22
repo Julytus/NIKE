@@ -1,6 +1,7 @@
 // @ts-check
 import 'dotenv/config';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 import { defineConfig, devices } from '@playwright/test';
 
@@ -43,6 +44,8 @@ const uiProject = {
   testIgnore: /tests[\\/]api[\\/]/,
   ...phaseFilter,
 };
+// Visual + a11y chỉ chạy ở `chromium` và `mobile-chrome` (plan kiem-thu-giao-dien §11 câu 4).
+const noVisualProject = { ...uiProject, testIgnore: /tests[\\/](api|visual|a11y)[\\/]/ };
 
 export default defineConfig({
   testDir: './tests',
@@ -53,7 +56,24 @@ export default defineConfig({
   workers,
   timeout: 30_000,
   // Vite dev biên dịch module ở lần tải đầu: Firefox / WebKit chạy song song có thể mất > 7 giây
-  expect: { timeout: 10_000 },
+  expect: {
+    timeout: 10_000,
+    // plan kiem-thu-giao-dien §5.2: ảnh luôn do Chromium Linux trong Docker vẽ (Playwright server).
+    // TC-17 đo 3 lần × 2 project: lệch 0 pixel → không cho lệch pixel nào (thay cho tỉ lệ 0,2 % dự kiến,
+    // vì 0,2 % bỏ lọt thay đổi nhỏ như giá dời 6px trên mobile — plan §12).
+    toHaveScreenshot: {
+      animations: 'disabled',
+      caret: 'hide',
+      scale: 'css',
+      threshold: 0.2,
+      maxDiffPixels: 0,
+      stylePath: fileURLToPath(new URL('./tests/visual/screenshot.css', import.meta.url)),
+    },
+  },
+  // Một bộ ảnh chuẩn (không có `{platform}`): `tests/visual/__screenshots__/<project>/<tên>.png`.
+  snapshotPathTemplate: '{testDir}/{testFileDir}/__screenshots__/{projectName}/{arg}{ext}',
+  // CI không tự ghi ảnh chuẩn: trang mới chưa có ảnh là đỏ hẳn (E5).
+  updateSnapshots: isCI ? 'none' : 'missing',
   globalSetup: './global-setup.js',
   reporter: [
     ...(isCI ? [['dot'], ['github']] : [['list']]),
@@ -96,8 +116,8 @@ export default defineConfig({
     { name: 'setup', testMatch: /.*\.setup\.js/, use: { ...devices['Desktop Chrome'] } },
     { name: 'api', testMatch: /tests[\\/]api[\\/].*\.spec\.js/, ...phaseFilter },
     { name: 'chromium', use: { ...devices['Desktop Chrome'] }, ...uiProject },
-    { name: 'firefox', use: { ...devices['Desktop Firefox'] }, ...uiProject },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] }, ...uiProject },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] }, ...noVisualProject },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] }, ...noVisualProject },
     { name: 'mobile-chrome', use: { ...devices['Pixel 7'] }, ...uiProject },
   ],
   webServer:

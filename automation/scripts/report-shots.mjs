@@ -3,7 +3,7 @@
  * Chụp ảnh báo cáo cho quyển — `pnpm report:shots` (plan ci-bao-cao §5.1, §8b bước 9).
  * Mở `allure-report/` và `playwright-report-all/` qua một server tĩnh tạm (127.0.0.1, cổng ngẫu nhiên) rồi chụp:
  *   05-allure-overview.png · 06-allure-behaviors.png · 07-allure-categories.png · 08-allure-test.png ·
- *   09-playwright-report-all.png
+ *   09-playwright-report-all.png · 10-playwright-visual-slider.png (TC-15 kiem-thu-giao-dien: so ảnh chế độ "Slider")
  * Có `--run <url>` (trang run công khai trên GitHub Actions, lặp lại được, theo thứ tự) thì chụp thêm:
  *   url thứ 1 (run smoke xanh)      → 01-actions-smoke.png + 02-actions-summary.png (đoạn job summary)
  *   url thứ 2 (run regression)      → 03-actions-regression.png
@@ -121,6 +121,38 @@ const open = async (url) => {
   await page.waitForTimeout(1500);
 };
 
+/**
+ * Trang test TC-15 của lát kiem-thu-giao-dien (chromium) trong HTML report, khối so ảnh `pdp.png` ở chế độ
+ * "Slider" (plan kiem-thu-giao-dien §8b bước 10). Báo cáo không có TC-15 (chưa chạy visual) thì bỏ qua.
+ */
+const shotVisualSlider = async () => {
+  await open(
+    `${base}/playwright-report-all/index.html#?q=${encodeURIComponent('TC-15 p:chromium')}`
+  );
+  const link = page.getByRole('link', { name: /TC-15 .*thay đổi giao diện/ }).first();
+  if ((await link.count()) === 0) {
+    console.log(
+      '  (không thấy TC-15 visual trong báo cáo — chạy pnpm test:visual trước; bỏ qua ảnh 10)'
+    );
+    return;
+  }
+  await link.click();
+  const slider = page.getByText('Slider', { exact: true }).first();
+  const found = await slider
+    .waitFor({ timeout: 10_000 })
+    .then(() => true)
+    .catch(() => false);
+  if (!found) {
+    console.log('  (TC-15 không có khối so ảnh — bỏ qua ảnh 10)');
+    return;
+  }
+  await slider.click();
+  await slider.scrollIntoViewIfNeeded();
+  await page.mouse.wheel(0, 200);
+  await page.waitForTimeout(500);
+  await shot('10-playwright-visual-slider.png');
+};
+
 /** Mở nhóm đầu tiên của cây (Behaviors / Categories); cây trống (vd không có test đỏ) thì bỏ qua. */
 const expandFirstNode = async () => {
   const node = page.locator('.node__title').first();
@@ -155,6 +187,7 @@ try {
   }
   await open(`${base}/playwright-report-all/index.html`);
   await shot('09-playwright-report-all.png');
+  await shotVisualSlider();
 
   const [smokeRun, regressionRun, failedRun] = opts.run ?? [];
   if (smokeRun) {
