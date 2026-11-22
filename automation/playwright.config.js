@@ -1,11 +1,20 @@
 // @ts-check
 import 'dotenv/config';
+import fs from 'node:fs';
+
 import { defineConfig, devices } from '@playwright/test';
 
 import { BASE_URL } from './utils/env.js';
+import { environmentInfo, frontendMode, runInfo } from './utils/report-env.js';
 
 const isCI = !!process.env.CI;
 const slowMo = Number(process.env.E2E_SLOWMO ?? 0);
+// Local: mọi trình duyệt cùng lấy module từ một tiến trình Vite dev; mặc định (nửa số nhân, 8 trên máy 16 nhân)
+// làm `goto` của Firefox / WebKit có lúc > 30 giây (plan kiem-thu-hoi-quy §12) → 4. CI (4 vCPU) → 2.
+// Đổi bằng E2E_WORKERS ở cả hai nơi (plan ci-bao-cao §5.2).
+const workers = Number(process.env.E2E_WORKERS ?? (isCI ? 2 : 4));
+// Tên file blob, để các shard của CI không trùng tên khi gộp (`pnpm report:all`).
+const reportTag = process.env.E2E_REPORT_TAG || 'local';
 
 // Chỉ chạy project `api` (vd `pnpm test:api`) thì không cần bật frontend.
 const onlyApi =
@@ -18,6 +27,16 @@ const onlyApi =
 const stockPhase = process.env.E2E_STOCK === '1';
 const STOCK_TAG = /@stock/;
 const phaseFilter = stockPhase ? { grep: STOCK_TAG } : { grepInvert: STOCK_TAG };
+const phaseName = stockPhase ? 'stock' : 'main';
+
+// Frontend Playwright tự bật: Vite dev (mặc định, máy local) hoặc bản build `vite preview` (CI, cần `pnpm build` trước).
+const frontendCommand =
+  frontendMode === 'preview'
+    ? 'pnpm --dir ../frontend preview --strictPort'
+    : 'pnpm --dir ../frontend dev';
+
+// Link `tms` của Allure trỏ về plan của lát (nhãn gắn ở auto fixture `allureLabels`).
+const { repoUrl } = runInfo();
 
 const uiProject = {
   dependencies: ['setup'],
@@ -31,20 +50,37 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
-  // Local: mọi trình duyệt cùng lấy module từ một tiến trình Vite dev; mặc định (nửa số nhân, 8 trên máy 16 nhân)
-  // làm `goto` của Firefox / WebKit có lúc > 30 giây (plan kiem-thu-hoi-quy §12) → 4, đổi bằng E2E_WORKERS
-  workers: isCI ? 2 : Number(process.env.E2E_WORKERS ?? 4),
+  workers,
   timeout: 30_000,
   // Vite dev biên dịch module ở lần tải đầu: Firefox / WebKit chạy song song có thể mất > 7 giây
   expect: { timeout: 10_000 },
   globalSetup: './global-setup.js',
   reporter: [
-    ['list'],
+    ...(isCI ? [['dot'], ['github']] : [['list']]),
     [
       'html',
       { outputFolder: stockPhase ? 'playwright-report-stock' : 'playwright-report', open: 'never' },
     ],
-    ['allure-playwright', { resultsDir: 'allure-results', detail: true, suiteTitle: true }],
+    // Mỗi pha một thư mục (reporter blob xoá outputDir ở đầu lần chạy); `pnpm report:all` gộp lại.
+    ['blob', { outputDir: `blob-report/${phaseName}`, fileName: `${phaseName}-${reportTag}.zip` }],
+    [
+      'allure-playwright',
+      {
+        resultsDir: 'allure-results',
+        detail: true,
+        suiteTitle: true,
+        environmentInfo: environmentInfo({ workers }),
+        categories: JSON.parse(
+          fs.readFileSync(new URL('./allure/categories.json', import.meta.url), 'utf8')
+        ),
+        links: {
+          tms: {
+            urlTemplate: `${repoUrl}/blob/main/plan/%s.md`,
+            nameTemplate: 'plan/%s.md',
+          },
+        },
+      },
+    ],
   ],
   use: {
     baseURL: BASE_URL,
@@ -68,7 +104,7 @@ export default defineConfig({
     onlyApi || process.env.E2E_SKIP_WEBSERVER
       ? undefined
       : {
-          command: 'pnpm --dir ../frontend dev',
+          command: frontendCommand,
           url: BASE_URL,
           reuseExistingServer: !isCI,
           timeout: 120_000,

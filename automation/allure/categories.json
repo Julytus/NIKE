@@ -1,0 +1,31 @@
+[
+  {
+    "name": "Lỗi kết nối / hạ tầng",
+    "description": "Không gọi được backend / frontend (cổng đóng, mất kết nối, lỗi mạng của trình duyệt)",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": "(?s).*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy).*"
+  },
+  {
+    "name": "Hết thời gian của test",
+    "description": "Test chạy quá timeout (mặc định 30 giây)",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": "(?s)(?!.*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy)).*Test timeout of \\d+ms exceeded.*"
+  },
+  {
+    "name": "Sai kết quả mong đợi",
+    "description": "Khẳng định expect(…) không đúng",
+    "matchedStatuses": ["failed"],
+    "messageRegex": "(?s)(?!.*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy|Test timeout of \\d+ms exceeded)).*expect\\(.*"
+  },
+  {
+    "name": "Lỗi khác",
+    "description": "Mọi lỗi còn lại",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": "(?s)(?!.*(ECONNREFUSED|ECONNRESET|socket hang up|net::ERR_|NS_ERROR_|Backend chưa chạy|Test timeout of \\d+ms exceeded|expect\\()).*"
+  },
+  {
+    "name": "Test chập chờn",
+    "description": "Đỏ ở lần đầu, xanh khi chạy lại (retry)",
+    "flaky": true
+  }
+]

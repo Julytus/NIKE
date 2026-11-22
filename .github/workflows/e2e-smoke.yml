@@ -1,108 +1,98 @@
-# Chạy nhóm @smoke của bộ automation test (API + Chromium) mỗi lần push / mở PR vào main.
-# Hạ tầng giống máy local: MySQL + MinIO bằng docker-compose.local.yml, backend chạy jar profile `local`,
-# frontend do Playwright tự bật (webServer: pnpm --dir ../frontend dev).
+# Chạy nhóm @smoke của bộ automation test trên đủ 5 project (api, chromium, firefox, webkit, mobile-chrome) mỗi lần
+# push lên bất kỳ nhánh nào (plan ci-bao-cao §5.3). Commit chỉ sửa tài liệu thì bỏ qua (paths-ignore).
+# Không chạy theo pull_request: check của commit đã hiện trên PR, tránh chạy hai lần cho cùng một commit.
+# Hạ tầng dựng bằng composite action .github/actions/setup-sut; frontend chạy bản build (vite preview).
 name: E2E smoke
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'plan/**'
+      - '**/*.md'
+      - '.claude/**'
   workflow_dispatch:
 
 concurrency:
   group: e2e-smoke-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   smoke:
+    name: smoke (5 project)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     env:
       CI: 'true'
+      TZ: Asia/Ho_Chi_Minh
+      E2E_FRONTEND: preview
+      E2E_REPORT_TAG: smoke
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cài Java 21
-        uses: actions/setup-java@v4
+      - name: Dựng SUT
+        uses: ./.github/actions/setup-sut
         with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
+          browsers: chromium firefox webkit
 
-      - name: Cài pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 12.5.1
-
-      - name: Cài Node 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: pnpm
-          cache-dependency-path: |
-            frontend/pnpm-lock.yaml
-            automation/pnpm-lock.yaml
-
-      - name: Tạo file môi trường từ mẫu
-        run: |
-          cp backend/.env.example backend/.env
-          cp frontend/.env.example frontend/.env
-
-      - name: Dựng MySQL + MinIO
-        run: docker compose -f docker-compose.local.yml --env-file backend/.env up -d --wait
-
-      - name: Build backend
-        working-directory: backend
-        run: mvn -q -B "-Djooq.codegen.skip=true" -pl app -am package -DskipTests
-
-      - name: Chạy backend (profile local) và chờ sẵn sàng
-        run: |
-          nohup java -jar backend/app/target/aeoc-backend.jar > backend-run.log 2>&1 &
-          for i in $(seq 1 90); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:9500/api/v3/api-docs || true)
-            if [ "$code" = "200" ]; then echo "backend sẵn sàng sau $((i * 2))s"; exit 0; fi
-            sleep 2
-          done
-          echo "Backend không lên sau 180s"; tail -80 backend-run.log; exit 1
-
-      - name: Cài phụ thuộc frontend
-        working-directory: frontend
-        run: pnpm install --frozen-lockfile
-
-      - name: Cài phụ thuộc automation + Chromium
+      - name: Chạy nhóm @smoke (5 project × 2 pha)
         working-directory: automation
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm exec playwright install --with-deps chromium
+        run: pnpm test:smoke
 
-      - name: Chạy nhóm @smoke (api + chromium)
+      # Các bước báo cáo luôn chạy (kể cả khi test đỏ); thiếu đầu vào thì cảnh báo, không làm đỏ thêm bước khác.
+      - name: Cảnh báo không có blob report
+        if: always() && hashFiles('automation/blob-report/**/*.zip') == ''
+        run: echo "::warning::Không có blob report — bỏ qua bước gộp báo cáo (test không chạy được?)"
+
+      - name: Gộp báo cáo HTML hai pha
+        if: always() && hashFiles('automation/blob-report/**/*.zip') != ''
         working-directory: automation
-        run: pnpm test:smoke --project=api --project=chromium
+        run: pnpm report:all
+
+      - name: Bảng số liệu → job summary
+        if: always() && hashFiles('automation/playwright-report-all/results.json') != ''
+        working-directory: automation
+        run: pnpm report:summary --title "Smoke"
+
+      - name: Khôi phục lịch sử Allure
+        if: always() && hashFiles('automation/allure-results/*-result.json') != ''
+        uses: actions/cache/restore@v4
+        with:
+          path: automation/allure-report/history
+          key: allure-history-smoke-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            allure-history-smoke-${{ github.ref_name }}-
+            allure-history-smoke-main-
 
       - name: Sinh báo cáo Allure
-        if: always()
+        if: always() && hashFiles('automation/allure-results/*-result.json') != ''
         working-directory: automation
-        run: pnpm allure:generate || true
+        run: pnpm allure:generate --single-file --title "Smoke"
 
-      - name: Tải lên báo cáo Playwright
+      - name: Lưu lịch sử Allure
+        if: always() && hashFiles('automation/allure-report/history/*.json') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: automation/allure-report/history
+          key: allure-history-smoke-${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Tải lên báo cáo Playwright (gộp)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: |
-            automation/playwright-report/
-            automation/playwright-report-stock/
+          name: smoke-playwright-report
+          path: automation/playwright-report-all/
           retention-days: 14
 
-      - name: Tải lên kết quả Allure
+      - name: Tải lên báo cáo Allure (một file)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results
-          path: |
-            automation/allure-results/
-            automation/allure-report/
+          name: smoke-allure-report
+          path: automation/allure-report-single/
           retention-days: 14
 
       - name: Tải lên log backend khi lỗi

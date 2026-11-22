@@ -1,0 +1,74 @@
+# Dựng hệ thống cần kiểm (SUT) cho bộ automation test — dùng chung cho e2e-smoke.yml và e2e-regression.yml
+# (plan ci-bao-cao §5.3). Hạ tầng giống máy local: MySQL + MinIO bằng docker-compose.local.yml, backend chạy jar
+# profile `local`, frontend build sẵn để Playwright bật `vite preview` (E2E_FRONTEND=preview).
+# Backend được chạy nền từ sớm; trong lúc nó khởi động thì build frontend, cài phụ thuộc, cài trình duyệt.
+name: Dựng SUT (MySQL, MinIO, backend, frontend, trình duyệt)
+description: Cài Java / Node / pnpm, dựng MySQL + MinIO, build + chạy backend, build frontend, cài trình duyệt Playwright
+inputs:
+  browsers:
+    description: Trình duyệt Playwright cần cài, cách nhau bằng dấu cách (vd "chromium firefox webkit")
+    required: false
+    default: chromium
+runs:
+  using: composite
+  steps:
+    - name: Cài Java 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '21'
+        cache: maven
+
+    - name: Cài pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 12.5.1
+
+    - name: Cài Node 22
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: pnpm
+        cache-dependency-path: |
+          frontend/pnpm-lock.yaml
+          automation/pnpm-lock.yaml
+
+    - name: Tạo file môi trường từ mẫu
+      shell: bash
+      run: |
+        cp backend/.env.example backend/.env
+        cp frontend/.env.example frontend/.env
+
+    - name: Dựng MySQL + MinIO
+      shell: bash
+      run: docker compose -f docker-compose.local.yml --env-file backend/.env up -d --wait
+
+    - name: Build backend
+      shell: bash
+      working-directory: backend
+      run: mvn -q -B "-Djooq.codegen.skip=true" -pl app -am package -DskipTests
+
+    - name: Chạy backend nền (profile local)
+      shell: bash
+      run: nohup java -jar backend/app/target/aeoc-backend.jar > backend-run.log 2>&1 &
+
+    - name: Build frontend
+      shell: bash
+      working-directory: frontend
+      run: |
+        pnpm install --frozen-lockfile
+        pnpm build
+
+    - name: Cài phụ thuộc automation
+      shell: bash
+      working-directory: automation
+      run: pnpm install --frozen-lockfile
+
+    - name: Cài trình duyệt Playwright (${{ inputs.browsers }})
+      shell: bash
+      working-directory: automation
+      run: pnpm exec playwright install --with-deps ${{ inputs.browsers }}
+
+    - name: Chờ backend sẵn sàng
+      shell: bash
+      run: sh .github/actions/setup-sut/wait-backend.sh
