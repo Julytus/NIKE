@@ -33,10 +33,10 @@ jobs:
             browsers: chromium
           - shard: firefox
             projects: --project=firefox
-            browsers: firefox
+            browsers: chromium firefox # project setup chạy Desktop Chrome ở mọi shard
           - shard: webkit
             projects: --project=webkit
-            browsers: webkit
+            browsers: chromium webkit
           - shard: mobile-chrome
             projects: --project=mobile-chrome
             browsers: chromium
